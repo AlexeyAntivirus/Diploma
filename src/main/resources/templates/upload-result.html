@@ -5,8 +5,26 @@
         <title>Результат загрузки</title>
     </head>
     <body>
-        <p th:utext="${result}"/><br/>
-        <p th:utext="${statusLink}"/>
-
+        <div th:switch="${status}">
+            <p th:case="200">
+                <strong>Успех!</strong> Файл загружен.
+            </p>
+            <p th:case="400">
+                <strong>Ошибка!</strong> Файл не указан.
+            </p>
+            <p th:case="500">
+                <strong>Ошибка!</strong> Возникли технические неполадки с сервером.
+            </p>
+        </div>
+        <div th:switch="${value}">
+            <p th:case="null">
+                <a th:href="@{/upload}">Попробовать снова</a>
+            </p>
+            <p th:case="*">
+                <a th:href="@{/download(fileUUID=${value})}">Ссылка на скачивание</a>
+                <br/>
+                <a th:href="@{/upload}">Вернуться</a>
+            </p>
+        </div>
     </body>
 </html>

@@ -1,17 +1,19 @@
 package com.rx.controllers;
 
+import com.rx.data.ServiceResult;
 import com.rx.services.FileStorageService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.UUID;
 
 /**
@@ -21,6 +23,8 @@ import java.util.UUID;
 @Controller
 public class FileDownloadController {
 
+    private Logger logger = LogManager.getRootLogger();
+
     private final FileStorageService fileStorageService;
 
     @Autowired
@@ -29,24 +33,27 @@ public class FileDownloadController {
     }
 
     @GetMapping(name = "/download", value = "/download")
-    public ResponseEntity<Resource> handleDownload(
-            @RequestParam("fileUUID") UUID fileUUID) {
+    public void handleDownload(
+            @RequestParam("fileUUID") UUID fileUUID,
+            HttpServletResponse response) {
 
-        Path uploadedFilePath = fileStorageService.download(fileUUID);
-        try {
-            ByteArrayResource buffer = new ByteArrayResource(
-                    Files.readAllBytes(uploadedFilePath));
-            return ResponseEntity.ok()
-                    .contentLength(buffer.contentLength())
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header("Content-Disposition",
-                            String.format("attachment; filename=\"%s\"", uploadedFilePath.getFileName()))
-                    .body(buffer);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity
-                    .notFound()
-                    .build();
+        ServiceResult<FileSystemResource> result =
+                this.fileStorageService.getFromStorage(fileUUID);
+
+        if (result.getStatus() == HttpStatus.OK) {
+            try {
+                FileSystemResource resource = result.getValue();
+                response.setContentLengthLong(resource.contentLength());
+                response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+                response.setHeader("Content-Disposition",
+                        String.format("attachment; filename=\"%s\"", resource.getFilename()));
+
+                IOUtils.copy(resource.getInputStream(), response.getOutputStream());
+            } catch (IOException e) {
+                logger.error(e);
+            }
         }
+
+        response.setStatus(result.getStatus().value());
     }
 }

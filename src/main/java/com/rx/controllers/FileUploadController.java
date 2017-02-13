@@ -1,5 +1,6 @@
 package com.rx.controllers;
 
+import com.rx.data.ServiceResult;
 import com.rx.services.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,7 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 /**
  * Created by multi-view on 2/10/17.
@@ -30,28 +32,23 @@ public class FileUploadController {
         return "upload";
     }
 
-    @PostMapping(name = "/upload", value = "/upload-result")
-    public String handleUpload(
-            @RequestParam(name = "file") MultipartFile file,
-            Model model) {
+    @PostMapping(name = "/upload", value = "/upload")
+    public String handleUpload(@RequestParam(name = "file") MultipartFile file,
+            HttpServletResponse response, Model model) {
 
-        if (file.isEmpty()) {
-            model.addAttribute("result", "<strong>Ошибка!</strong> Файл не указан.");
-            model.addAttribute("statusLink", "<a href=\"/upload\">Попробовать заново</a>");
-        } else {
-            try {
-                model.addAttribute("result", "<strong>Успех!</strong> Файл загружен на сервер.");
-                model.addAttribute("statusLink",
-                        String.format("<a href=\"/download?fileUUID=%s\">Ссылка на скачивание</a><br/>",
-                                this.fileStorageService.upload(file)) +
-                        "<a href=\"/upload\">Вернуться</a>");
-            } catch (IOException e) {
-                e.printStackTrace();
-                model.addAttribute("result", "<strong>Ошибка!</strong> Возникли проблемы с сервером.");
-                model.addAttribute("statusLink", "<a href=\"/upload\">Вернуться</a>");
-            }
-        }
+        ServiceResult<UUID> result =
+                this.fileStorageService.saveToStorage(file);
 
+        model.addAttribute("status", result.getStatus().value());
+        model.addAttribute("value", result.getValue());
+
+        response.setStatus(result.getStatus().value());
+
+        return "upload-result";
+    }
+
+    @GetMapping(name = "/upload-result", value = "/upload-result")
+    public String getUploadResult() {
         return "upload-result";
     }
 }

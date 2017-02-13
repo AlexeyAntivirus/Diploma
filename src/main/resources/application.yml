@@ -1,0 +1,9 @@
+spring:
+  http:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+app:
+  storage:
+    folder: /home/multi-view/.storage

@@ -1,15 +1,20 @@
 package com.rx.services;
 
+import com.rx.data.ServiceResult;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.OutputStream;
+import java.nio.file.*;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -22,39 +27,59 @@ import java.util.UUID;
 @Service
 public class FileStorageService {
 
-    private final Map<UUID, Path> fileStorageDB;
+    private Logger logger = LogManager.getRootLogger();
 
-    private Path fileStorageFolder;
+    private Map<UUID, Path> database;
+
+    private Path storageFolder;
+
+    private FileSystemProvider provider = FileSystems.getDefault().provider();
+
 
     @Autowired
-    public FileStorageService() {
-        this.fileStorageDB = new HashMap<>();
-        try {
-            this.fileStorageFolder = this.createStorageIfAbsent(
-                    Paths.get(System.getProperty("user.home"), ".storage"));
-        } catch (IOException e) {
-            e.printStackTrace();
+    public FileStorageService(Environment environment) {
+        this.database = new HashMap<>();
+        this.storageFolder = Paths.get(environment.getProperty("app.storage.folder"));
+        File storageFolderFile = this.storageFolder.toFile();
+
+        if (!storageFolderFile.exists()) {
+            try {
+                this.provider.createDirectory(this.storageFolder);
+            } catch (IOException e) {
+                logger.error(e);
+            }
         }
     }
 
-    public UUID upload(MultipartFile file) throws IOException {
-        UUID fileUUID = UUID.randomUUID();
-        Path uploadedFilePath = this.fileStorageFolder.resolve(
-                file.getOriginalFilename());
+    public ServiceResult<UUID> saveToStorage(MultipartFile file) {
 
-        Files.write(uploadedFilePath, file.getBytes());
+        if (file.isEmpty()) {
+            return new ServiceResult<>(null, HttpStatus.BAD_REQUEST);
+        }
 
-        this.fileStorageDB.put(fileUUID, uploadedFilePath);
+        try {
+            Path uploadedFilePath = this.storageFolder.resolve(file.getOriginalFilename());
+            OutputStream outputStream = this.provider.newOutputStream(uploadedFilePath);
+            outputStream.write(file.getBytes());
+            UUID uploadedFileUUID = UUID.randomUUID();
+            this.database.put(uploadedFileUUID, uploadedFilePath);
 
-        return fileUUID;
+            return new ServiceResult<>(uploadedFileUUID, HttpStatus.OK);
+        } catch (IOException e) {
+            logger.error(e);
+            return new ServiceResult<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public Path download(UUID fileUUID) {
-        return this.fileStorageDB.get(fileUUID);
+    public ServiceResult<FileSystemResource> getFromStorage(UUID fileUUID) {
+        Path filePath = this.database.get(fileUUID);
+
+        if (filePath != null) {
+            return new ServiceResult<>(
+                    new FileSystemResource(filePath.toFile()), HttpStatus.OK);
+        } else {
+            return new ServiceResult<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 
-    private Path createStorageIfAbsent(Path fileStorageFolder) throws IOException {
-        return Files.exists(fileStorageFolder) ?
-                fileStorageFolder : Files.createDirectory(fileStorageFolder);
-    }
 }
