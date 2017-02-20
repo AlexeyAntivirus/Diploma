@@ -2,25 +2,16 @@ package com.rx.dto;
 
 import org.springframework.core.io.FileSystemResource;
 
-/**
- * Created by multi-view on 2/14/17.
- */
+
 public class FileDownloadResultDto {
 
-    private FileSystemResource fileSystemResource;
+    private final FileSystemResource fileSystemResource;
 
-    private FileDownloadStatus fileDownloadStatus;
+    private final FileDownloadStatus fileDownloadStatus;
 
-    public FileDownloadResultDto() {}
-
-    public FileDownloadResultDto setFileSystemResource(FileSystemResource fileSystemResource) {
-        this.fileSystemResource = fileSystemResource;
-        return this;
-    }
-
-    public FileDownloadResultDto setDownoloadResultStatus(FileDownloadStatus fileDownloadStatus) {
-        this.fileDownloadStatus = fileDownloadStatus;
-        return this;
+    protected FileDownloadResultDto(FileDownloadResultDtoBuilder builder) {
+        this.fileSystemResource = builder.fileSystemResource;
+        this.fileDownloadStatus = builder.fileDownloadStatus;
     }
 
     public FileDownloadStatus getFileDownloadStatus() {
@@ -29,5 +20,30 @@ public class FileDownloadResultDto {
 
     public FileSystemResource getFileSystemResource() {
         return fileSystemResource;
+    }
+
+    public static FileDownloadResultDtoBuilder getBuilder() {
+        return new FileDownloadResultDtoBuilder();
+    }
+
+    public static class FileDownloadResultDtoBuilder {
+
+        private FileSystemResource fileSystemResource;
+
+        private FileDownloadStatus fileDownloadStatus;
+
+        public FileDownloadResultDtoBuilder setFileSystemResource(FileSystemResource fileSystemResource) {
+            this.fileSystemResource = fileSystemResource;
+            return this;
+        }
+
+        public FileDownloadResultDtoBuilder setFileDownloadStatus(FileDownloadStatus fileDownloadStatus) {
+            this.fileDownloadStatus = fileDownloadStatus;
+            return this;
+        }
+
+        public FileDownloadResultDto build() {
+            return new FileDownloadResultDto(this);
+        }
     }
 }

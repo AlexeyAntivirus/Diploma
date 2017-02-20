@@ -1,11 +1,11 @@
 package com.rx.controllers;
 
 import com.rx.dto.FileDownloadResultDto;
-import com.rx.dto.FileDownloadStatus;
 import com.rx.services.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,25 +30,24 @@ public class FileDownloadController {
     }
 
     @GetMapping
-    public @ResponseBody Resource handleDownload(
-            @RequestParam("fileUUID") UUID fileUUID,
-            HttpServletResponse response) throws IOException {
+    @ResponseBody
+    public Resource handleDownload(@RequestParam("fileUUID") UUID fileUUID, HttpServletResponse response) throws IOException {
 
         FileDownloadResultDto result = this.fileStorageService.getFromStorage(fileUUID);
-        FileDownloadStatus fileDownloadStatus = result.getFileDownloadStatus();
-
         FileSystemResource resource = result.getFileSystemResource();
 
-        switch (fileDownloadStatus) {
+        switch (result.getFileDownloadStatus()) {
             case FILE_FOUND:
                 response.setStatus(200);
                 response.setContentLengthLong(resource.contentLength());
                 response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-                response.setHeader("Content-Disposition",
-                        String.format("attachment; filename=\"%s\"", resource.getFilename()));
+                response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"", resource.getFilename()));
                 break;
             case FILE_NOT_FOUND:
                 response.setStatus(404);
+                break;
+            default:
+                break;
         }
 
         return resource;

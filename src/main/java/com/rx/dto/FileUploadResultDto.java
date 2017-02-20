@@ -2,25 +2,16 @@ package com.rx.dto;
 
 import java.util.UUID;
 
-/**
- * Created by multi-view on 2/14/17.
- */
+
 public class FileUploadResultDto {
 
-    private UUID uploadedFileUUID;
+    private final UUID uploadedFileUUID;
 
-    private FileUploadStatus fileUploadStatus;
+    private final FileUploadStatus fileUploadStatus;
 
-    public FileUploadResultDto() {}
-
-    public FileUploadResultDto setUploadedFileUUID(UUID uploadedFileUUID) {
-        this.uploadedFileUUID = uploadedFileUUID;
-        return this;
-    }
-
-    public FileUploadResultDto setFileUploadStatus(FileUploadStatus fileUploadStatus) {
-        this.fileUploadStatus = fileUploadStatus;
-        return this;
+    protected FileUploadResultDto(FileUploadResultDtoBuilder builder) {
+        this.uploadedFileUUID = builder.uploadedFileUUID;
+        this.fileUploadStatus = builder.fileUploadStatus;
     }
 
     public FileUploadStatus getFileUploadStatus() {
@@ -29,5 +20,30 @@ public class FileUploadResultDto {
 
     public UUID getUploadedFileUUID() {
         return uploadedFileUUID;
+    }
+
+    public static FileUploadResultDtoBuilder getBuilder() {
+        return new FileUploadResultDtoBuilder();
+    }
+
+    public static class FileUploadResultDtoBuilder {
+
+        private UUID uploadedFileUUID;
+
+        private FileUploadStatus fileUploadStatus;
+
+        public FileUploadResultDtoBuilder setUploadedFileUUID(UUID uploadedFileUUID) {
+            this.uploadedFileUUID = uploadedFileUUID;
+            return this;
+        }
+
+        public FileUploadResultDtoBuilder setFileUploadStatus(FileUploadStatus fileUploadStatus) {
+            this.fileUploadStatus = fileUploadStatus;
+            return this;
+        }
+
+        public FileUploadResultDto build() {
+            return new FileUploadResultDto(this);
+        }
     }
 }

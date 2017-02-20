@@ -5,26 +5,16 @@
         <title>Результат загрузки</title>
     </head>
     <body>
-        <div th:switch="${fileUploadStatus}">
-            <p th:case="${T(com.rx.dto.FileUploadStatus).FILE_UPLOADED}">
-                <strong>Успех!</strong> Файл загружен.
-            </p>
-            <p th:case="${T(com.rx.dto.FileUploadStatus).EMPTY_OR_NULL_FILE}">
-                <strong>Ошибка!</strong> Файл не указан.
-            </p>
-            <p th:case="${T(com.rx.dto.FileUploadStatus).INTERNAL_ERROR}">
-                <strong>Ошибка!</strong> Возникли технические неполадки с сервером.
+        <div>
+            <p th:inline="text">
+                <strong th:text="${shortStatus}"></strong> [[${description}]]
             </p>
         </div>
-        <div th:switch="${uploadedFileUUID}">
-            <p th:case="null">
-                <a th:href="@{/upload}">Попробовать снова</a>
-            </p>
-            <p th:case="*">
-                <a th:href="@{/download(fileUUID=${uploadedFileUUID})}">Ссылка на скачивание</a>
-                <br/>
-                <a th:href="@{/upload}">Вернуться</a>
-            </p>
+        <div th:if="${uploadedFileUUID != null}">
+            <a th:href="@{/download(fileUUID=${uploadedFileUUID})}">Ссылка на скачивание</a>
+        </div>
+        <div>
+            <a th:href="@{/upload}">Вернуться</a>
         </div>
     </body>
 </html>

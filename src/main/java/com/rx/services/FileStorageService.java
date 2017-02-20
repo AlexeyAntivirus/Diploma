@@ -4,11 +4,12 @@ import com.rx.dto.FileDownloadResultDto;
 import com.rx.dto.FileDownloadStatus;
 import com.rx.dto.FileUploadResultDto;
 import com.rx.dto.FileUploadStatus;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,68 +22,84 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.rx.dto.FileUploadResultDto.FileUploadResultDtoBuilder;
+import static com.rx.dto.FileDownloadResultDto.FileDownloadResultDtoBuilder;
+
 
 @Service
 public class FileStorageService {
 
-    private Logger logger = LogManager.getLogger(FileStorageService.class);
+    private static final Logger LOGGER = LogManager.getLogger(FileStorageService.class);
 
     private Map<UUID, Path> database;
 
     private Path storageFolder;
 
     @Autowired
-    public FileStorageService(Environment environment) {
+    public FileStorageService(@Value("${app.storage.folder}") String storageFolder) {
         this.database = new HashMap<>();
-        try {
-            this.storageFolder = this.createStorageIfAbsent(
-                    Paths.get(environment.getProperty("app.storage.folder")));
-        } catch (IOException e) {
-            throw new BeanCreationException("File storage folder is not created!");
-        }
 
+        try {
+            this.storageFolder = Files.notExists(Paths.get(storageFolder)) ?
+                    Files.createDirectory(this.storageFolder) : Paths.get(storageFolder);
+        } catch (IOException ioException) {
+            throw new BeanCreationException("File storage folder is not created!", ioException);
+        }
     }
 
     public FileUploadResultDto saveToStorage(MultipartFile file) {
-        FileUploadResultDto dto = new FileUploadResultDto();
+        UUID uploadedFileUUID;
+        FileUploadStatus uploadStatus;
 
-        if (file.isEmpty() || (file == null)) {
-            return dto.setUploadedFileUUID(null)
-                    .setFileUploadStatus(FileUploadStatus.EMPTY_OR_NULL_FILE);
-        }
+        if (file == null || file.isEmpty()) {
+            uploadedFileUUID = null;
+            uploadStatus = FileUploadStatus.EMPTY_OR_NULL_FILE;
+        } else {
+            try {
+                Path uploadedFilePath = this.storageFolder.resolve(file.getOriginalFilename());
+                Files.write(uploadedFilePath, file.getBytes());
 
-        try {
-            Path uploadedFilePath = this.storageFolder.resolve(file.getOriginalFilename());
-            Files.write(uploadedFilePath, file.getBytes());
-            UUID uploadedFileUUID = UUID.randomUUID();
-            while (this.database.containsKey(uploadedFileUUID)) {
-                uploadedFileUUID = UUID.randomUUID();
+                uploadedFileUUID = this.addToDatabase(uploadedFilePath);
+                uploadStatus = FileUploadStatus.FILE_UPLOADED;
+            } catch (IOException ioException) {
+                LOGGER.warn("File is not uploaded into storage, because io error occurs", ioException);
+                uploadedFileUUID = null;
+                uploadStatus = FileUploadStatus.INTERNAL_ERROR;
             }
-            this.database.put(uploadedFileUUID, uploadedFilePath);
-
-            return dto.setUploadedFileUUID(uploadedFileUUID)
-                    .setFileUploadStatus(FileUploadStatus.FILE_UPLOADED);
-        } catch (IOException e) {
-            logger.warn("File is not uploaded into storage, because io error occurs", e);
-            return dto.setUploadedFileUUID(null)
-                    .setFileUploadStatus(FileUploadStatus.INTERNAL_ERROR);
         }
+
+        return new FileUploadResultDtoBuilder().setUploadedFileUUID(uploadedFileUUID)
+                .setFileUploadStatus(uploadStatus).build();
     }
 
     public FileDownloadResultDto getFromStorage(UUID fileUUID) {
-        FileDownloadResultDto dto = new FileDownloadResultDto();
+
         Path filePath = this.database.get(fileUUID);
+        FileSystemResource resource;
+        FileDownloadStatus downloadStatus;
 
         if (filePath != null) {
-            return dto.setFileSystemResource(new FileSystemResource(filePath.toFile()))
-                    .setDownoloadResultStatus(FileDownloadStatus.FILE_FOUND);
+            resource = new FileSystemResource(filePath.toFile());
+            downloadStatus = FileDownloadStatus.FILE_FOUND;
         } else {
-            return dto.setFileSystemResource(null)
-                    .setDownoloadResultStatus(FileDownloadStatus.FILE_NOT_FOUND);
+            resource = null;
+            downloadStatus = FileDownloadStatus.FILE_NOT_FOUND;
         }
+
+        return new FileDownloadResultDtoBuilder().setFileSystemResource(resource)
+                .setFileDownloadStatus(downloadStatus).build();
     }
 
     private Path createStorageIfAbsent(Path storageFolder) throws IOException {
         return Files.exists(storageFolder) ? storageFolder : Files.createDirectory(storageFolder);
+    }
+
+    private UUID addToDatabase(Path uploadedFilePath) {
+        UUID uploadedFileUUID = UUID.randomUUID();
+        while (this.database.containsKey(uploadedFileUUID)) {
+            uploadedFileUUID = UUID.randomUUID();
+        }
+        this.database.put(uploadedFileUUID, uploadedFilePath);
+        return uploadedFileUUID;
     }
 }

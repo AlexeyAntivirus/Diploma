@@ -15,11 +15,11 @@ import java.io.IOException;
 @ControllerAdvice
 public class FileDownloadControllerAdvice {
 
-    private Logger logger = LogManager.getLogger(FileDownloadControllerAdvice.class);
+    private static final Logger logger = LogManager.getLogger(FileDownloadControllerAdvice.class);
 
     @ExceptionHandler(IOException.class)
-    public void handle(IOException ex, HttpServletResponse response) {
-        logger.warn("Error when preparing file to downloading!", ex);
+    public void handle(IOException ioException, HttpServletResponse response) {
+        logger.warn("Error when preparing file to downloading!", ioException);
         response.setStatus(500);
     }
 }
