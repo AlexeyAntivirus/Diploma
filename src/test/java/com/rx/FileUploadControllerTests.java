@@ -1,13 +1,13 @@
 package com.rx;
 
 import com.rx.controllers.FileUploadController;
-import com.rx.data.ServiceResult;
+import com.rx.dto.FileUploadResultDto;
+import com.rx.dto.FileUploadStatus;
 import com.rx.services.FileStorageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,10 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.UUID;
 
-/**
- * Created by multi-view on 2/10/17.
- */
-
+import static com.rx.dto.FileUploadResultDto.FileUploadResultDtoBuilder;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -41,8 +38,9 @@ public class FileUploadControllerTests {
 
     @Test
     public void shouldOkWhenUploadingFile() throws Exception {
-        ServiceResult<UUID> result = new ServiceResult<>(
-                UUID.randomUUID(), HttpStatus.OK);
+        FileUploadResultDto result = new FileUploadResultDtoBuilder()
+                .setUploadedFileUUID(UUID.randomUUID())
+                .setFileUploadStatus(FileUploadStatus.FILE_UPLOADED).build();
 
         Mockito.when(mockFileStorageService.saveToStorage(file)).thenReturn(result);
         this.mvc.perform(builder)
@@ -51,8 +49,8 @@ public class FileUploadControllerTests {
 
     @Test
     public void shouldBadRequestWhenFileIsNotSpecified() throws Exception {
-        ServiceResult<UUID> result = new ServiceResult<>(
-                null, HttpStatus.BAD_REQUEST);
+        FileUploadResultDto result = new FileUploadResultDtoBuilder()
+                .setFileUploadStatus(FileUploadStatus.EMPTY_OR_NULL_FILE).build();
 
         Mockito.when(mockFileStorageService.saveToStorage(file)).thenReturn(result);
         this.mvc.perform(builder)
@@ -61,8 +59,8 @@ public class FileUploadControllerTests {
 
     @Test
     public void shouldInternalServerErrorWhenIOExceptionIsOccur() throws Exception {
-        ServiceResult<UUID> result = new ServiceResult<>(
-                null, HttpStatus.INTERNAL_SERVER_ERROR);
+        FileUploadResultDto result = new FileUploadResultDtoBuilder()
+                .setFileUploadStatus(FileUploadStatus.INTERNAL_ERROR).build();
 
         Mockito.when(mockFileStorageService.saveToStorage(file)).thenReturn(result);
         this.mvc.perform(builder)

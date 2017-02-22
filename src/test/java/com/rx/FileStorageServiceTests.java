@@ -1,138 +1,134 @@
 package com.rx;
 
-import com.rx.data.ServiceResult;
+import com.rx.dto.FileDownloadResultDto;
+import com.rx.dto.FileDownloadStatus;
+import com.rx.dto.FileUploadResultDto;
+import com.rx.dto.FileUploadStatus;
 import com.rx.services.FileStorageService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.api.mockito.PowerMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.spi.FileSystemProvider;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by multi-view on 2/10/17.
- */
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(FileStorageService.class)
 public class FileStorageServiceTests {
 
-    @InjectMocks
-    @Autowired
-    private FileStorageService fileStorageService;
+    private String originalFileStorageFolder = "/home/multi-view/.storage";
 
-    @Autowired
-    private Environment environment;
+    private MockMultipartFile file = new MockMultipartFile(
+            "file", "text.txt", "text/plain", "This is a test".getBytes());
 
-    @Mock
-    private Map<UUID, Path> database;
-
-    @Mock
-    private FileSystemProvider provider = PowerMockito.mock(FileSystemProvider.class);
-
-    private MockMultipartFile mockMultipartFile = new MockMultipartFile(
-            "mockMultipartFile", "text.txt", "text/plain", "This is a test".getBytes());
-
-    private UUID uuid = UUID.randomUUID();
-
-    private Path storageFolder;
-
+    private FileStorageService service;
 
     @Before
     public void init() {
-       storageFolder = ((Path) Whitebox.getInternalState(
-                this.fileStorageService, "storageFolder"))
-                .resolve(mockMultipartFile.getOriginalFilename());
+        this.service = new FileStorageService(originalFileStorageFolder);
     }
 
     @Test
-    public void shouldNormalInitialization() throws Exception {
-        Path storageFolder = (Path)
-                Whitebox.getInternalState(this.fileStorageService, "storageFolder");
-        Map<UUID, Path> database = (Map<UUID, Path>)
-                Whitebox.getInternalState(this.fileStorageService, "database");
+    public void testConstructorInNormalInitialization() {
+        FileStorageService service = new FileStorageService(originalFileStorageFolder);
+        Map<UUID, Path> database = (Map<UUID, Path>) Whitebox.getInternalState(service, "database");
+        Path fileStorageFolder = (Path) Whitebox.getInternalState(service, "storageFolder");
 
-        Assert.assertEquals(storageFolder, Paths.get(environment.getProperty("app.storage.folder")));
-        Assert.assertNotEquals(database, null);
+        Assert.assertEquals(fileStorageFolder.toString(), originalFileStorageFolder);
+        Assert.assertNotNull(database);
+    }
+
+    @Test(expected = BeanCreationException.class)
+    public void testConstructorInThrowingException() throws IOException {
+        Path storageFolder = Paths.get(originalFileStorageFolder);
+
+        PowerMockito.mockStatic(Files.class);
+        PowerMockito.when(Files.notExists(storageFolder)).thenReturn(true);
+        PowerMockito.when(Files.createDirectory(storageFolder)).thenThrow(IOException.class);
+
+        new FileStorageService(originalFileStorageFolder);
     }
 
     @Test
-    public void shouldReturnNormalResultWhenCallingGetFromStorage() {
-        this.database = new HashMap<UUID, Path>() {{
-            put(uuid, storageFolder);
-        }};
-        Whitebox.setInternalState(this.fileStorageService,
-                "database", this.database);
-
-        FileSystemResource resource = new FileSystemResource(this.storageFolder.toFile());
-        ServiceResult<FileSystemResource> result =
-                fileStorageService.getFromStorage(this.uuid);
-        Assert.assertEquals(result.getValue(), resource);
-        Assert.assertEquals(result.getStatus(), HttpStatus.OK);
-    }
-
-    @Test
-    public void shouldReturnNullWhenCallingGetFromStorage() {
-        this.database = new HashMap<>();
-        Whitebox.setInternalState(this.fileStorageService,
-                "database", this.database);
-
-        ServiceResult<FileSystemResource> result =
-                fileStorageService.getFromStorage(this.uuid);
-        Assert.assertEquals(result.getValue(), null);
-        Assert.assertEquals(result.getStatus(), HttpStatus.NOT_FOUND);
-    }
-
-    @Test
-    public void shouldReturnNormalResultWhenCallingSaveToStorage() throws Exception {
-        Whitebox.setInternalState(this.fileStorageService,
-                "provider", this.provider);
-
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PowerMockito.when(provider.newOutputStream(storageFolder)).thenReturn(byteArrayOutputStream);
-
-        ServiceResult<UUID> result = this.fileStorageService.saveToStorage(mockMultipartFile);
-
-        Assert.assertNotEquals(result.getValue(), null);
-        Assert.assertEquals(result.getStatus(), HttpStatus.OK);
-    }
-
-    @Test
-    public void shouldReturnNullWhenFileNotSpecifiedWhenCallingSaveToStorage() {
+    public void testSaveOnStorageWhenFileIsEmpty() {
         MockMultipartFile emptyMockMultipartFile = new MockMultipartFile("test.txt", (byte[]) null);
 
-        ServiceResult<UUID> result = this.fileStorageService.saveToStorage(emptyMockMultipartFile);
-        Assert.assertEquals(result.getValue(), null);
+        FileUploadResultDto result = this.service.saveToStorage(emptyMockMultipartFile);
+        Assert.assertNull(result.getUploadedFileUUID());
     }
 
     @Test
-    public void shouldReturnNullWhenInternalErrorInServiceWhenCallingSaveToStorage() throws IOException {
-        Whitebox.setInternalState(this.fileStorageService,
-                "provider", this.provider);
-        PowerMockito.when(provider.newOutputStream(storageFolder))
-                .thenThrow(IOException.class);
-
-        ServiceResult<UUID> result = this.fileStorageService.saveToStorage(mockMultipartFile);
-        Assert.assertEquals(result.getValue(), null);
-        Assert.assertEquals(result.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public void testSaveOnStorageWhenFileIsNull() {
+        FileUploadResultDto result = this.service.saveToStorage(null);
+        Assert.assertNull(result.getUploadedFileUUID());
     }
 
+    @Test
+    public void testSaveOnStorageWhenInternalErrorOccurs() throws IOException {
+        Path filePath = Paths.get(originalFileStorageFolder).resolve(file.getOriginalFilename());
+
+        PowerMockito.mockStatic(Files.class);
+        PowerMockito.when(Files.write(filePath, file.getBytes())).thenThrow(IOException.class);
+
+        FileUploadResultDto result = this.service.saveToStorage(file);
+
+        Assert.assertNull(result.getUploadedFileUUID());
+        Assert.assertEquals(result.getFileUploadStatus(), FileUploadStatus.INTERNAL_ERROR);
+    }
+
+    @Test
+    public void testSaveToStorageWhenFileExistsAndNotEmpty() throws Exception {
+        Path filePath = Paths.get(originalFileStorageFolder).resolve(file.getOriginalFilename());
+
+        FileUploadResultDto result = this.service.saveToStorage(file);
+        PowerMockito.mockStatic(Files.class);
+        PowerMockito.when(Files.write(filePath, file.getBytes())).thenReturn(filePath);
+
+        Assert.assertNotNull(result.getUploadedFileUUID());
+        Assert.assertEquals(result.getFileUploadStatus(), FileUploadStatus.FILE_UPLOADED);
+    }
+
+    @Test
+    public void testGetFromStorageWhenFileNotFound() {
+        Whitebox.setInternalState(this.service, "database", new HashMap<>());
+
+        UUID uuid = UUID.randomUUID();
+        FileDownloadResultDto result = this.service.getFromStorage(uuid);
+
+        Assert.assertEquals(result.getFileSystemResource(), null);
+        Assert.assertEquals(result.getFileDownloadStatus(), FileDownloadStatus.FILE_NOT_FOUND);
+    }
+
+    @Test
+    public void testGetFromStorageWhenFileFound() {
+        UUID uuid = UUID.randomUUID();
+        Path path = Paths.get(originalFileStorageFolder, file.getOriginalFilename());
+
+        Whitebox.setInternalState(this.service, "database",
+                new HashMap<UUID, Path>() {{
+                    put(uuid, path);
+                }});
+
+        FileSystemResource resource = new FileSystemResource(path.toFile());
+        FileDownloadResultDto result =
+                service.getFromStorage(uuid);
+        Assert.assertEquals(result.getFileSystemResource(), resource);
+        Assert.assertEquals(result.getFileDownloadStatus(), FileDownloadStatus.FILE_FOUND);
+
+    }
 
 }
