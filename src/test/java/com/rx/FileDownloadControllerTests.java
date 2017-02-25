@@ -1,8 +1,6 @@
 package com.rx;
 
 import com.rx.controllers.FileDownloadController;
-import com.rx.dto.FileDownloadResultDto;
-import com.rx.dto.FileDownloadStatus;
 import com.rx.services.FileStorageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,8 +40,7 @@ public class FileDownloadControllerTests {
                 .thenReturn(new ByteArrayInputStream("This is a test".getBytes()));
         Mockito.when(mockFileStorageService.getFromStorage(randomUUID))
                 .thenReturn(new FileDownloadResultDtoBuilder()
-                        .setFileSystemResource(mockedResource)
-                        .setFileDownloadStatus(FileDownloadStatus.FILE_FOUND)
+                        .withFileResource(mockedResource)
                         .build());
 
         this.mvc.perform(MockMvcRequestBuilders.get(
@@ -59,8 +56,7 @@ public class FileDownloadControllerTests {
                 new ByteArrayInputStream("This is a test".getBytes()));
         Mockito.when(mockFileStorageService.getFromStorage(randomUUID))
                 .thenReturn(new FileDownloadResultDtoBuilder()
-                        .setFileSystemResource(mockedResource)
-                        .setFileDownloadStatus(FileDownloadStatus.FILE_NOT_FOUND)
+                        .withFileResource(mockedResource)
                         .build());
 
         this.mvc.perform(MockMvcRequestBuilders.get(

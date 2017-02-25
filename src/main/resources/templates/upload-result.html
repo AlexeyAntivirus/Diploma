@@ -5,12 +5,8 @@
         <title>Результат загрузки</title>
     </head>
     <body>
-        <div>
-            <p th:inline="text">
-                <strong th:text="${shortStatus}"></strong> [[${description}]]
-            </p>
-        </div>
         <div th:if="${uploadedFileUUID != null}">
+            <label th:text="#{upload.file.success.message}"></label>
             <a th:href="@{/download(fileUUID=${uploadedFileUUID})}">Ссылка на скачивание</a>
         </div>
         <div>

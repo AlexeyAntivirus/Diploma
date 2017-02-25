@@ -1,9 +1,7 @@
 package com.rx;
 
 import com.rx.dto.FileDownloadResultDto;
-import com.rx.dto.FileDownloadStatus;
 import com.rx.dto.FileUploadResultDto;
-import com.rx.dto.FileUploadStatus;
 import com.rx.services.FileStorageService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,13 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(FileStorageService.class)
 public class FileStorageServiceTests {
 
     private String originalFileStorageFolder = "/home/multi-view/.storage";
-
     private MockMultipartFile file = new MockMultipartFile(
             "file", "text.txt", "text/plain", "This is a test".getBytes());
 
@@ -68,13 +64,13 @@ public class FileStorageServiceTests {
         MockMultipartFile emptyMockMultipartFile = new MockMultipartFile("test.txt", (byte[]) null);
 
         FileUploadResultDto result = this.service.saveToStorage(emptyMockMultipartFile);
-        Assert.assertNull(result.getUploadedFileUUID());
+        Assert.assertNull(result.getFileUUID());
     }
 
     @Test
     public void testSaveOnStorageWhenFileIsNull() {
         FileUploadResultDto result = this.service.saveToStorage(null);
-        Assert.assertNull(result.getUploadedFileUUID());
+        Assert.assertNull(result.getFileUUID());
     }
 
     @Test
@@ -86,8 +82,7 @@ public class FileStorageServiceTests {
 
         FileUploadResultDto result = this.service.saveToStorage(file);
 
-        Assert.assertNull(result.getUploadedFileUUID());
-        Assert.assertEquals(result.getFileUploadStatus(), FileUploadStatus.INTERNAL_ERROR);
+        Assert.assertNull(result.getFileUUID());
     }
 
     @Test
@@ -98,8 +93,7 @@ public class FileStorageServiceTests {
         PowerMockito.mockStatic(Files.class);
         PowerMockito.when(Files.write(filePath, file.getBytes())).thenReturn(filePath);
 
-        Assert.assertNotNull(result.getUploadedFileUUID());
-        Assert.assertEquals(result.getFileUploadStatus(), FileUploadStatus.FILE_UPLOADED);
+        Assert.assertNotNull(result.getFileUUID());
     }
 
     @Test
@@ -109,8 +103,7 @@ public class FileStorageServiceTests {
         UUID uuid = UUID.randomUUID();
         FileDownloadResultDto result = this.service.getFromStorage(uuid);
 
-        Assert.assertEquals(result.getFileSystemResource(), null);
-        Assert.assertEquals(result.getFileDownloadStatus(), FileDownloadStatus.FILE_NOT_FOUND);
+        Assert.assertEquals(result.getFileResource(), null);
     }
 
     @Test
@@ -126,9 +119,7 @@ public class FileStorageServiceTests {
         FileSystemResource resource = new FileSystemResource(path.toFile());
         FileDownloadResultDto result =
                 service.getFromStorage(uuid);
-        Assert.assertEquals(result.getFileSystemResource(), resource);
-        Assert.assertEquals(result.getFileDownloadStatus(), FileDownloadStatus.FILE_FOUND);
-
+        Assert.assertEquals(result.getFileResource(), resource);
     }
 
 }

@@ -2,43 +2,24 @@ package com.rx.dto;
 
 import org.springframework.core.io.FileSystemResource;
 
-
 public class FileDownloadResultDto {
 
-    private final FileSystemResource fileSystemResource;
-
-    private final FileDownloadStatus fileDownloadStatus;
+    private final FileSystemResource fileResource;
 
     protected FileDownloadResultDto(FileDownloadResultDtoBuilder builder) {
-        this.fileSystemResource = builder.fileSystemResource;
-        this.fileDownloadStatus = builder.fileDownloadStatus;
+        this.fileResource = builder.fileResource;
     }
 
-    public FileDownloadStatus getFileDownloadStatus() {
-        return fileDownloadStatus;
-    }
-
-    public FileSystemResource getFileSystemResource() {
-        return fileSystemResource;
-    }
-
-    public static FileDownloadResultDtoBuilder getBuilder() {
-        return new FileDownloadResultDtoBuilder();
+    public FileSystemResource getFileResource() {
+        return fileResource;
     }
 
     public static class FileDownloadResultDtoBuilder {
 
-        private FileSystemResource fileSystemResource;
+        private FileSystemResource fileResource;
 
-        private FileDownloadStatus fileDownloadStatus;
-
-        public FileDownloadResultDtoBuilder setFileSystemResource(FileSystemResource fileSystemResource) {
-            this.fileSystemResource = fileSystemResource;
-            return this;
-        }
-
-        public FileDownloadResultDtoBuilder setFileDownloadStatus(FileDownloadStatus fileDownloadStatus) {
-            this.fileDownloadStatus = fileDownloadStatus;
+        public FileDownloadResultDtoBuilder withFileResource(FileSystemResource fileResource) {
+            this.fileResource = fileResource;
             return this;
         }
 

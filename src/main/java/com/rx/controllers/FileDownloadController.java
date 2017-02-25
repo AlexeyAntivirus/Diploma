@@ -1,26 +1,33 @@
 package com.rx.controllers;
 
+import com.rx.controllers.exceptions.FileDownloadNotFoundException;
 import com.rx.dto.FileDownloadResultDto;
 import com.rx.services.FileStorageService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
-
 @Controller
 @RequestMapping("/download")
 public class FileDownloadController {
+
+    private static final Logger LOGGER = LogManager.getLogger(FileDownloadController.class);
 
     private FileStorageService fileStorageService;
 
@@ -29,27 +36,26 @@ public class FileDownloadController {
         this.fileStorageService = fileStorageService;
     }
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public Resource handleDownload(@RequestParam("fileUUID") UUID fileUUID, HttpServletResponse response) throws IOException {
 
         FileDownloadResultDto result = this.fileStorageService.getFromStorage(fileUUID);
-        FileSystemResource resource = result.getFileSystemResource();
+        FileSystemResource resource = result.getFileResource();
 
-        switch (result.getFileDownloadStatus()) {
-            case FILE_FOUND:
-                response.setStatus(200);
-                response.setContentLengthLong(resource.contentLength());
-                response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-                response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"", resource.getFilename()));
-                break;
-            case FILE_NOT_FOUND:
-                response.setStatus(404);
-                break;
-            default:
-                break;
+        if (resource == null) {
+            throw new FileDownloadNotFoundException("Requested file UUID was not found in the DB. uuid=" + fileUUID);
         }
 
+        response.setContentLengthLong(resource.contentLength());
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() +"\"");
+
         return resource;
+    }
+
+    @ExceptionHandler(value = FileDownloadNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public void fileDownloadNotFoundExceptionHandler(FileDownloadNotFoundException e) {
+        LOGGER.warn(e.getMessage(), e);
     }
 }

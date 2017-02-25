@@ -1,10 +1,10 @@
 package com.rx.services;
 
+import com.rx.controllers.exceptions.FileDownloadNotFoundException;
+import com.rx.controllers.exceptions.FileUploadIOException;
+import com.rx.controllers.exceptions.FileUploadInvalidPathException;
 import com.rx.dto.FileDownloadResultDto;
-import com.rx.dto.FileDownloadStatus;
 import com.rx.dto.FileUploadResultDto;
-import com.rx.dto.FileUploadStatus;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.BeanCreationException;
@@ -18,88 +18,89 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static com.rx.dto.FileUploadResultDto.FileUploadResultDtoBuilder;
 import static com.rx.dto.FileDownloadResultDto.FileDownloadResultDtoBuilder;
-
+import static com.rx.dto.FileUploadResultDto.FileUploadResultDtoBuilder;
 
 @Service
 public class FileStorageService {
 
     private static final Logger LOGGER = LogManager.getLogger(FileStorageService.class);
 
-    private Map<UUID, Path> database;
-
-    private Path storageFolder;
+    private Map<UUID, String> database;
+    private Path fileStoragePath;
 
     @Autowired
-    public FileStorageService(@Value("${app.storage.folder}") String storageFolder) {
-        this.database = new HashMap<>();
+    public FileStorageService(@Value("${app.storage.folder}") String fileStoragePath) {
+        this.database = new ConcurrentHashMap<>();
 
-        try {
-            this.storageFolder = Files.notExists(Paths.get(storageFolder)) ?
-                    Files.createDirectory(this.storageFolder) : Paths.get(storageFolder);
-        } catch (IOException ioException) {
-            throw new BeanCreationException("File storage folder is not created!", ioException);
-        }
+        doInitFileStorageFolder(fileStoragePath);
     }
 
     public FileUploadResultDto saveToStorage(MultipartFile file) {
-        UUID uploadedFileUUID;
-        FileUploadStatus uploadStatus;
+        FileUploadResultDtoBuilder resultBuilder = new FileUploadResultDtoBuilder();
+        String filename = file.getOriginalFilename();
+        Path desiredFilePath = this.fileStoragePath.resolve(filename).normalize();
 
-        if (file == null || file.isEmpty()) {
-            uploadedFileUUID = null;
-            uploadStatus = FileUploadStatus.EMPTY_OR_NULL_FILE;
-        } else {
-            try {
-                Path uploadedFilePath = this.storageFolder.resolve(file.getOriginalFilename());
-                Files.write(uploadedFilePath, file.getBytes());
-
-                uploadedFileUUID = this.addToDatabase(uploadedFilePath);
-                uploadStatus = FileUploadStatus.FILE_UPLOADED;
-            } catch (IOException ioException) {
-                LOGGER.warn("File is not uploaded into storage, because io error occurs", ioException);
-                uploadedFileUUID = null;
-                uploadStatus = FileUploadStatus.INTERNAL_ERROR;
-            }
+        if (!desiredFilePath.startsWith(this.fileStoragePath)) {
+            throw new FileUploadInvalidPathException("Received filename that contains path traversal payload. filename=" + filename);
         }
 
-        return new FileUploadResultDtoBuilder().setUploadedFileUUID(uploadedFileUUID)
-                .setFileUploadStatus(uploadStatus).build();
+        try {
+            Path uploadedFilePath = Files.write(desiredFilePath, file.getBytes());
+
+            resultBuilder.withFileUUID(this.addToDatabase(uploadedFilePath.getFileName().toString()));
+        } catch (IOException ioException) {
+            throw new FileUploadIOException("File is not uploaded into storage, because io error occurs", ioException);
+        }
+
+        return resultBuilder.build();
     }
 
     public FileDownloadResultDto getFromStorage(UUID fileUUID) {
+        FileDownloadResultDtoBuilder resultBuilder = new FileDownloadResultDtoBuilder();
 
-        Path filePath = this.database.get(fileUUID);
-        FileSystemResource resource;
-        FileDownloadStatus downloadStatus;
-
-        if (filePath != null) {
-            resource = new FileSystemResource(filePath.toFile());
-            downloadStatus = FileDownloadStatus.FILE_FOUND;
-        } else {
-            resource = null;
-            downloadStatus = FileDownloadStatus.FILE_NOT_FOUND;
+        if (fileUUID == null) {
+            return resultBuilder.build();
         }
 
-        return new FileDownloadResultDtoBuilder().setFileSystemResource(resource)
-                .setFileDownloadStatus(downloadStatus).build();
+        String filename = this.database.get(fileUUID);
+
+        if (filename != null) {
+            Path desiredFilePath = this.fileStoragePath.resolve(filename).normalize();
+
+            if (!desiredFilePath.startsWith(this.fileStoragePath)) {
+                throw new FileDownloadNotFoundException("filename stored in the DB contains path traversal payload. uuid=" + fileUUID);
+            }
+
+            resultBuilder.withFileResource(new FileSystemResource(desiredFilePath.toFile()));
+        }
+
+        return resultBuilder.build();
     }
 
-    private Path createStorageIfAbsent(Path storageFolder) throws IOException {
-        return Files.exists(storageFolder) ? storageFolder : Files.createDirectory(storageFolder);
-    }
+    private UUID addToDatabase(String filename) {
+        UUID uploadedFileUUID;
+        String path;
 
-    private UUID addToDatabase(Path uploadedFilePath) {
-        UUID uploadedFileUUID = UUID.randomUUID();
-        while (this.database.containsKey(uploadedFileUUID)) {
+        do {
             uploadedFileUUID = UUID.randomUUID();
-        }
-        this.database.put(uploadedFileUUID, uploadedFilePath);
+            path = this.database.putIfAbsent(uploadedFileUUID, filename);
+        } while (path != null);
+
         return uploadedFileUUID;
+    }
+
+    private void doInitFileStorageFolder(String fileStoragePath) {
+        Path path = Paths.get(fileStoragePath).normalize();
+
+        try {
+            this.fileStoragePath = Files.notExists(path) ? Files.createDirectory(path) : path;
+        } catch (IOException ioException) {
+            throw new BeanCreationException("File storage folder is not created!", ioException);
+        }
     }
 }

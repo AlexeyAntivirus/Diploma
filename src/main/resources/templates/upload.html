@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8"/>
         <title>Загрузка файла</title>
     </head>
     <body>
-        <form method="post" enctype="multipart/form-data" action="/upload">
-            <input type="file" name="file" placeholder="File" value="Выберите файл"/>
+        <form method="post" enctype="multipart/form-data" action="#" th:action="@{/upload}" th:object="${fileUploadFormDto}">
+            <input type="file" th:field="*{multipartFile}"/>
+            <label th:if="${#fields.hasErrors('multipartFile')}" th:errors="*{multipartFile}" for="multipartFile"></label>
+            <label th:if="${exception instanceof T(com.rx.controllers.exceptions.FileUploadIOException)}" th:text="#{upload.file.internal.error}" for="multipartFile"></label>
+            <label th:if="${exception instanceof T(com.rx.controllers.exceptions.FileUploadInvalidPathException)}" th:text="#{upload.file.invalid.name}" for="multipartFile"></label>
             <br/>
             <input type="submit" name="send" value="Загрузить"/>
         </form>

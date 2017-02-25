@@ -2,43 +2,24 @@ package com.rx.dto;
 
 import java.util.UUID;
 
-
 public class FileUploadResultDto {
 
-    private final UUID uploadedFileUUID;
-
-    private final FileUploadStatus fileUploadStatus;
+    private final UUID fileUUID;
 
     protected FileUploadResultDto(FileUploadResultDtoBuilder builder) {
-        this.uploadedFileUUID = builder.uploadedFileUUID;
-        this.fileUploadStatus = builder.fileUploadStatus;
+        this.fileUUID = builder.fileUUID;
     }
 
-    public FileUploadStatus getFileUploadStatus() {
-        return fileUploadStatus;
-    }
-
-    public UUID getUploadedFileUUID() {
-        return uploadedFileUUID;
-    }
-
-    public static FileUploadResultDtoBuilder getBuilder() {
-        return new FileUploadResultDtoBuilder();
+    public UUID getFileUUID() {
+        return fileUUID;
     }
 
     public static class FileUploadResultDtoBuilder {
 
-        private UUID uploadedFileUUID;
+        private UUID fileUUID;
 
-        private FileUploadStatus fileUploadStatus;
-
-        public FileUploadResultDtoBuilder setUploadedFileUUID(UUID uploadedFileUUID) {
-            this.uploadedFileUUID = uploadedFileUUID;
-            return this;
-        }
-
-        public FileUploadResultDtoBuilder setFileUploadStatus(FileUploadStatus fileUploadStatus) {
-            this.fileUploadStatus = fileUploadStatus;
+        public FileUploadResultDtoBuilder withFileUUID(UUID uploadedFileUUID) {
+            this.fileUUID = uploadedFileUUID;
             return this;
         }
 
