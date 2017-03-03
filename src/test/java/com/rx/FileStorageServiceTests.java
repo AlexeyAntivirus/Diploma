@@ -1,5 +1,6 @@
 package com.rx;
 
+import com.rx.controllers.exceptions.FileUploadIOException;
 import com.rx.dto.FileDownloadResultDto;
 import com.rx.dto.FileUploadResultDto;
 import com.rx.services.FileStorageService;
@@ -27,9 +28,10 @@ import java.util.UUID;
 @PrepareForTest(FileStorageService.class)
 public class FileStorageServiceTests {
 
-    private String originalFileStorageFolder = "/home/multi-view/.storage";
+    private String originalFileStorageFolder = "/home/jrunix/.file_storage";
+
     private MockMultipartFile file = new MockMultipartFile(
-            "file", "text.txt", "text/plain", "This is a test".getBytes());
+            "file", "text.txt", "text/plain", "This is a testHandleUploadWhenFileUploaded".getBytes());
 
     private FileStorageService service;
 
@@ -40,9 +42,10 @@ public class FileStorageServiceTests {
 
     @Test
     public void testConstructorInNormalInitialization() {
+
         FileStorageService service = new FileStorageService(originalFileStorageFolder);
-        Map<UUID, Path> database = (Map<UUID, Path>) Whitebox.getInternalState(service, "database");
-        Path fileStorageFolder = (Path) Whitebox.getInternalState(service, "storageFolder");
+        Map<UUID, String> database = (Map<UUID, String>) Whitebox.getInternalState(service, "database");
+        Path fileStorageFolder = (Path) Whitebox.getInternalState(service, "fileStoragePath");
 
         Assert.assertEquals(fileStorageFolder.toString(), originalFileStorageFolder);
         Assert.assertNotNull(database);
@@ -59,21 +62,7 @@ public class FileStorageServiceTests {
         new FileStorageService(originalFileStorageFolder);
     }
 
-    @Test
-    public void testSaveOnStorageWhenFileIsEmpty() {
-        MockMultipartFile emptyMockMultipartFile = new MockMultipartFile("test.txt", (byte[]) null);
-
-        FileUploadResultDto result = this.service.saveToStorage(emptyMockMultipartFile);
-        Assert.assertNull(result.getFileUUID());
-    }
-
-    @Test
-    public void testSaveOnStorageWhenFileIsNull() {
-        FileUploadResultDto result = this.service.saveToStorage(null);
-        Assert.assertNull(result.getFileUUID());
-    }
-
-    @Test
+    @Test(expected = FileUploadIOException.class)
     public void testSaveOnStorageWhenInternalErrorOccurs() throws IOException {
         Path filePath = Paths.get(originalFileStorageFolder).resolve(file.getOriginalFilename());
 
@@ -112,13 +101,12 @@ public class FileStorageServiceTests {
         Path path = Paths.get(originalFileStorageFolder, file.getOriginalFilename());
 
         Whitebox.setInternalState(this.service, "database",
-                new HashMap<UUID, Path>() {{
-                    put(uuid, path);
+                new HashMap<UUID, String>() {{
+                    put(uuid, path.toString());
                 }});
 
         FileSystemResource resource = new FileSystemResource(path.toFile());
-        FileDownloadResultDto result =
-                service.getFromStorage(uuid);
+        FileDownloadResultDto result = service.getFromStorage(uuid);
         Assert.assertEquals(result.getFileResource(), resource);
     }
 

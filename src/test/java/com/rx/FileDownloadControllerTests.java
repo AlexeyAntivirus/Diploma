@@ -37,7 +37,7 @@ public class FileDownloadControllerTests {
         UUID randomUUID = UUID.randomUUID();
 
         Mockito.when(mockedResource.getInputStream())
-                .thenReturn(new ByteArrayInputStream("This is a test".getBytes()));
+                .thenReturn(new ByteArrayInputStream("This is a testHandleUploadWhenFileUploaded".getBytes()));
         Mockito.when(mockFileStorageService.getFromStorage(randomUUID))
                 .thenReturn(new FileDownloadResultDtoBuilder()
                         .withFileResource(mockedResource)
@@ -52,11 +52,8 @@ public class FileDownloadControllerTests {
     public void should404WhenFileNotFound() throws Exception {
         UUID randomUUID = UUID.randomUUID();
 
-        Mockito.when(mockedResource.getInputStream()).thenReturn(
-                new ByteArrayInputStream("This is a test".getBytes()));
         Mockito.when(mockFileStorageService.getFromStorage(randomUUID))
                 .thenReturn(new FileDownloadResultDtoBuilder()
-                        .withFileResource(mockedResource)
                         .build());
 
         this.mvc.perform(MockMvcRequestBuilders.get(
