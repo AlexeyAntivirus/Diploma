@@ -14,7 +14,7 @@ public class FileDownloadControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public void handleException (Exception e) {
+    public void handleException(Exception e) {
         LOGGER.warn("Unexpected error appeared!", e);
     }
 }

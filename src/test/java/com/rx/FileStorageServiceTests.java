@@ -1,6 +1,8 @@
 package com.rx;
 
+import com.rx.controllers.exceptions.FileDownloadNotFoundException;
 import com.rx.controllers.exceptions.FileUploadIOException;
+import com.rx.controllers.exceptions.FileUploadInvalidPathException;
 import com.rx.dto.FileDownloadResultDto;
 import com.rx.dto.FileUploadResultDto;
 import com.rx.services.FileStorageService;
@@ -8,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -28,7 +31,7 @@ import java.util.UUID;
 @PrepareForTest(FileStorageService.class)
 public class FileStorageServiceTests {
 
-    private String originalFileStorageFolder = "/home/jrunix/.file_storage";
+    private String originalFileStorageFolder = "file_storage";
 
     private MockMultipartFile file = new MockMultipartFile(
             "file", "text.txt", "text/plain", "This is a testHandleUploadWhenFileUploaded".getBytes());
@@ -74,6 +77,15 @@ public class FileStorageServiceTests {
         Assert.assertNull(result.getFileUUID());
     }
 
+    @Test(expected = FileUploadInvalidPathException.class)
+    public void testSaveOnStorageWhenDesiredPathIsNotStartsWithStorageFolderPath() {
+        FileStorageService service = new FileStorageService("");
+
+        FileUploadResultDto result = service.saveToStorage(file);
+
+        Assert.assertNull(result.getFileUUID());
+    }
+
     @Test
     public void testSaveToStorageWhenFileExistsAndNotEmpty() throws Exception {
         Path filePath = Paths.get(originalFileStorageFolder).resolve(file.getOriginalFilename());
@@ -98,16 +110,28 @@ public class FileStorageServiceTests {
     @Test
     public void testGetFromStorageWhenFileFound() {
         UUID uuid = UUID.randomUUID();
-        Path path = Paths.get(originalFileStorageFolder, file.getOriginalFilename());
 
         Whitebox.setInternalState(this.service, "database",
                 new HashMap<UUID, String>() {{
-                    put(uuid, path.toString());
+                    put(uuid, file.getOriginalFilename());
                 }});
 
-        FileSystemResource resource = new FileSystemResource(path.toFile());
+        FileSystemResource resource = new FileSystemResource(
+                Paths.get(originalFileStorageFolder, file.getOriginalFilename()).toFile());
         FileDownloadResultDto result = service.getFromStorage(uuid);
         Assert.assertEquals(result.getFileResource(), resource);
     }
 
+    @Test(expected = FileDownloadNotFoundException.class)
+    public void testGetFromStorageWhenDesiredFilePathNotStartsWithStorageFolderPath() {
+        UUID uuid = UUID.randomUUID();
+
+        Whitebox.setInternalState(this.service, "database",
+                new HashMap<UUID, String>() {{
+                    put(uuid, file.getOriginalFilename());
+                }});
+        Whitebox.setInternalState(this.service, "fileStoragePath", Paths.get(""));
+
+        service.getFromStorage(uuid);
+    }
 }
