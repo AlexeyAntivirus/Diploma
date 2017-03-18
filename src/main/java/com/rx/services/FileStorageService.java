@@ -1,23 +1,17 @@
 package com.rx.services;
 
 import com.rx.controllers.exceptions.FileDownloadNotFoundException;
-import com.rx.controllers.exceptions.FileUploadIOException;
-import com.rx.controllers.exceptions.FileUploadInvalidPathException;
 import com.rx.dto.FileDownloadResultDto;
 import com.rx.dto.FileUploadResultDto;
+import com.rx.helpers.FileStorageHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,55 +25,36 @@ public class FileStorageService {
     private static final Logger LOGGER = LogManager.getLogger(FileStorageService.class);
 
     private Map<UUID, String> database;
-    private Path fileStoragePath;
+    private FileStorageHelper fileStorageHelper;
 
     @Autowired
-    public FileStorageService(@Value("${app.storage.folder}") String fileStoragePath) {
+    public FileStorageService(FileStorageHelper fileStorageHelper) {
         this.database = new ConcurrentHashMap<>();
-
-        doInitFileStorageFolder(fileStoragePath);
+        this.fileStorageHelper = fileStorageHelper;
     }
 
-    public FileUploadResultDto saveToStorage(MultipartFile file) {
-        FileUploadResultDtoBuilder resultBuilder = new FileUploadResultDtoBuilder();
-        String filename = file.getOriginalFilename();
-        Path desiredFilePath = this.fileStoragePath.resolve(filename).normalize();
+    public FileUploadResultDto saveFileInStorage(MultipartFile file) {
+        String uploadedFilePath = fileStorageHelper.saveNewFile(file);
+        UUID fileUuid = this.addToDatabase(uploadedFilePath);
 
-        if (!desiredFilePath.startsWith(this.fileStoragePath)) {
-            throw new FileUploadInvalidPathException("Received filename that contains path traversal payload. filename=" + filename);
-        }
-
-        try {
-            Path uploadedFilePath = Files.write(desiredFilePath, file.getBytes());
-
-            resultBuilder.withFileUUID(this.addToDatabase(uploadedFilePath.getFileName().toString()));
-        } catch (IOException ioException) {
-            throw new FileUploadIOException("File is not uploaded into storage, because io error occurs", ioException);
-        }
-
-        return resultBuilder.build();
+        return new FileUploadResultDtoBuilder().withFileUUID(fileUuid).build();
     }
 
-    public FileDownloadResultDto getFromStorage(UUID fileUUID) {
-        FileDownloadResultDtoBuilder resultBuilder = new FileDownloadResultDtoBuilder();
-
+    public FileDownloadResultDto getFileFromStorageById(UUID fileUUID) {
         if (fileUUID == null) {
-            return resultBuilder.build();
+            throw new FileDownloadNotFoundException("fileUUID is missing!");
         }
 
         String filename = this.database.get(fileUUID);
 
-        if (filename != null) {
-            Path desiredFilePath = this.fileStoragePath.resolve(filename).normalize();
-
-            if (!desiredFilePath.startsWith(this.fileStoragePath)) {
-                throw new FileDownloadNotFoundException("filename stored in the DB contains path traversal payload. uuid=" + fileUUID);
-            }
-
-            resultBuilder.withFileResource(new FileSystemResource(desiredFilePath.toFile()));
+        if (filename == null) {
+            throw new FileDownloadNotFoundException("No file was found by fileUUID. fileUUID=" + fileUUID);
         }
 
-        return resultBuilder.build();
+        File file = fileStorageHelper.getFileByName(filename);
+        FileSystemResource fileSystemResource = new FileSystemResource(file);
+
+        return new FileDownloadResultDtoBuilder().withFileResource(fileSystemResource).build();
     }
 
     private UUID addToDatabase(String filename) {
@@ -92,15 +67,5 @@ public class FileStorageService {
         } while (path != null);
 
         return uploadedFileUUID;
-    }
-
-    private void doInitFileStorageFolder(String fileStoragePath) {
-        Path path = Paths.get(fileStoragePath).normalize();
-
-        try {
-            this.fileStoragePath = Files.notExists(path) ? Files.createDirectory(path) : path;
-        } catch (IOException ioException) {
-            throw new BeanCreationException("File storage folder is not created!", ioException);
-        }
     }
 }

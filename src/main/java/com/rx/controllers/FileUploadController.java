@@ -59,7 +59,7 @@ public class FileUploadController {
             return "upload";
         }
 
-        FileUploadResultDto result = this.fileStorageService.saveToStorage(fileUploadFormDto.getMultipartFile());
+        FileUploadResultDto result = this.fileStorageService.saveFileInStorage(fileUploadFormDto.getMultipartFile());
 
         model.addAttribute("uploadedFileUUID", result.getFileUUID());
 

@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.util.UriUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Controller
@@ -40,15 +42,12 @@ public class FileDownloadController {
     @ResponseBody
     public Resource handleDownload(@RequestParam("fileUUID") UUID fileUUID, HttpServletResponse response) throws IOException {
 
-        FileDownloadResultDto result = this.fileStorageService.getFromStorage(fileUUID);
+        FileDownloadResultDto result = this.fileStorageService.getFileFromStorageById(fileUUID);
         FileSystemResource resource = result.getFileResource();
+        String filename = UriUtils.encode(resource.getFilename(), StandardCharsets.UTF_8.name());
 
-        if (resource == null) {
-            throw new FileDownloadNotFoundException("Requested file UUID was not found in the DB. uuid=" + fileUUID);
-        }
-
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"; filename*=UTF-8''" + filename);
         response.setContentLengthLong(resource.contentLength());
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() +"\"");
 
         return resource;
     }

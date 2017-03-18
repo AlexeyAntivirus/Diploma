@@ -18,13 +18,12 @@ import org.springframework.validation.FieldError;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class FileUploadFormDtoValidatorTests {
 
     @Value("${app.storage.allowed.filename}")
-    String allowedFilenamePattern;
+    private String allowedFilenamePattern;
 
     private FileUploadFormDtoValidator validator;
 
@@ -41,6 +40,7 @@ public class FileUploadFormDtoValidatorTests {
     @Test
     public void testConstructorWhenAllIsWell() {
         Pattern initializedAllowedFilenamePattern = (Pattern) Whitebox.getInternalState(validator, "filenamePattern");
+
         Assert.assertEquals(allowedFilenamePattern, initializedAllowedFilenamePattern.toString());
     }
 
@@ -57,22 +57,25 @@ public class FileUploadFormDtoValidatorTests {
     @Test
     public void testValidateWhenAllIsWell() {
         FileUploadFormDto dto = new FileUploadFormDto();
-        dto.setMultipartFile(new MockMultipartFile("multipartFile", "text.txt", "text/plain", "This is a test".getBytes()));
         Errors errors = new BeanPropertyBindingResult(dto, "fileUploadFormDto");
 
+        dto.setMultipartFile(new MockMultipartFile("multipartFile", "text.txt", "text/plain", "This is a test".getBytes()));
         validator.validate(dto, errors);
 
+        Assert.assertFalse(errors.hasErrors());
         Assert.assertNull(errors.getFieldError("multipartFile"));
     }
 
     @Test
     public void testValidateMultipartFileIsEmpty() {
         FileUploadFormDto dto = new FileUploadFormDto();
-        dto.setMultipartFile(new MockMultipartFile("multipartFile", "text.txt", "text/plain", (byte[]) null));
         Errors errors = new BeanPropertyBindingResult(dto, "fileUploadFormDto");
 
+        dto.setMultipartFile(new MockMultipartFile("multipartFile", "text.txt", "text/plain", (byte[]) null));
         validator.validate(dto, errors);
+
         FieldError multipartFileError = errors.getFieldError("multipartFile");
+
         Assert.assertNotNull(multipartFileError);
         Assert.assertEquals(multipartFileError.getCode(), "upload.file.empty");
     }
@@ -80,11 +83,13 @@ public class FileUploadFormDtoValidatorTests {
     @Test
     public void testValidateMultipartFileOriginalNameIsInvalid() {
         FileUploadFormDto dto = new FileUploadFormDto();
-        dto.setMultipartFile(new MockMultipartFile("multipartFile", "text.sh", "text/plain", "echo \"Hello!\"".getBytes()));
         Errors errors = new BeanPropertyBindingResult(dto, "fileUploadFormDto");
 
+        dto.setMultipartFile(new MockMultipartFile("multipartFile", "text.sh", "text/plain", "echo \"Hello!\"".getBytes()));
         validator.validate(dto, errors);
+
         FieldError multipartFileError = errors.getFieldError("multipartFile");
+
         Assert.assertNotNull(multipartFileError);
         Assert.assertEquals(multipartFileError.getCode(), "upload.file.invalid.name");
     }
