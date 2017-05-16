@@ -2,6 +2,7 @@ package com.rx.controllers;
 
 import com.rx.controllers.exceptions.FileUploadIOException;
 import com.rx.controllers.exceptions.FileUploadInvalidPathException;
+import com.rx.dao.DocumentType;
 import com.rx.dto.FileUploadFormDto;
 import com.rx.dto.FileUploadResultDto;
 import com.rx.services.FileStorageService;
@@ -59,9 +60,10 @@ public class FileUploadController {
             return "upload";
         }
 
-        FileUploadResultDto result = this.fileStorageService.saveFileInStorage(fileUploadFormDto.getMultipartFile());
+        FileUploadResultDto result = this.fileStorageService.
+                saveFileInStorage(fileUploadFormDto.getMultipartFile(), DocumentType.COURSE_WORK_GUIDELINES);
 
-        model.addAttribute("uploadedFileUUID", result.getFileUUID());
+        model.addAttribute("uploadedFileUUID", result.getFileId());
 
         return "upload-result";
     }

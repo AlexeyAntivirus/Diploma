@@ -1,6 +1,9 @@
 package com.rx.services;
 
 import com.rx.controllers.exceptions.FileDownloadNotFoundException;
+import com.rx.dao.Document;
+import com.rx.dao.DocumentType;
+import com.rx.dao.repositories.DocumentRepository;
 import com.rx.dto.FileDownloadResultDto;
 import com.rx.dto.FileUploadResultDto;
 import com.rx.helpers.FileStorageHelper;
@@ -12,9 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.rx.dto.FileDownloadResultDto.FileDownloadResultDtoBuilder;
 import static com.rx.dto.FileUploadResultDto.FileUploadResultDtoBuilder;
@@ -24,48 +24,41 @@ public class FileStorageService {
 
     private static final Logger LOGGER = LogManager.getLogger(FileStorageService.class);
 
-    private Map<UUID, String> database;
+    private DocumentRepository documentRepository;
     private FileStorageHelper fileStorageHelper;
 
     @Autowired
-    public FileStorageService(FileStorageHelper fileStorageHelper) {
-        this.database = new ConcurrentHashMap<>();
+    public FileStorageService(DocumentRepository documentRepository, FileStorageHelper fileStorageHelper) {
+        this.documentRepository = documentRepository;
         this.fileStorageHelper = fileStorageHelper;
     }
 
-    public FileUploadResultDto saveFileInStorage(MultipartFile file) {
-        String uploadedFilePath = fileStorageHelper.saveNewFile(file);
-        UUID fileUuid = this.addToDatabase(uploadedFilePath);
+    public FileUploadResultDto saveFileInStorage(MultipartFile file, DocumentType documentType) {
+        String uploadedFilename = fileStorageHelper.saveNewFile(file);
+        Document document = Document.builder()
+                .withDocumentFilename(uploadedFilename)
+                .withDocumentType(documentType)
+                .build();
 
-        return new FileUploadResultDtoBuilder().withFileUUID(fileUuid).build();
+        Long fileId = documentRepository.save(document).getId(); //метод save возращает тот же объект что мы добавляем
+
+        return new FileUploadResultDtoBuilder().withFileUUID(fileId).build();
     }
 
-    public FileDownloadResultDto getFileFromStorageById(UUID fileUUID) {
-        if (fileUUID == null) {
-            throw new FileDownloadNotFoundException("fileUUID is missing!");
+    public FileDownloadResultDto getFileFromStorageById(Long fileId) {
+        if (fileId == null) {
+            throw new FileDownloadNotFoundException("fileId is missing!");
         }
 
-        String filename = this.database.get(fileUUID);
+        Document document = this.documentRepository.findOne(fileId);
 
-        if (filename == null) {
-            throw new FileDownloadNotFoundException("No file was found by fileUUID. fileUUID=" + fileUUID);
+        if (document == null) {
+            throw new FileDownloadNotFoundException("No file was found by fileId. fileId=" + fileId);
         }
 
-        File file = fileStorageHelper.getFileByName(filename);
+        File file = fileStorageHelper.getFileByName(document.getDocumentFilename());
         FileSystemResource fileSystemResource = new FileSystemResource(file);
 
         return new FileDownloadResultDtoBuilder().withFileResource(fileSystemResource).build();
-    }
-
-    private UUID addToDatabase(String filename) {
-        UUID uploadedFileUUID;
-        String path;
-
-        do {
-            uploadedFileUUID = UUID.randomUUID();
-            path = this.database.putIfAbsent(uploadedFileUUID, filename);
-        } while (path != null);
-
-        return uploadedFileUUID;
     }
 }
