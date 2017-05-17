@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Title</title>
+    </head>
+    <body>
+        <div th:if="${user == null}">
+            <p th:text="${'User with id ' + id + ' is not exists'}"></p>
+        </div>
+        <div th:unless="${user == null}">
+            <p th:text="${user.getLastName() + ' ' + user.getFirstName() + ' ' + user.getMiddleName()}"></p>
+            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).SENIOR_LECTURER}" th:text="Старший викладач"></p>
+            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ASSISTANT_LECTURER}" th:text="Ассістент"></p>
+            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}" th:text="Завідуючий кафедри"></p>
+            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}" th:text="Методист"></p>
+            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ADMINISTRATOR}" th:text="Адміністратор"></p>
+        </div>
+    </body>
+</html>

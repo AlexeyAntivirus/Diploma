@@ -19,7 +19,7 @@ public class User {
 
     @Id
     @GeneratedValue
-    private Long userId;
+    private Long id;
 
     private String login;
 
@@ -38,7 +38,7 @@ public class User {
     private Set<Document> teachingLoads;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "users_disciplines", joinColumns = @JoinColumn(name = "discipline", referencedColumnName = "discipline_id"))
+    @JoinTable(name = "users_disciplines", joinColumns = @JoinColumn(name = "discipline", referencedColumnName = "id"))
     private Set<Discipline> disciplines;
 
 
@@ -54,8 +54,8 @@ public class User {
         this.userRole = builder.userRole;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
     public String getLogin() {

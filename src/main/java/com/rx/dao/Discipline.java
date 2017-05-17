@@ -14,14 +14,14 @@ public class Discipline {
 
     @Id
     @GeneratedValue
-    private Long disciplineId;
+    private Long id;
 
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Document> curriculums;
 
-    @ManyToMany(mappedBy = "discipline")
+    @ManyToMany(mappedBy = "disciplines")
     private Set<User> users;
 
 
@@ -41,8 +41,8 @@ public class Discipline {
         return curriculums;
     }
 
-    public Long getDisciplineId() {
-        return disciplineId;
+    public Long getId() {
+        return id;
     }
 
     public String getName() {

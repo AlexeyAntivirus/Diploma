@@ -40,9 +40,9 @@ public class FileDownloadController {
 
     @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public Resource handleDownload(@RequestParam("fileUUID") UUID fileUUID, HttpServletResponse response) throws IOException {
+    public Resource handleDownload(@RequestParam("fileId") Long fileId, HttpServletResponse response) throws IOException {
 
-        FileDownloadResultDto result = this.fileStorageService.getFileFromStorageById(fileUUID);
+        FileDownloadResultDto result = this.fileStorageService.getFileFromStorageById(fileId);
         FileSystemResource resource = result.getFileResource();
         String filename = UriUtils.encode(resource.getFilename(), StandardCharsets.UTF_8.name());
 
