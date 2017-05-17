@@ -3,23 +3,38 @@ package com.rx.controllers;
 import com.rx.dao.User;
 import com.rx.dao.UserRole;
 import com.rx.dao.repositories.UserRepository;
+import com.rx.dto.AddingUserFormDto;
+import com.rx.validators.AddingUserFormDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
 
 @Controller
 public class LoginController {
 
-    private final UserRepository repository;
+    private UserRepository repository;
+    private AddingUserFormDtoValidator validator;
 
     @Autowired
-    public LoginController(UserRepository repository) {
+    public LoginController(UserRepository repository, AddingUserFormDtoValidator validator) {
         this.repository = repository;
+        this.validator = validator;
+    }
+
+    @InitBinder("addingUserFormDto")
+    private void initBinder(WebDataBinder binder) {
+        binder.setValidator(validator);
     }
 
     @GetMapping(name = "/profile", value = "/profile/{id}")
@@ -40,6 +55,33 @@ public class LoginController {
         model.addAttribute("users", users);
         return "profiles";
     }
+
+    @GetMapping(name = "/add-user", value = "/add-user")
+    public ModelAndView getAddingUserForm() {
+        return addingUserForm();
+    }
+
+    @PostMapping(name = "/add-user", value = "/add-user")
+    public String addUser(@Valid AddingUserFormDto addingUserFormDto,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "add-user";
+        } else {
+            User user = User.builder()
+                    .withLogin(addingUserFormDto.getLogin())
+                    .withEmail(addingUserFormDto.getEmail())
+                    .withPassword(addingUserFormDto.getPassword())
+                    .withLastName(addingUserFormDto.getLastName())
+                    .withFirstName(addingUserFormDto.getFirstName())
+                    .withMiddleName(addingUserFormDto.getMiddleName())
+                    .withUserRole(addingUserFormDto.getUserRole())
+                    .build();
+
+            Long id = repository.save(user).getId();
+            return "redirect:/profile/" + id;
+        }
+    }
+
 
     @Bean
     public CommandLineRunner runner(UserRepository repository) {
@@ -91,5 +133,9 @@ public class LoginController {
                     .withUserRole(UserRole.ASSISTANT_LECTURER)
                     .build());
         };
+    }
+
+    private ModelAndView addingUserForm() {
+        return new ModelAndView("add-user", "addingUserFormDto", new AddingUserFormDto());
     }
 }

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Title</title>
+    </head>
+    <body>
+        <form id="form" action="#" th:action="@{/add-user}" method="post" th:object="${addingUserFormDto}">
+            <label>
+                Логін <input type="text" th:field="*{login}"/>
+                <label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
+            </label>
+            <br/>
+            <label>
+                Email <input type="email" th:field="*{email}"/>
+                <label th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></label>
+            </label>
+            <br/>
+            <label>
+                Пароль <input type="password" th:field="*{password}"/>
+                <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></label>
+            </label>
+            <br/>
+            <label>
+                Прізвище <input type="text" th:field="*{lastName}"/>
+                <label th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></label>
+            </label>
+            <br/>
+            <label>
+                Ім'я <input type="text" th:field="*{firstName}"/>
+                <label th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></label>
+            </label>
+            <br/>
+            <label>
+                По батькові <input type="text" th:field="*{middleName}"/>
+                <label th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></label>
+            </label>
+            <br/>
+            <label>
+                Роль <select th:field="*{userRole}">
+                    <option th:text="''" th:value="null" selected="selected"></option>
+                    <option th:text="'Асистент'" th:value="${T(com.rx.dao.UserRole).ASSISTANT_LECTURER}"></option>
+                    <option th:text="'Старший викладач'" th:value="${T(com.rx.dao.UserRole).SENIOR_LECTURER}"></option>
+                    <option th:text="'Завідуючий кафедри'" th:value="${T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}"></option>
+                    <option th:text="'Методист'" th:value="${T(com.rx.dao.UserRole).METHODOLOGIST}"></option>
+                </select>
+                <label th:if="${#fields.hasErrors('userRole')}" th:errors="*{userRole}"></label>
+            </label>
+            <br/>
+            <button type="submit" form="form">Додати</button>
+        </form>
+    </body>
+</html>
