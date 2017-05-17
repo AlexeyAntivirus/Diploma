@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.sql.Date;
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/upload")
@@ -61,7 +63,9 @@ public class FileUploadController {
         }
 
         FileUploadResultDto result = this.fileStorageService.
-                saveFileInStorage(fileUploadFormDto.getMultipartFile(), DocumentType.COURSE_WORK_GUIDELINES);
+                saveFileInStorage(fileUploadFormDto.getMultipartFile(),
+                        DocumentType.COURSE_WORK_GUIDELINES,
+                        Date.valueOf(LocalDate.now()));
 
         model.addAttribute("uploadedFileUUID", result.getFileId());
 

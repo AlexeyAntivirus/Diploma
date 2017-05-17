@@ -23,6 +23,8 @@ public class User {
 
     private String login;
 
+    private String email;
+
     private String password;
 
     private String lastName;
@@ -47,6 +49,7 @@ public class User {
 
     private User(UserBuilder builder) {
         this.login = builder.login;
+        this.email = builder.email;
         this.password = builder.password;
         this.lastName = builder.lastName;
         this.firstName = builder.firstName;
@@ -78,6 +81,10 @@ public class User {
         return firstName;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public UserRole getUserRole() {
         return userRole;
     }
@@ -98,6 +105,8 @@ public class User {
 
         private String login;
 
+        private String email;
+
         private String password;
 
         private String lastName;
@@ -117,6 +126,11 @@ public class User {
 
         public UserBuilder withLogin(String login) {
             this.login = login;
+            return this;
+        }
+
+        public UserBuilder withEmail(String email) {
+            this.email = email;
             return this;
         }
 

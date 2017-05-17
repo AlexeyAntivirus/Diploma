@@ -5,20 +5,16 @@
         <title>Title</title>
     </head>
     <body>
-        <div th:if="${user == null}">
-            <p th:text="${'User with id ' + id + ' is not exists'}"></p>
-        </div>
-        <div th:unless="${user == null}">
+        <div th:each="user: ${users}">
             <p th:text="${'Логін: ' + user.getLogin()}"></p>
             <p th:text="${'Email: ' + user.getEmail()}"></p>
-            <p th:text="${'Прізвище: ' + user.getLastName()}"></p>
-            <p th:text="${'Ім`я: ' + user.getFirstName()}"></p>
-            <p th:text="${'По батькові: ' + user.getMiddleName()}"></p>
+            <p th:text="${'ПІБ: ' + user.getLastName() + ' ' + user.getFirstName() + ' ' + user.getMiddleName()}"></p>
             <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).SENIOR_LECTURER}" th:text="'Роль: Старший викладач'"></p>
             <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ASSISTANT_LECTURER}" th:text="'Роль: Асистент'"></p>
             <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}" th:text="'Роль: Завідуючий кафедри'"></p>
             <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}" th:text="'Роль: Методист'"></p>
             <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ADMINISTRATOR}" th:text="'Роль: Адміністратор'"></p>
+            <br/>
         </div>
     </body>
 </html>

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.sql.Date;
 
 import static com.rx.dto.FileDownloadResultDto.FileDownloadResultDtoBuilder;
 import static com.rx.dto.FileUploadResultDto.FileUploadResultDtoBuilder;
@@ -33,11 +34,12 @@ public class FileStorageService {
         this.fileStorageHelper = fileStorageHelper;
     }
 
-    public FileUploadResultDto saveFileInStorage(MultipartFile file, DocumentType documentType) {
+    public FileUploadResultDto saveFileInStorage(MultipartFile file, DocumentType documentType, Date uploadingDate) {
         String uploadedFilename = fileStorageHelper.saveNewFile(file);
         Document document = Document.builder()
                 .withDocumentFilename(uploadedFilename)
                 .withDocumentType(documentType)
+                .withUploadingDate(uploadingDate)
                 .build();
 
         Long fileId = documentRepository.save(document).getId(); //метод save возращает тот же объект что мы добавляем
