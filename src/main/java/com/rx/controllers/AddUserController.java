@@ -9,25 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 
 @Controller
-public class LoginController {
+public class AddUserController {
 
     private UserRepository repository;
     private AddingUserFormDtoValidator validator;
 
     @Autowired
-    public LoginController(UserRepository repository, AddingUserFormDtoValidator validator) {
+    public AddUserController(UserRepository repository, AddingUserFormDtoValidator validator) {
         this.repository = repository;
         this.validator = validator;
     }
@@ -35,25 +33,6 @@ public class LoginController {
     @InitBinder("addingUserFormDto")
     private void initBinder(WebDataBinder binder) {
         binder.setValidator(validator);
-    }
-
-    @GetMapping(name = "/profile", value = "/profile/{id}")
-    public String getProfile(@PathVariable("id") Long id, Model model) {
-
-        User user = repository.findOne(id);
-
-        model.addAttribute("id", id);
-        model.addAttribute("user", user);
-        return "profile";
-    }
-
-    @GetMapping(name = "/profiles", value = "/profiles")
-    public String getProfiles(Model model) {
-
-        Iterable<User> users = repository.findAll();
-
-        model.addAttribute("users", users);
-        return "profiles";
     }
 
     @GetMapping(name = "/add-user", value = "/add-user")

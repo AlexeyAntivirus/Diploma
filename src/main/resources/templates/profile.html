@@ -9,16 +9,52 @@
             <p th:text="${'User with id ' + id + ' is not exists'}"></p>
         </div>
         <div th:unless="${user == null}">
-            <p th:text="${'Логін: ' + user.getLogin()}"></p>
-            <p th:text="${'Email: ' + user.getEmail()}"></p>
-            <p th:text="${'Прізвище: ' + user.getLastName()}"></p>
-            <p th:text="${'Ім`я: ' + user.getFirstName()}"></p>
-            <p th:text="${'По батькові: ' + user.getMiddleName()}"></p>
-            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).SENIOR_LECTURER}" th:text="'Роль: Старший викладач'"></p>
-            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ASSISTANT_LECTURER}" th:text="'Роль: Асистент'"></p>
-            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}" th:text="'Роль: Завідуючий кафедри'"></p>
-            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}" th:text="'Роль: Методист'"></p>
-            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ADMINISTRATOR}" th:text="'Роль: Адміністратор'"></p>
+            <form id="updatingUserFormDto" action="#" th:action="@{'/profile/' + ${id}}" method="post"
+                  th:object="${updatingUserFormDto}">
+                <label>
+                    Логін <input type="text" th:value="${user.getLogin()}" disabled="disabled"/>
+                </label>
+                <br/>
+                <label>
+                    Email <input type="email" th:field="*{email}"/>
+                    <label th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></label>
+                </label>
+                <br/>
+                <label>
+                    Пароль <input type="password" th:field="*{password}"/>
+                    <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></label>
+                </label>
+                <br/>
+                <label>
+                    Прізвище <input type="text" th:field="*{lastName}"/>
+                    <label th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></label>
+                </label>
+                <br/>
+                <label>
+                    Ім'я <input type="text" th:field="*{firstName}"/>
+                    <label th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></label>
+                </label>
+                <br/>
+                <label>
+                    По батькові <input type="text" th:field="*{middleName}"/>
+                    <label th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></label>
+                </label>
+                <br/>
+                <label>
+                    Роль <select disabled="disabled">
+                    <option th:text="'Асистент'" th:value="${T(com.rx.dao.UserRole).ASSISTANT_LECTURER}"
+                            th:selected="${user.getUserRole() == T(com.rx.dao.UserRole).ASSISTANT_LECTURER}"></option>
+                    <option th:text="'Старший викладач'" th:value="${T(com.rx.dao.UserRole).SENIOR_LECTURER}"
+                            th:selected="${user.getUserRole() == T(com.rx.dao.UserRole).SENIOR_LECTURER}"></option>
+                    <option th:text="'Завідуючий кафедри'" th:value="${T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}"
+                            th:selected="${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}"></option>
+                    <option th:text="'Методист'" th:value="${T(com.rx.dao.UserRole).METHODOLOGIST}"
+                            th:selected="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}"></option>
+                </select>
+                </label>
+                <br/>
+                <button type="submit" form="updatingUserFormDto">Редагувати</button>
+            </form>
         </div>
     </body>
 </html>
