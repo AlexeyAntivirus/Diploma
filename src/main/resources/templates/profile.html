@@ -16,27 +16,27 @@
                 </label>
                 <br/>
                 <label>
-                    Email <input type="email" th:field="*{email}"/>
+                    Email <input type="email" th:id="email" th:name="email" th:value="${user.getEmail()}"/>
                     <label th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></label>
                 </label>
                 <br/>
                 <label>
-                    Пароль <input type="password" th:field="*{password}"/>
+                    Пароль <input type="password" th:id="password" th:name="password" th:value="${user.getPassword()}"/>
                     <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></label>
                 </label>
                 <br/>
                 <label>
-                    Прізвище <input type="text" th:field="*{lastName}"/>
+                    Прізвище <input type="text" th:id="lastName" th:name="lastName" th:value="${user.getLastName()}"/>
                     <label th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></label>
                 </label>
                 <br/>
                 <label>
-                    Ім'я <input type="text" th:field="*{firstName}"/>
+                    Ім'я <input type="text" th:id="firstName" th:name="firstName" th:value="${user.getFirstName()}"/>
                     <label th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></label>
                 </label>
                 <br/>
                 <label>
-                    По батькові <input type="text" th:field="*{middleName}"/>
+                    По батькові <input type="text" th:id="middleName" th:name="middleName" th:value="${user.getMiddleName()}"/>
                     <label th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></label>
                 </label>
                 <br/>

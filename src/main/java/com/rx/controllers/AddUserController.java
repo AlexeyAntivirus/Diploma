@@ -4,6 +4,7 @@ import com.rx.dao.User;
 import com.rx.dao.UserRole;
 import com.rx.dao.repositories.UserRepository;
 import com.rx.dto.AddingUserFormDto;
+import com.rx.services.UserService;
 import com.rx.validators.AddingUserFormDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -21,12 +22,12 @@ import javax.validation.Valid;
 @Controller
 public class AddUserController {
 
-    private UserRepository repository;
+    private UserService userService;
     private AddingUserFormDtoValidator validator;
 
     @Autowired
-    public AddUserController(UserRepository repository, AddingUserFormDtoValidator validator) {
-        this.repository = repository;
+    public AddUserController(UserService userService, AddingUserFormDtoValidator validator) {
+        this.userService = userService;
         this.validator = validator;
     }
 
@@ -45,6 +46,12 @@ public class AddUserController {
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "add-user";
+        } else if (userService.existsByLogin(addingUserFormDto.getLogin())) {
+            bindingResult.rejectValue("login", "user.isPresent");
+            return "add-user";
+        } else if (userService.existsByEmail(addingUserFormDto.getEmail())) {
+            bindingResult.rejectValue("email", "email.isBusy");
+            return "add-user";
         } else {
             User user = User.builder()
                     .withLogin(addingUserFormDto.getLogin())
@@ -55,8 +62,7 @@ public class AddUserController {
                     .withMiddleName(addingUserFormDto.getMiddleName())
                     .withUserRole(addingUserFormDto.getUserRole())
                     .build();
-
-            Long id = repository.save(user).getId();
+            Long id = userService.insertOrUpdateUser(user);
             return "redirect:/profile/" + id;
         }
     }

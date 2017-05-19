@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Set;
 
 public interface DisciplineRepository extends CrudRepository<Discipline, Long> {
-    Set<Discipline> findByUsersLogin(String login);
+    boolean existsByName(String name);
 }

@@ -41,6 +41,10 @@ public class Discipline {
         return curriculums;
     }
 
+    public void setCurriculums(Set<Document> curriculums) {
+        this.curriculums = curriculums;
+    }
+
     public Long getId() {
         return id;
     }
@@ -49,8 +53,16 @@ public class Discipline {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Set<User> getUsers() {
         return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     public static class DisciplineBuilder {

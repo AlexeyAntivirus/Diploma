@@ -38,41 +38,41 @@ public class UpdatingUserFormDtoValidator implements Validator {
 
     private void validateEmail(String email, Errors errors) {
         if (email == null || email.isEmpty()) {
-            errors.rejectValue("email", "add.user.field.not.specified");
+            errors.rejectValue("email", "field.not.specified");
         } else if (!emailPattern.matcher(email).matches()) {
-            errors.rejectValue("email", "add.user.invalid.email");
+            errors.rejectValue("email", "invalid.email");
         }
     }
 
     private void validatePassword(String password, Errors errors) {
         if (password == null || password.isEmpty()) {
-            errors.rejectValue("password", "add.user.field.not.specified");
+            errors.rejectValue("password", "field.not.specified");
         } else if (password.length() > 128 || password.length() < 6) {
-            errors.rejectValue("password", "add.user.invalid.size.range");
+            errors.rejectValue("password", "invalid.field.size.range");
         }
     }
 
     private void validateLastName(String lastName, Errors errors) {
         if (lastName == null || lastName.isEmpty()) {
-            errors.rejectValue("lastName", "add.user.field.not.specified");
+            errors.rejectValue("lastName", "field.not.specified");
         } else if (lastName.length() > 128) {
-            errors.rejectValue("lastName", "add.user.invalid.size");
+            errors.rejectValue("lastName", "invalid.field.size");
         }
     }
 
     private void validateFirstName(String firstName, Errors errors) {
         if (firstName == null || firstName.isEmpty()) {
-            errors.rejectValue("firstName", "add.user.field.not.specified");
+            errors.rejectValue("firstName", "field.not.specified");
         } else if (firstName.length() > 128) {
-            errors.rejectValue("firstName", "add.user.invalid.size");
+            errors.rejectValue("firstName", "invalid.field.size");
         }
     }
 
     private void validateMiddleName(String middleName, Errors errors) {
         if (middleName == null || middleName.isEmpty()) {
-            errors.rejectValue("middleName", "add.user.field.not.specified");
+            errors.rejectValue("middleName", "field.not.specified");
         } else if (middleName.length() > 128) {
-            errors.rejectValue("middleName", "add.user.invalid.size");
+            errors.rejectValue("middleName", "invalid.field.size");
         }
     }
 }
