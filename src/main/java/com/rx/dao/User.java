@@ -153,10 +153,6 @@ public class User {
 
         private UserRole userRole;
 
-        private Set<Document> teachingLoads = new HashSet<>();
-
-        private Set<Discipline> disciplines = new HashSet<>();
-
         private UserBuilder() {
         }
 
@@ -192,16 +188,6 @@ public class User {
 
         public UserBuilder withUserRole(UserRole userRole) {
             this.userRole = userRole;
-            return this;
-        }
-
-        public UserBuilder withDiscipline(Discipline discipline) {
-            this.disciplines.add(discipline);
-            return this;
-        }
-
-        public UserBuilder withTeachingLoad(Document document) {
-            this.teachingLoads.add(document);
             return this;
         }
 

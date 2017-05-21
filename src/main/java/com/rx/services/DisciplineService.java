@@ -3,6 +3,7 @@ package com.rx.services;
 import com.rx.dao.Discipline;
 import com.rx.dao.repositories.DisciplineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,6 +22,10 @@ public class DisciplineService {
 
     public boolean existsByName(String name) {
         return disciplineRepository.existsByName(name);
+    }
+
+    public void deleteById(Long id) {
+        disciplineRepository.delete(id);
     }
 
     public Iterable<Discipline> getAllDisciplines() {

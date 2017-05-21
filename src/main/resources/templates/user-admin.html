@@ -9,10 +9,11 @@
             <p th:text="${'User with id ' + id + ' is not exists'}"></p>
         </div>
         <div th:unless="${user == null}">
-            <form id="updatingUserFormDto" action="#" th:action="@{'/profile/' + ${id}}" method="post"
-                  th:object="${updatingUserFormDto}">
+            <form id="userFormDto" action="#" th:action="@{'/user/' + ${id} + '/admin'}" method="post"
+                  th:object="${userFormDto}">
                 <label>
-                    Логін <input type="text" th:value="${user.getLogin()}" disabled="disabled"/>
+                    Логін <input type="text" th:id="login" th:name="login" th:value="${user.getLogin()}"/>
+                    <label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
                 </label>
                 <br/>
                 <label>
@@ -41,7 +42,7 @@
                 </label>
                 <br/>
                 <label>
-                    Роль <select disabled="disabled">
+                    Роль <select th:id="userRole" th:name="userRole">
                     <option th:text="'Асистент'" th:value="${T(com.rx.dao.UserRole).ASSISTANT_LECTURER}"
                             th:selected="${user.getUserRole() == T(com.rx.dao.UserRole).ASSISTANT_LECTURER}"></option>
                     <option th:text="'Старший викладач'" th:value="${T(com.rx.dao.UserRole).SENIOR_LECTURER}"
@@ -50,11 +51,14 @@
                             th:selected="${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}"></option>
                     <option th:text="'Методист'" th:value="${T(com.rx.dao.UserRole).METHODOLOGIST}"
                             th:selected="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}"></option>
-                </select>
+                    </select>
+                    <label th:if="${#fields.hasErrors('userRole')}" th:errors="*{userRole}"></label>
                 </label>
                 <br/>
-                <button type="submit" form="updatingUserFormDto">Редагувати</button>
+                <button type="submit" form="userFormDto">Редагувати</button>
             </form>
+            <br/>
+            <a th:href="@{${'/user/delete-user/' + id}}">Видалити</a>
         </div>
     </body>
 </html>

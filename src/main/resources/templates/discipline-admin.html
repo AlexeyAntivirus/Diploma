@@ -9,7 +9,7 @@
             <p th:text="${'Discipline with id ' + id + ' is not exists'}"></p>
         </div>
         <div th:unless="${discipline == null}">
-            <form id="disciplineFormDto" action="#" th:action="@{'/discipline/' + ${id}}" method="post" th:object="${disciplineFormDto}">
+            <form id="disciplineFormDto" action="#" th:action="@{'/discipline/' + ${id} + '/admin'}" method="post" th:object="${disciplineFormDto}">
                 <label>
                     Логін <input type="text" th:id="name" th:name="name" th:value="${discipline.getName()}"/>
                     <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></label>
@@ -17,7 +17,7 @@
                 <br/>
                 <button type="submit" form="disciplineFormDto">Редагувати</button>
             </form>
+            <a th:href="@{${'/discipline/delete-discipline/' + id}}">Видалити</a>
         </div>
-
     </body>
 </html>

@@ -1,7 +1,13 @@
 package com.rx.dto;
 
 
-public class UpdatingUserFormDto {
+import com.rx.dao.UserRole;
+
+
+public class UserFormDto {
+
+    private String login;
+
     private String email;
 
     private String password;
@@ -11,6 +17,17 @@ public class UpdatingUserFormDto {
     private String firstName;
 
     private String middleName;
+
+    private UserRole userRole;
+
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
 
     public String getEmail() {
         return email;
@@ -52,4 +69,11 @@ public class UpdatingUserFormDto {
         this.middleName = middleName;
     }
 
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
 }

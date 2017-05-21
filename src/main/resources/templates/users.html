@@ -14,6 +14,8 @@
             <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}" th:text="'Роль: Завідуючий кафедри'"></p>
             <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}" th:text="'Роль: Методист'"></p>
             <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ADMINISTRATOR}" th:text="'Роль: Адміністратор'"></p>
+            <a th:href="@{${'/user/delete-user/' + user.getId()}}">Видалити</a>
+            <br/>
             <br/>
         </div>
     </body>

@@ -26,9 +26,9 @@ public class DisciplineController {
     private DisciplineFormDtoValidator validator;
 
     @Autowired
-    public DisciplineController(DisciplineService disciplineService, DisciplineFormDtoValidator validator) {
+    public DisciplineController(DisciplineService disciplineService, DisciplineFormDtoValidator disciplineFormDtoValidator) {
         this.disciplineService = disciplineService;
-        this.validator = validator;
+        this.validator = disciplineFormDtoValidator;
     }
 
     @InitBinder("disciplineFormDto")
@@ -53,7 +53,7 @@ public class DisciplineController {
             Long id = disciplineService.insertOrUpdateDiscipline(Discipline.builder()
                     .withName(disciplineFormDto.getName())
                     .build());
-            return "redirect:/discipline/" + id;
+            return "redirect:/discipline/" + id + "/admin";
         }
     }
 
@@ -65,7 +65,6 @@ public class DisciplineController {
 
         return modelAndView;
     }
-
 
     @PostMapping(name = "{id}", value = "{id}")
     public String updateDiscipline(@PathVariable("id") Long id,
@@ -87,6 +86,36 @@ public class DisciplineController {
         return "discipline";
     }
 
+    @GetMapping(name = "{id}/admin", value = "{id}/admin")
+    public ModelAndView getDisciplineAdmin(@PathVariable("id") Long id) {
+        ModelAndView modelAndView = disciplineAdminForm();
+        modelAndView.getModel().put("id", id);
+        modelAndView.getModel().put("discipline", disciplineService.getDisciplineById(id));
+
+        return modelAndView;
+    }
+
+    @PostMapping(name = "{id}/admin", value = "{id}/admin")
+    public String updateDisciplineAdmin(@PathVariable("id") Long id,
+                                   @Valid DisciplineFormDto disciplineFormDto,
+                                   BindingResult bindingResult,
+                                   Model model) {
+        Discipline discipline = disciplineService.getDisciplineById(id);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("disciplineFormDto", disciplineFormDto);
+        } else if (disciplineService.existsByName(disciplineFormDto.getName())) {
+            model.addAttribute("disciplineFormDto", disciplineFormDto);
+            bindingResult.rejectValue("name", "discipline.isPresent");
+        } else {
+            discipline.setName(disciplineFormDto.getName());
+            disciplineService.insertOrUpdateDiscipline(discipline);
+        }
+
+
+        model.addAttribute("discipline", discipline);
+        return "discipline-admin";
+    }
+
     @GetMapping(name = "disciplines", value = "disciplines")
     public String getDisciplines(Model model) {
         Iterable<Discipline> disciplines = disciplineService.getAllDisciplines();
@@ -95,11 +124,21 @@ public class DisciplineController {
         return "disciplines";
     }
 
+    @GetMapping(name = "delete-discipline/{id}", value = "delete-discipline/{id}")
+    public String deleteDiscipline(@PathVariable("id") Long id) {
+        disciplineService.deleteById(id);
+        return "redirect:/discipline/" + id + "/disciplines";
+    }
+
     private ModelAndView addingDisciplineForm() {
         return new ModelAndView("add-discipline", "disciplineFormDto", new DisciplineFormDto());
     }
 
     private ModelAndView disciplineForm() {
         return new ModelAndView("discipline", "disciplineFormDto", new DisciplineFormDto());
+    }
+
+    private ModelAndView disciplineAdminForm() {
+        return new ModelAndView("discipline-admin", "disciplineFormDto", new DisciplineFormDto());
     }
 }
