@@ -3,7 +3,7 @@ package com.rx.controllers;
 import com.rx.controllers.exceptions.FileUploadIOException;
 import com.rx.controllers.exceptions.FileUploadInvalidPathException;
 import com.rx.dao.DocumentType;
-import com.rx.dto.FileUploadFormDto;
+import com.rx.dto.forms.FileUploadFormDto;
 import com.rx.dto.FileUploadResultDto;
 import com.rx.services.FileStorageService;
 import com.rx.validators.FileUploadFormDtoValidator;

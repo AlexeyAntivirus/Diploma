@@ -9,15 +9,36 @@
             <p th:text="${'Discipline with id ' + id + ' is not exists'}"></p>
         </div>
         <div th:unless="${discipline == null}">
-            <form id="disciplineFormDto" action="#" th:action="@{'/discipline/' + ${id}}" method="post" th:object="${disciplineFormDto}">
+            <form id="disciplineFormDto" action="#" th:action="@{'/discipline/get/' + ${id}}" method="post"
+                  th:object="${disciplineFormDto}">
                 <label>
-                    Логін <input type="text" th:id="name" th:name="name" th:value="${discipline.getName()}"/>
+                    Назва <input type="text" th:id="name" th:name="name" th:value="${discipline.getName()}"/>
                     <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></label>
                 </label>
                 <br/>
+                <h2>Викладачі</h2>
+                <span th:each="user: ${discipline.getUsers()}">
+                    <a th:text="#{${user.getUserRole()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|"
+                       th:href="@{'/user/get/' + ${user.getId()}}"></a>
+                    <br/>
+                </span>
+                <br/>
+                <h2>НМК</h2>
+                <div th:each="documentRootType: ${T(com.rx.misc.DocumentRootType).values()}"
+                     th:if="${documentRootType.isCurriculum()}">
+                    <h3 th:text="#{${documentRootType}}"></h3>
+                    <div th:each="documentSubType: ${T(com.rx.misc.DocumentSubType).resolveSubTypes(documentRootType)}">
+                        <h4 th:text="#{${documentSubType}}"></h4>
+                        <div th:each="curriculum: ${discipline.getCurriculums()}"
+                               th:if="${curriculum.getDocumentType() == T(com.rx.misc.DocumentTypeResolver).resolve(documentRootType, documentSubType)}">
+                            <label th:text="${curriculum.getDocumentFilename()}"></label>
+                            <br/>
+                        </div>
+                    </div>
+                </div>
                 <button type="submit" form="disciplineFormDto">Редагувати</button>
             </form>
+            <a th:href="@{${'/discipline/delete-discipline/' + id}}">Видалити</a>
         </div>
-
     </body>
 </html>

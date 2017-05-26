@@ -1,6 +1,6 @@
 package com.rx.validators;
 
-import com.rx.dto.FileUploadFormDto;
+import com.rx.dto.forms.FileUploadFormDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

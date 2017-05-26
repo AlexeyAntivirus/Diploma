@@ -39,7 +39,7 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Document> teachingLoads;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "users_disciplines", joinColumns = @JoinColumn(name = "discipline", referencedColumnName = "id"))
     private Set<Discipline> disciplines;
 

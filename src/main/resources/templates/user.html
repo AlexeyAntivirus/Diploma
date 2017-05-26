@@ -9,10 +9,11 @@
             <p th:text="${'User with id ' + id + ' is not exists'}"></p>
         </div>
         <div th:unless="${user == null}">
-            <form id="userFormDto" action="#" th:action="@{'/user/' + ${id}}" method="post"
+            <form id="userFormDto" action="#" th:action="@{'/user/get/' + ${id}}" method="post"
                   th:object="${userFormDto}">
                 <label>
-                    Логін <input type="text" th:value="${user.getLogin()}" disabled="disabled"/>
+                    Логін <input type="text" th:value="${user.getLogin()}" th:id="login" th:name="login" readonly="readonly"/>
+                    <label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
                 </label>
                 <br/>
                 <label>
@@ -42,18 +43,33 @@
                 <br/>
                 <label>
                     Роль <select disabled="disabled">
-                    <option th:text="'Асистент'" th:value="${T(com.rx.dao.UserRole).ASSISTANT_LECTURER}"
+                    <option th:text="#{${T(com.rx.dao.UserRole).ASSISTANT_LECTURER}}" th:value="${T(com.rx.dao.UserRole).ASSISTANT_LECTURER}"
                             th:selected="${user.getUserRole() == T(com.rx.dao.UserRole).ASSISTANT_LECTURER}"></option>
-                    <option th:text="'Старший викладач'" th:value="${T(com.rx.dao.UserRole).SENIOR_LECTURER}"
+                    <option th:text="#{${T(com.rx.dao.UserRole).SENIOR_LECTURER}}" th:value="${T(com.rx.dao.UserRole).SENIOR_LECTURER}"
                             th:selected="${user.getUserRole() == T(com.rx.dao.UserRole).SENIOR_LECTURER}"></option>
-                    <option th:text="'Завідуючий кафедри'" th:value="${T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}"
+                    <option th:text="#{${T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}}" th:value="${T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}"
                             th:selected="${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}"></option>
-                    <option th:text="'Методист'" th:value="${T(com.rx.dao.UserRole).METHODOLOGIST}"
+                    <option th:text="#{${T(com.rx.dao.UserRole).METHODOLOGIST}}" th:value="${T(com.rx.dao.UserRole).METHODOLOGIST}"
                             th:selected="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}"></option>
                     </select>
+                    <input type="hidden" th:id="userRole" th:name="userRole" th:value="${user.getUserRole()}"/>
                 </label>
                 <br/>
+                <h3>Педагогічна нагрузка</h3>
+                <span th:each="teachingLoad: ${user.getTeachingLoads()}">
+                    <a th:text="${teachingLoad.getDocumentFilename()}"></a>
+                    <br/>
+                </span>
+                <br/>
+                <h3>Дисципліни</h3>
+                <span th:each="discipline: ${user.getDisciplines()}">
+                    <a th:text="${discipline.getName()}" th:href="@{'/discipline/get/' + ${discipline.getId()}}"></a>
+                    <br/>
+                </span>
+                <br/>
                 <button type="submit" form="userFormDto">Редагувати</button>
+                <br/>
+                <a th:href="@{${'/user/delete-user/' + user.getId()}}">Видалити</a>
             </form>
         </div>
     </body>

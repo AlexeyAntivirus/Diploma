@@ -1,4 +1,4 @@
-package com.rx.dto;
+package com.rx.dto.forms;
 
 
 public class DisciplineFormDto {

@@ -2,7 +2,7 @@ package com.rx.validators;
 
 
 import com.rx.dao.UserRole;
-import com.rx.dto.UserFormDto;
+import com.rx.dto.forms.UserFormDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

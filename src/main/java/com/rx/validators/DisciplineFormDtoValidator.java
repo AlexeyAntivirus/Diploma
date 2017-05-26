@@ -1,6 +1,6 @@
 package com.rx.validators;
 
-import com.rx.dto.DisciplineFormDto;
+import com.rx.dto.forms.DisciplineFormDto;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

@@ -39,10 +39,10 @@
             <label>
                 Роль <select th:field="*{userRole}">
                     <option th:text="''" th:value="null" selected="selected"></option>
-                    <option th:text="'Асистент'" th:value="${T(com.rx.dao.UserRole).ASSISTANT_LECTURER}"></option>
-                    <option th:text="'Старший викладач'" th:value="${T(com.rx.dao.UserRole).SENIOR_LECTURER}"></option>
-                    <option th:text="'Завідуючий кафедри'" th:value="${T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}"></option>
-                    <option th:text="'Методист'" th:value="${T(com.rx.dao.UserRole).METHODOLOGIST}"></option>
+                    <option th:text="#{${T(com.rx.dao.UserRole).ASSISTANT_LECTURER}}" th:value="${T(com.rx.dao.UserRole).ASSISTANT_LECTURER}"></option>
+                    <option th:text="#{${T(com.rx.dao.UserRole).SENIOR_LECTURER}}" th:value="${T(com.rx.dao.UserRole).SENIOR_LECTURER}"></option>
+                    <option th:text="#{${T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}}" th:value="${T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}"></option>
+                    <option th:text="#{${T(com.rx.dao.UserRole).METHODOLOGIST}}" th:value="${T(com.rx.dao.UserRole).METHODOLOGIST}"></option>
                 </select>
                 <label th:if="${#fields.hasErrors('userRole')}" th:errors="*{userRole}"></label>
             </label>

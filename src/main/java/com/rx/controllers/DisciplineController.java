@@ -1,7 +1,7 @@
 package com.rx.controllers;
 
 import com.rx.dao.Discipline;
-import com.rx.dto.DisciplineFormDto;
+import com.rx.dto.forms.DisciplineFormDto;
 import com.rx.services.DisciplineService;
 import com.rx.validators.DisciplineFormDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,7 @@ public class DisciplineController {
         binder.setValidator(validator);
     }
 
+
     @GetMapping(name = "add-discipline", value = "add-discipline")
     public ModelAndView getAddingDisciplineForm() {
         return addingDisciplineForm();
@@ -43,7 +44,8 @@ public class DisciplineController {
 
     @PostMapping(name = "add-discipline", value = "add-discipline")
     public String addDiscipline(@Valid DisciplineFormDto disciplineFormDto,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult,
+                                Model model) {
         if (bindingResult.hasErrors()) {
             return "add-discipline";
         } else if (disciplineService.existsByName(disciplineFormDto.getName())) {
@@ -53,11 +55,14 @@ public class DisciplineController {
             Long id = disciplineService.insertOrUpdateDiscipline(Discipline.builder()
                     .withName(disciplineFormDto.getName())
                     .build());
-            return "redirect:/discipline/" + id + "/admin";
+            model.addAttribute("resultText", "discipline.add.message");
+            model.addAttribute("linkText", "discipline.add.link.text");
+            model.addAttribute("link", "/discipline/get/" + id);
+            return "add-result";
         }
     }
 
-    @GetMapping(name = "{id}", value = "{id}")
+    @GetMapping(name = "get/{id}", value = "get/{id}")
     public ModelAndView getDiscipline(@PathVariable("id") Long id) {
         ModelAndView modelAndView = disciplineForm();
         modelAndView.getModel().put("id", id);
@@ -66,7 +71,7 @@ public class DisciplineController {
         return modelAndView;
     }
 
-    @PostMapping(name = "{id}", value = "{id}")
+    @PostMapping(name = "get/{id}", value = "get/{id}")
     public String updateDiscipline(@PathVariable("id") Long id,
                                    @Valid DisciplineFormDto disciplineFormDto,
                                    BindingResult bindingResult,
@@ -86,34 +91,12 @@ public class DisciplineController {
         return "discipline";
     }
 
-    @GetMapping(name = "{id}/admin", value = "{id}/admin")
-    public ModelAndView getDisciplineAdmin(@PathVariable("id") Long id) {
-        ModelAndView modelAndView = disciplineAdminForm();
-        modelAndView.getModel().put("id", id);
-        modelAndView.getModel().put("discipline", disciplineService.getDisciplineById(id));
-
-        return modelAndView;
-    }
-
-    @PostMapping(name = "{id}/admin", value = "{id}/admin")
-    public String updateDisciplineAdmin(@PathVariable("id") Long id,
-                                   @Valid DisciplineFormDto disciplineFormDto,
-                                   BindingResult bindingResult,
+    @GetMapping(name = "delete-discipline/{id}", value = "delete-discipline/{id}")
+    public String deleteDiscipline(@PathVariable("id") Long id,
                                    Model model) {
-        Discipline discipline = disciplineService.getDisciplineById(id);
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("disciplineFormDto", disciplineFormDto);
-        } else if (disciplineService.existsByName(disciplineFormDto.getName())) {
-            model.addAttribute("disciplineFormDto", disciplineFormDto);
-            bindingResult.rejectValue("name", "discipline.isPresent");
-        } else {
-            discipline.setName(disciplineFormDto.getName());
-            disciplineService.insertOrUpdateDiscipline(discipline);
-        }
-
-
-        model.addAttribute("discipline", discipline);
-        return "discipline-admin";
+        disciplineService.deleteById(id);
+        model.addAttribute("resultText", "discipline.delete.message");
+        return "delete-result";
     }
 
     @GetMapping(name = "disciplines", value = "disciplines")
@@ -124,12 +107,6 @@ public class DisciplineController {
         return "disciplines";
     }
 
-    @GetMapping(name = "delete-discipline/{id}", value = "delete-discipline/{id}")
-    public String deleteDiscipline(@PathVariable("id") Long id) {
-        disciplineService.deleteById(id);
-        return "redirect:/discipline/" + id + "/disciplines";
-    }
-
     private ModelAndView addingDisciplineForm() {
         return new ModelAndView("add-discipline", "disciplineFormDto", new DisciplineFormDto());
     }
@@ -138,7 +115,5 @@ public class DisciplineController {
         return new ModelAndView("discipline", "disciplineFormDto", new DisciplineFormDto());
     }
 
-    private ModelAndView disciplineAdminForm() {
-        return new ModelAndView("discipline-admin", "disciplineFormDto", new DisciplineFormDto());
-    }
+
 }

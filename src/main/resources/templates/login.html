@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Login</title>
+    </head>
+    <body>
+        <form id="loginFormDto" action="#" th:action="@{/auth}" method="post" th:object="${loginFormDto}">
+            <label>
+                Логін <input type="text" th:field="*{login}"/>
+                <label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
+            </label>
+            <br/>
+            <label>
+                Пароль <input type="password" th:field="*{password}"/>
+                <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></label>
+            </label>
+            <br/>
+            <p th:text="#{${authorizationError}}"></p>
+            <br/>
+            <button type="submit" form="loginFormDto">Авторизуватись</button>
+        </form>
+    </body>
+</html>

@@ -19,6 +19,10 @@ public class UserService {
         return userRepository.findOne(id);
     }
 
+    public User getUserByLoginAndPassword(String login, String password) {
+        return userRepository.findByLoginAndPassword(login, password);
+    }
+
     public boolean existsByLogin(String login) {
         return userRepository.existsByLogin(login);
     }

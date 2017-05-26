@@ -1,6 +1,6 @@
 package com.rx;
 
-import com.rx.dto.FileUploadFormDto;
+import com.rx.dto.forms.FileUploadFormDto;
 import com.rx.validators.FileUploadFormDtoValidator;
 import org.junit.Assert;
 import org.junit.Before;

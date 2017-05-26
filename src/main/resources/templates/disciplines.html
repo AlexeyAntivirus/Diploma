@@ -7,6 +7,7 @@
     <body>
         <div th:each="discipline: ${disciplines}">
             <label th:text="${'Назва дісципліни: ' + discipline.getName()}"></label>
+            <a th:href="@{${'/discipline/delete-discipline/' + discipline.getId()}}">Видалити</a>
         </div>
     </body>
 </html>

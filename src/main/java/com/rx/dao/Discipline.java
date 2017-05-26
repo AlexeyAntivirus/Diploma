@@ -4,8 +4,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +24,7 @@ public class Discipline {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Document> curriculums;
 
-    @ManyToMany(mappedBy = "disciplines")
+    @ManyToMany(cascade = CascadeType.MERGE, mappedBy = "disciplines")
     private Set<User> users;
 
 
@@ -63,6 +66,13 @@ public class Discipline {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    @PreRemove
+    private void removeDisciplinesFromUsers() {
+        for (User u : users) {
+            u.getDisciplines().remove(this);
+        }
     }
 
     public static class DisciplineBuilder {
