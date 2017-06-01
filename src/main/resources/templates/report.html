@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Title</title>
+    </head>
+    <body>
+        <table border="1">
+            <tr>
+                <th th:text="|Назва дисципліни|"
+                    th:rowspan="2"></th>
+                <th th:each="value: ${T(com.rx.misc.DocumentRootType).values()}"
+                    th:with="subTypeCount = ${T(com.rx.misc.DocumentSubType).resolveSubTypes(value).length}"
+                    th:colspan="${subTypeCount}"
+                    th:rowspan="${subTypeCount > 1 ? 1 : 2}"
+                    th:text="#{${value}}"
+                    th:if="${value.isCurriculum()}"></th>
+            </tr>
+            <tr>
+                <th th:each="value: ${T(com.rx.misc.DocumentTypeResolver).getSubTypesForCurriculumRootTypes()}" th:text="#{${value}}"></th>
+            </tr>
+            <tr th:each="discipline: ${state.keySet()}">
+                <th>
+                    <a th:text="${discipline.getName()}" th:href="@{'/discipline/get/' + ${discipline.getId()}}"></a>
+                </th>
+                <th th:each="element: ${state.get(discipline)}"
+                    th:text="${element ? '+' : '-'}"></th>
+            </tr>
+        </table>
+    </body>
+</html>

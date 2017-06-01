@@ -34,18 +34,8 @@ public class DiplomaApplication {
 					.withDocumentType(DocumentType.TEACHING_LOAD)
 					.withUploadingDate(Date.valueOf(LocalDate.now()))
 					.build();
-			Document document2 = Document.builder()
-					.withDocumentFilename("Швець Н.В. Педагогічна нагрузка 2017-2018.xlsx")
-					.withDocumentType(DocumentType.TEACHING_LOAD)
-					.withUploadingDate(Date.valueOf(LocalDate.now()))
-					.build();
 			Document document3 = Document.builder()
 					.withDocumentFilename("Мітрофанова Н.Ф. Педагогічна нагрузка 2016-2017.xlsx")
-					.withDocumentType(DocumentType.TEACHING_LOAD)
-					.withUploadingDate(Date.valueOf(LocalDate.now()))
-					.build();
-			Document document4 = Document.builder()
-					.withDocumentFilename("Мітрофанова Н.Ф. Педагогічна нагрузка 2017-2018.xlsx")
 					.withDocumentType(DocumentType.TEACHING_LOAD)
 					.withUploadingDate(Date.valueOf(LocalDate.now()))
 					.build();
@@ -56,11 +46,6 @@ public class DiplomaApplication {
 					.build();
 			Document document6 = Document.builder()
 					.withDocumentFilename("ПтаППБ. Посібник до лабораторних робіт 2013.docx")
-					.withDocumentType(DocumentType.LABORATORY_WORK_TUTORIALS)
-					.withUploadingDate(Date.valueOf(LocalDate.now()))
-					.build();
-			Document document7 = Document.builder()
-					.withDocumentFilename("ПтаППБ. Посібник до лабораторних робіт 2014.docx")
 					.withDocumentType(DocumentType.LABORATORY_WORK_TUTORIALS)
 					.withUploadingDate(Date.valueOf(LocalDate.now()))
 					.build();
@@ -89,7 +74,6 @@ public class DiplomaApplication {
 					.withName("Паралельне та Багатопоточне Програмування")
 					.withCik(document5)
 					.withCik(document6)
-					.withCik(document7)
 					.withCik(document11)
 					.build();
 			Discipline discipline2 = Discipline.builder()
@@ -124,12 +108,10 @@ public class DiplomaApplication {
 			}};
 			user1.setTeachingLoads(new HashSet<Document>() {{
 				add(document1);
-				add(document2);
 			}});
 			user1.setDisciplines(disciplines);
 			user2.setTeachingLoads(new HashSet<Document>() {{
 				add(document3);
-				add(document4);
 			}});
 			user2.setDisciplines(disciplines);
 
