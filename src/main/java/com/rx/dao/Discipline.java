@@ -1,6 +1,7 @@
 package com.rx.dao;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -17,6 +18,7 @@ public class Discipline {
     @GeneratedValue
     private Long id;
 
+    @Column(length = 512, nullable = false)
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL)

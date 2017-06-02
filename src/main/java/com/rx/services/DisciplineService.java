@@ -4,12 +4,15 @@ import com.rx.dao.Discipline;
 import com.rx.dao.Document;
 import com.rx.dao.DocumentType;
 import com.rx.dao.repositories.DisciplineRepository;
+import com.rx.dto.CurriculumStateDto;
 import com.rx.misc.DocumentRootType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,29 +48,35 @@ public class DisciplineService {
         return disciplineRepository.save(discipline).getId();
     }
 
-    public Map<Discipline, Boolean[]> getCurriculumsStateOfAllDisciplines() {
-        HashMap<Discipline, Boolean[]> curriculumsStateOfAllDisciplines = new HashMap<>();
+    public List<CurriculumStateDto> getCurriculumsStateOfAllDisciplines() {
+        List<CurriculumStateDto> states = new ArrayList<>();
 
-        Iterable<Discipline> allDisciplines = getAllDisciplines();
-        for (Discipline discipline : allDisciplines) {
-            Set<Document> actualCurriculums = discipline.getCurriculums().stream()
-                    .filter(document -> {
-                        LocalDate uploadingDate = document.getUploadingDate()
-                                .toLocalDate()
-                                .plusYears(5);
-                        LocalDate now = LocalDate.now();
-                        return !uploadingDate.isBefore(now);
-                    })
-                    .collect(Collectors.toSet());
-            DocumentType[] allDocumentTypes = DocumentType.values();
-            Boolean[] state = Stream.of(allDocumentTypes)
-                    .filter(documentType -> DocumentRootType.resolve(documentType).isCurriculum())
-                    .map(documentType -> actualCurriculums.stream()
-                            .anyMatch(document -> document.getDocumentType() == documentType))
-                    .toArray(Boolean[]::new);
-            curriculumsStateOfAllDisciplines.put(discipline, state);
+        for (Discipline discipline: getAllDisciplines()) {
+            Map<DocumentType, Boolean> curriculumsState = new HashMap<>();
+
+            for (DocumentType documentType: DocumentType.values()) {
+                if (DocumentRootType.resolve(documentType).isCurriculum()) {
+                    curriculumsState.put(documentType, false);
+                }
+            }
+
+            for (Document curriculum: discipline.getCurriculums()) {
+                LocalDate uploadingDate = curriculum.getUploadingDate()
+                        .toLocalDate()
+                        .plusYears(5);
+                LocalDate now = LocalDate.now();
+                if (!uploadingDate.isBefore(now)) {
+                    curriculumsState.replace(curriculum.getDocumentType(), true);
+                }
+            }
+
+            states.add(CurriculumStateDto.builder()
+                    .withDisciplineId(discipline.getId())
+                    .withDisciplineName(discipline.getName())
+                    .withCurriculumState(curriculumsState)
+                    .build());
         }
 
-        return curriculumsStateOfAllDisciplines;
+        return states;
     }
 }

@@ -7,6 +7,7 @@ public enum DocumentRootType {
     SYLLABUS,
     NORMATIVE_ACT,
     TEACHING_LOAD,
+
     TRAINING_PROGRAM,
     WORK_PROGRAM,
     THEORETICAL_PART,

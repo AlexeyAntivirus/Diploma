@@ -74,13 +74,13 @@ public class DiplomaApplication {
 					.withName("Паралельне та Багатопоточне Програмування")
 					.withCik(document5)
 					.withCik(document6)
-					.withCik(document11)
 					.build();
 			Discipline discipline2 = Discipline.builder()
 					.withName("Крос-Платформне Програмування")
 					.withCik(document8)
 					.withCik(document9)
 					.withCik(document10)
+					.withCik(document11)
 					.build();
 			disciplineRepository.save(discipline1);
 			disciplineRepository.save(discipline2);

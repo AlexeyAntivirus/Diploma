@@ -17,14 +17,18 @@
                     th:if="${value.isCurriculum()}"></th>
             </tr>
             <tr>
-                <th th:each="value: ${T(com.rx.misc.DocumentTypeResolver).getSubTypesForCurriculumRootTypes()}" th:text="#{${value}}"></th>
+                <th th:each="value: ${T(com.rx.dao.DocumentType).values()}"
+                    th:if="${T(com.rx.misc.DocumentRootType).resolve(value).isCurriculum()
+                        and T(com.rx.misc.DocumentSubType).resolve(value) != T(com.rx.misc.DocumentSubType).NO_SUB_TYPE}"
+                    th:text="#{${T(com.rx.misc.DocumentSubType).resolve(value)}}"></th>
             </tr>
-            <tr th:each="discipline: ${state.keySet()}">
+            <tr th:each="curriculumState: ${curriculumStates}">
                 <th>
-                    <a th:text="${discipline.getName()}" th:href="@{'/discipline/get/' + ${discipline.getId()}}"></a>
+                    <a th:text="${curriculumState.getDisciplineName()}" th:href="@{'/discipline/get/' + ${curriculumState.getDisciplineId()}}"></a>
                 </th>
-                <th th:each="element: ${state.get(discipline)}"
-                    th:text="${element ? '+' : '-'}"></th>
+                <th th:each="value: ${T(com.rx.dao.DocumentType).values()}"
+                    th:if="${T(com.rx.misc.DocumentRootType).resolve(value).isCurriculum()}"
+                    th:text="${curriculumState.getCurriculumState().get(value) ? '+' : '-'}"></th>
             </tr>
         </table>
     </body>

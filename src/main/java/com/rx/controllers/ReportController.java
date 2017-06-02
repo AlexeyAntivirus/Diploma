@@ -23,7 +23,7 @@ public class ReportController {
     @GetMapping
     public String getReport(Model model) {
 
-        model.addAttribute("state", service.getCurriculumsStateOfAllDisciplines());
+        model.addAttribute("curriculumStates", service.getCurriculumsStateOfAllDisciplines());
         return "report";
     }
 }
