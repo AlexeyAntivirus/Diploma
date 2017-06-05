@@ -39,8 +39,10 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Document> teachingLoads;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
-    @JoinTable(name = "users_disciplines", joinColumns = @JoinColumn(name = "discipline", referencedColumnName = "id"))
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "users_disciplines",
+            joinColumns = @JoinColumn(name = "discipline", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user", referencedColumnName = "id"))
     private Set<Discipline> disciplines;
 
 

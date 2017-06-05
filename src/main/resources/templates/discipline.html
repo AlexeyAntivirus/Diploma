@@ -9,20 +9,31 @@
             <p th:text="${'Discipline with id ' + id + ' is not exists'}"></p>
         </div>
         <div th:unless="${discipline == null}">
-            <form id="disciplineFormDto" action="#" th:action="@{'/discipline/get/' + ${id}}" method="post"
-                  th:object="${disciplineFormDto}">
-                <label>
-                    Назва <input type="text" th:id="name" th:name="name" th:value="${discipline.getName()}"/>
-                    <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></label>
-                </label>
-                <br/>
-                <h2>Викладачі</h2>
-                <span th:each="user: ${discipline.getUsers()}">
-                    <a th:text="#{${user.getUserRole()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|"
-                       th:href="@{'/user/get/' + ${user.getId()}}"></a>
-                    <br/>
-                </span>
-                <br/>
+            <form id="fullDisciplineFormDto" th:action="@{'/admin/get-discipline/' + ${id}}" method="post"
+                  th:object="${fullDisciplineFormDto}">
+                <div>
+                    <label>
+                        Назва <input type="text" th:id="name" th:name="name" th:value="${discipline.getName()}"/>
+                        <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></label>
+                    </label>
+                </div>
+                <div>
+                    <p th:text="'Викладачі'"></p>
+                    <div th:each="user: ${discipline.getUsers()}">
+                        <a th:text="#{${user.getUserRole()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|"
+                            th:href="@{'/user/get/' + ${user.getId()}}"></a>
+                    </div>
+                </div>
+                <div>
+                    <label>
+                        Додати викладача <select th:id="userId" th:name="userId">
+                            <option th:text="''" th:value="null" selected="selected"></option>
+                            <option th:each="user: ${users}" th:value="${user.getId()}"
+                                    th:text="#{${user.getUserRole()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|">
+                            </option>
+                        </select>
+                    </label>
+                </div>
                 <h2>НМК</h2>
                 <div th:each="documentRootType: ${T(com.rx.misc.DocumentRootType).values()}"
                      th:if="${documentRootType.isCurriculum()}">
@@ -36,9 +47,10 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" form="disciplineFormDto">Редагувати</button>
+                <button type="submit" form="fullDisciplineFormDto">Редагувати</button>
+                <a th:href="@{${'/discipline/delete-discipline/' + id}}">Видалити</a>
             </form>
-            <a th:href="@{${'/discipline/delete-discipline/' + id}}">Видалити</a>
+
         </div>
     </body>
 </html>

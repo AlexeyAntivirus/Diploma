@@ -3,9 +3,12 @@ package com.rx.services;
 import com.rx.dao.Discipline;
 import com.rx.dao.Document;
 import com.rx.dao.DocumentType;
+import com.rx.dao.User;
 import com.rx.dao.repositories.DisciplineRepository;
 import com.rx.dto.CurriculumStateDto;
-import com.rx.misc.DocumentRootType;
+import com.rx.dto.DisciplineUpdatingResultDto;
+import com.rx.dto.forms.AddDisciplineFormDto;
+import com.rx.dto.forms.FullDisciplineFormDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +25,12 @@ import java.util.stream.Stream;
 public class DisciplineService {
 
     private DisciplineRepository disciplineRepository;
+    private UserService userService;
 
     @Autowired
-    public DisciplineService(DisciplineRepository disciplineRepository) {
+    public DisciplineService(DisciplineRepository disciplineRepository, UserService userService) {
         this.disciplineRepository = disciplineRepository;
+        this.userService = userService;
     }
 
     public Discipline getDisciplineById(Long id) {
@@ -44,31 +49,53 @@ public class DisciplineService {
         return disciplineRepository.findAll();
     }
 
-    public Long insertOrUpdateDiscipline(Discipline discipline) {
+    public Long addDiscipline(Discipline discipline) {
         return disciplineRepository.save(discipline).getId();
+    }
+
+    public Discipline updateDiscipline(Long id, FullDisciplineFormDto fullDisciplineFormDto) {
+        Discipline discipline = disciplineRepository.findOne(id);
+
+        discipline.setName(fullDisciplineFormDto.getName());
+
+        Long userId = fullDisciplineFormDto.getUserId();
+        if (userId != null) {
+            User user = userService.getUserById(fullDisciplineFormDto.getUserId());
+
+            Set<User> users = discipline.getUsers();
+            users.add(user);
+
+            discipline.setUsers(users);
+
+            return disciplineRepository.save(discipline);
+        }
+
+        return discipline;
     }
 
     public List<CurriculumStateDto> getCurriculumsStateOfAllDisciplines() {
         List<CurriculumStateDto> states = new ArrayList<>();
 
-        for (Discipline discipline: getAllDisciplines()) {
+        for (Discipline discipline : getAllDisciplines()) {
             Map<DocumentType, Boolean> curriculumsState = new HashMap<>();
 
-            for (DocumentType documentType: DocumentType.values()) {
-                if (DocumentRootType.resolve(documentType).isCurriculum()) {
-                    curriculumsState.put(documentType, false);
-                }
-            }
+            List<DocumentType> allDocumentTypes = Stream.of(DocumentType.values()).collect(Collectors.toList());
 
-            for (Document curriculum: discipline.getCurriculums()) {
+            for (Document curriculum : discipline.getCurriculums()) {
                 LocalDate uploadingDate = curriculum.getUploadingDate()
                         .toLocalDate()
                         .plusYears(5);
                 LocalDate now = LocalDate.now();
+                DocumentType documentType = curriculum.getDocumentType();
+
                 if (!uploadingDate.isBefore(now)) {
-                    curriculumsState.replace(curriculum.getDocumentType(), true);
+                    curriculumsState.put(documentType, true);
+                    allDocumentTypes.remove(documentType);
                 }
             }
+
+            curriculumsState.putAll(allDocumentTypes.stream()
+                    .collect(Collectors.toMap(keyMapper -> keyMapper, valueMapper -> false)));
 
             states.add(CurriculumStateDto.builder()
                     .withDisciplineId(discipline.getId())

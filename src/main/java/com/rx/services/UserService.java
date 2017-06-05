@@ -2,6 +2,10 @@ package com.rx.services;
 
 import com.rx.dao.User;
 import com.rx.dao.repositories.UserRepository;
+import com.rx.dto.UserAddingResultDto;
+import com.rx.dto.UserUpdatingResultDto;
+import com.rx.dto.forms.FullUserFormDto;
+import com.rx.dto.forms.UserFormDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,23 +27,100 @@ public class UserService {
         return userRepository.findByLoginAndPassword(login, password);
     }
 
-    public boolean existsByLogin(String login) {
-        return userRepository.existsByLogin(login);
-    }
-
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public Long insertOrUpdateUser(User newUser) {
-        return userRepository.save(newUser).getId();
+    public UserAddingResultDto addUser(FullUserFormDto fullUserFormDto) {
+        String errorMessage = null;
+        String errorField = null;
+        Long userId = null;
+
+        if (userRepository.existsByLogin(fullUserFormDto.getLogin())) {
+            errorField = "login";
+            errorMessage = "login.isBusy";
+        } else if (userRepository.existsByEmail(fullUserFormDto.getEmail())) {
+            errorField = "email";
+            errorMessage = "email.isBusy";
+        } else {
+            User user = User.builder()
+                    .withLogin(fullUserFormDto.getLogin())
+                    .withEmail(fullUserFormDto.getEmail())
+                    .withPassword(fullUserFormDto.getPassword())
+                    .withLastName(fullUserFormDto.getLastName())
+                    .withFirstName(fullUserFormDto.getFirstName())
+                    .withMiddleName(fullUserFormDto.getMiddleName())
+                    .withUserRole(fullUserFormDto.getUserRole())
+                    .build();
+            userId = userRepository.save(user).getId();
+        }
+
+        return UserAddingResultDto.builder()
+                .withErrorField(errorField)
+                .withErrorMessage(errorMessage)
+                .withUserId(userId)
+                .build();
+    }
+
+    public UserUpdatingResultDto updateUser(Long id, UserFormDto userFormDto) {
+        User user = this.getUserById(id);
+        String errorMessage = null;
+        String errorField = null;
+
+        if (!userFormDto.getEmail().equals(user.getEmail()) &&
+                userRepository.existsByEmail(userFormDto.getEmail())) {
+            errorField = "email";
+            errorMessage = "email.isBusy";
+        } else {
+            user.setEmail(userFormDto.getEmail());
+            user.setPassword(userFormDto.getPassword());
+            user.setLastName(userFormDto.getLastName());
+            user.setFirstName(userFormDto.getFirstName());
+            user.setMiddleName(userFormDto.getMiddleName());
+            userRepository.save(user);
+        }
+
+        return UserUpdatingResultDto.builder()
+                .withErrorField(errorField)
+                .withErrorMessage(errorMessage)
+                .withUpdatedUser(user)
+                .build();
+    }
+
+    public UserUpdatingResultDto updateUserFully(Long id, FullUserFormDto fullUserFormDto) {
+
+        User user = this.getUserById(id);
+        String errorMessage = null;
+
+        String errorField = null;
+        if (!fullUserFormDto.getEmail().equals(user.getEmail()) &&
+                userRepository.existsByEmail(fullUserFormDto.getEmail())) {
+            errorField = "email";
+            errorMessage = "email.isBusy";
+        } else if (!fullUserFormDto.getLogin().equals(user.getLogin()) &&
+                userRepository.existsByLogin(fullUserFormDto.getLogin())) {
+            errorField = "login";
+            errorMessage = "login.isBusy";
+        } else {
+            user.setLogin(fullUserFormDto.getLogin());
+            user.setEmail(fullUserFormDto.getEmail());
+            user.setPassword(fullUserFormDto.getPassword());
+            user.setLastName(fullUserFormDto.getLastName());
+            user.setFirstName(fullUserFormDto.getFirstName());
+            user.setMiddleName(fullUserFormDto.getMiddleName());
+            user.setUserRole(fullUserFormDto.getUserRole());
+            userRepository.save(user);
+        }
+
+        return UserUpdatingResultDto.builder()
+                .withErrorField(errorField)
+                .withErrorMessage(errorMessage)
+                .withUpdatedUser(user)
+                .build();
     }
 
     public void deleteById(Long id) {
         userRepository.delete(id);
     }
+
 }

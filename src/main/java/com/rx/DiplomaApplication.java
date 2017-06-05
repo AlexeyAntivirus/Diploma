@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
+import javax.transaction.Transactional;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ public class DiplomaApplication {
 	}
 
 	@Bean
+	@Transactional
     @Profile("dev")
 	public CommandLineRunner runner(UserRepository userRepository,
                                     DisciplineRepository disciplineRepository) {

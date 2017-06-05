@@ -6,29 +6,27 @@
     </head>
     <body>
         <table border="1">
-            <tr>
-                <th th:text="|Назва дисципліни|"
-                    th:rowspan="2"></th>
-                <th th:each="value: ${T(com.rx.misc.DocumentRootType).values()}"
-                    th:with="subTypeCount = ${T(com.rx.misc.DocumentSubType).resolveSubTypes(value).length}"
-                    th:colspan="${subTypeCount}"
-                    th:rowspan="${subTypeCount > 1 ? 1 : 2}"
-                    th:text="#{${value}}"
-                    th:if="${value.isCurriculum()}"></th>
-            </tr>
-            <tr>
-                <th th:each="value: ${T(com.rx.dao.DocumentType).values()}"
-                    th:if="${T(com.rx.misc.DocumentRootType).resolve(value).isCurriculum()
-                        and T(com.rx.misc.DocumentSubType).resolve(value) != T(com.rx.misc.DocumentSubType).NO_SUB_TYPE}"
-                    th:text="#{${T(com.rx.misc.DocumentSubType).resolve(value)}}"></th>
-            </tr>
-            <tr th:each="curriculumState: ${curriculumStates}">
-                <th>
-                    <a th:text="${curriculumState.getDisciplineName()}" th:href="@{'/discipline/get/' + ${curriculumState.getDisciplineId()}}"></a>
+            <tr th:with="list = ${#lists.toList(T(com.rx.misc.DocumentRootType).values())}">
+                <th th:text="|Назва дисципліни|" th:rowspan="2">
                 </th>
-                <th th:each="value: ${T(com.rx.dao.DocumentType).values()}"
-                    th:if="${T(com.rx.misc.DocumentRootType).resolve(value).isCurriculum()}"
-                    th:text="${curriculumState.getCurriculumState().get(value) ? '+' : '-'}"></th>
+                <th:block th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
+                          th:with="documentRootType = ${T(com.rx.misc.DocumentRootType).resolve(documentType)},
+                            subTypeCount = ${T(com.rx.misc.DocumentSubType).resolveSubTypes(documentRootType).length}">
+                    <th th:colspan="${subTypeCount}"
+                        th:rowspan="${subTypeCount > 1 ? 1 : 2}"
+                        th:if="${list.remove(documentRootType) and documentRootType.isCurriculum()}">
+                        <p th:text="#{${documentRootType}}"></p>
+                    </th>
+                </th:block>
+            </tr>
+            <tr>
+                <th:block th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
+                          th:with="documentSubType = ${T(com.rx.misc.DocumentSubType).resolve(documentType)}">
+                    <th th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()
+                                and documentSubType != T(com.rx.misc.DocumentSubType).NO_SUB_TYPE}">
+                        <p th:text="#{${documentSubType}}"></p>
+                    </th>
+                </th:block>
             </tr>
         </table>
     </body>

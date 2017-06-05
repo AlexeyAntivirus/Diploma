@@ -5,7 +5,7 @@
         <title>Title</title>
     </head>
     <body>
-        <form id="userFormDto" action="#" th:action="@{/user/add-user}" method="post" th:object="${userFormDto}">
+        <form id="fullUserFormDto" action="#" th:action="@{/user/add-user}" method="post" th:object="${fullUserFormDto}">
             <label>
                 Логін <input type="text" th:field="*{login}"/>
                 <label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
@@ -47,7 +47,7 @@
                 <label th:if="${#fields.hasErrors('userRole')}" th:errors="*{userRole}"></label>
             </label>
             <br/>
-            <button type="submit" form="userFormDto">Додати</button>
+            <button type="submit" form="fullUserFormDto">Додати</button>
         </form>
     </body>
 </html>

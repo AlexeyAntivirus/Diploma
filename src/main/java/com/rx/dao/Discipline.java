@@ -24,7 +24,7 @@ public class Discipline {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Document> curriculums;
 
-    @ManyToMany(cascade = CascadeType.MERGE, mappedBy = "disciplines")
+    @ManyToMany(cascade = {CascadeType.MERGE}, mappedBy = "disciplines")
     private Set<User> users;
 
 
@@ -50,6 +50,10 @@ public class Discipline {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

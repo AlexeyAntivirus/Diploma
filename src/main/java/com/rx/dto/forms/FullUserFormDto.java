@@ -1,6 +1,7 @@
 package com.rx.dto.forms;
 
 
+import com.rx.dao.UserRole;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Component
-public class UserFormDto {
+public class FullUserFormDto {
+
+    @NotNull(message = "{field.not.specified}")
+    @NotEmpty(message = "{field.not.specified}")
+    @Size(min = 6, max = 255, message = "{invalid.field.size.range}")
+    private String login;
 
     @NotNull(message = "{field.not.specified}")
     @NotEmpty(message = "{field.not.specified}")
@@ -36,6 +42,17 @@ public class UserFormDto {
     @Size(max = 255, message = "{invalid.field.size}")
     private String middleName;
 
+    @NotNull(message = "{field.not.specified}")
+    private UserRole userRole;
+
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
 
     public String getEmail() {
         return email;
@@ -75,5 +92,13 @@ public class UserFormDto {
 
     public void setMiddleName(String middleName) {
         this.middleName = middleName;
+    }
+
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 }

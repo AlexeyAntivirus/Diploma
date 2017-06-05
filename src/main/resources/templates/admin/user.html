@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Title</title>
+    </head>
+    <body>
+        <div th:if="${user == null}">
+            <p th:text="${'User with id ' + id + ' is not exists'}"></p>
+        </div>
+        <div th:unless="${user == null}">
+            <form id="fullUserFormDto" action="#" th:action="@{'/admin/user/get/' + ${id}}" method="post"
+                  th:object="${fullUserFormDto}">
+
+                <th:block th:include="fragments/user :: login-showing-fragment">
+                    Login for admin
+                </th:block>
+
+                <th:block th:include="fragments/user :: user-form-fragment">
+                    Default user form
+                </th:block>
+
+                <th:block th:include="fragments/user :: role-editing-fragment">
+                    User role editing select
+                </th:block>
+
+                <button type="submit" form="fullUserFormDto">Редагувати</button>
+
+                <a th:href="@{${'/admin/delete-user/' + user.getId()}}">Видалити</a>
+            </form>
+        </div>
+    </body>
+</html>
