@@ -39,15 +39,6 @@
             </div>
         </th:block>
 
-        <th:block th:fragment="login-showing-fragment">
-            <div>
-                <label>
-                    Логін <input type="text" th:value="${user.getLogin()}" th:id="login" th:name="login"/>
-                    <label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
-                </label>
-            </div>
-        </th:block>
-
         <th:block>
             <th:block th:fragment="role-showing-fragment">
                 <div>

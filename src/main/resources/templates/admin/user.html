@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8"/>
-        <title>Title</title>
+        <title>User profile</title>
     </head>
     <body>
         <div th:if="${user == null}">
@@ -12,9 +12,12 @@
             <form id="fullUserFormDto" action="#" th:action="@{'/admin/user/get/' + ${id}}" method="post"
                   th:object="${fullUserFormDto}">
 
-                <th:block th:include="fragments/user :: login-showing-fragment">
-                    Login for admin
-                </th:block>
+                <div>
+                    <label>
+                        Логін <input type="text" th:value="${user.getLogin()}" th:id="login" th:name="login"/>
+                        <label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
+                    </label>
+                </div>
 
                 <th:block th:include="fragments/user :: user-form-fragment">
                     Default user form
@@ -24,9 +27,14 @@
                     User role editing select
                 </th:block>
 
-                <button type="submit" form="fullUserFormDto">Редагувати</button>
+                <th:block th:include="fragments/basic-fragments :: submit-button-fragment('Редагувати', 'fullUserFormDto')">
 
-                <a th:href="@{${'/admin/delete-user/' + user.getId()}}">Видалити</a>
+                </th:block>
+
+                <th:block th:include="fragments/basic-fragments :: deleting-link-fragment('Видалити', '/admin/delete-user', ${user.getId()})">
+
+                </th:block>
+
             </form>
         </div>
     </body>

@@ -24,7 +24,7 @@ public class Discipline {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Document> curriculums;
 
-    @ManyToMany(cascade = {CascadeType.MERGE}, mappedBy = "disciplines")
+    @ManyToMany(mappedBy = "disciplines", cascade = CascadeType.ALL)
     private Set<User> users;
 
 
@@ -70,13 +70,6 @@ public class Discipline {
 
     public void setUsers(Set<User> users) {
         this.users = users;
-    }
-
-    @PreRemove
-    private void removeDisciplinesFromUsers() {
-        for (User u : users) {
-            u.getDisciplines().remove(this);
-        }
     }
 
     public static class DisciplineBuilder {

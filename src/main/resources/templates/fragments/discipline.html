@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Title</title>
+    </head>
+    <body>
+        <th:block th:fragment="user-showing-fragment">
+            <div>
+                <p th:text="'Викладачі'"></p>
+                <div th:each="user: ${discipline.getUsers()}">
+                    <a th:text="#{${user.getUserRole()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|"
+                       th:href="@{'/admin/get-user/' + ${user.getId()}}"></a>
+                </div>
+            </div>
+        </th:block>
+
+        <th:block th:fragment="curriculums-showing-fragment">
+            <p>НМК</p>
+            <div th:each="documentRootType: ${T(com.rx.misc.DocumentRootType).values()}"
+                 th:if="${documentRootType.isCurriculum()}">
+                <p th:text="#{${documentRootType}}"></p>
+                <div th:each="documentSubType: ${T(com.rx.misc.DocumentSubType).resolveSubTypes(documentRootType)}">
+                    <p th:text="#{${documentSubType}}"></p>
+                    <div th:each="curriculum: ${discipline.getCurriculums()}"
+                         th:if="${curriculum.getDocumentType() == T(com.rx.misc.DocumentTypeResolver).resolve(documentRootType, documentSubType)}">
+                        <a th:text="${curriculum.getDocumentFilename()}"></a>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </body>
+</html>

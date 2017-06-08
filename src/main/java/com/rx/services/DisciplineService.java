@@ -12,9 +12,11 @@ import com.rx.dto.forms.FullDisciplineFormDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Transactional
 public class DisciplineService {
 
     private DisciplineRepository disciplineRepository;
@@ -42,6 +45,10 @@ public class DisciplineService {
     }
 
     public void deleteById(Long id) {
+        Discipline one = disciplineRepository.findOne(id);
+        for (User user: one.getUsers()) {
+            user.getDisciplines().remove(one);
+        }
         disciplineRepository.delete(id);
     }
 
@@ -53,6 +60,7 @@ public class DisciplineService {
         return disciplineRepository.save(discipline).getId();
     }
 
+
     public Discipline updateDiscipline(Long id, FullDisciplineFormDto fullDisciplineFormDto) {
         Discipline discipline = disciplineRepository.findOne(id);
 
@@ -61,6 +69,10 @@ public class DisciplineService {
         Long userId = fullDisciplineFormDto.getUserId();
         if (userId != null) {
             User user = userService.getUserById(fullDisciplineFormDto.getUserId());
+            user.setDisciplines(new HashSet<Discipline>() {{
+                add(discipline);
+                addAll(user.getDisciplines());
+            }});
 
             Set<User> users = discipline.getUsers();
             users.add(user);

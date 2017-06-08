@@ -17,13 +17,11 @@
                         <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></label>
                     </label>
                 </div>
-                <div>
-                    <p th:text="'Викладачі'"></p>
-                    <div th:each="user: ${discipline.getUsers()}">
-                        <a th:text="#{${user.getUserRole()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|"
-                            th:href="@{'/user/get/' + ${user.getId()}}"></a>
-                    </div>
-                </div>
+
+                <th:block th:include="fragments/discipline :: user-showing-fragment">
+
+                </th:block>
+
                 <div>
                     <label>
                         Додати викладача <select th:id="userId" th:name="userId">
@@ -34,21 +32,18 @@
                         </select>
                     </label>
                 </div>
-                <h2>НМК</h2>
-                <div th:each="documentRootType: ${T(com.rx.misc.DocumentRootType).values()}"
-                     th:if="${documentRootType.isCurriculum()}">
-                    <h3 th:text="#{${documentRootType}}"></h3>
-                    <div th:each="documentSubType: ${T(com.rx.misc.DocumentSubType).resolveSubTypes(documentRootType)}">
-                        <h4 th:text="#{${documentSubType}}"></h4>
-                        <div th:each="curriculum: ${discipline.getCurriculums()}"
-                               th:if="${curriculum.getDocumentType() == T(com.rx.misc.DocumentTypeResolver).resolve(documentRootType, documentSubType)}">
-                            <label th:text="${curriculum.getDocumentFilename()}"></label>
-                            <br/>
-                        </div>
-                    </div>
-                </div>
-                <button type="submit" form="fullDisciplineFormDto">Редагувати</button>
-                <a th:href="@{${'/discipline/delete-discipline/' + id}}">Видалити</a>
+
+                <th:block th:include="fragments/discipline :: curriculums-showing-fragment">
+
+                </th:block>
+
+                <th:block th:include="fragments/basic-fragments :: submit-button-fragment('Редагувати', 'fullDisciplineFormDto')">
+
+                </th:block>
+
+                <th:block th:include="fragments/basic-fragments :: deleting-link-fragment('Видалити', '/admin/delete-discipline', ${discipline.getId()})">
+
+                </th:block>
             </form>
 
         </div>

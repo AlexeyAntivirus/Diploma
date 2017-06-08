@@ -162,7 +162,7 @@ public class AdminController {
         }
 
         model.addAttribute("discipline", disciplineService.updateDiscipline(id, fullDisciplineFormDto));
-        return "discipline";
+        return "admin/discipline";
     }
 
     @GetMapping(name = "/delete-discipline/{id}", value = "/delete-discipline/{id}")
@@ -170,19 +170,19 @@ public class AdminController {
                                    Model model) {
         disciplineService.deleteById(id);
         model.addAttribute("resultText", "discipline.delete.message");
-        return "delete-result";
+        return "admin/delete-result";
     }
 
     private ModelAndView fullUserForm() {
-        return new ModelAndView("user", "fullUserFormDto", new FullUserFormDto());
+        return new ModelAndView("admin/user", "fullUserFormDto", new FullUserFormDto());
     }
 
     private ModelAndView addUserForm() {
-        return new ModelAndView("add-user", "userFormDto", new FullUserFormDto());
+        return new ModelAndView("admin/add-user", "userFormDto", new FullUserFormDto());
     }
 
     private ModelAndView fullDisciplineForm() {
-        return new ModelAndView("discipline", "fullDisciplineFormDto", new FullDisciplineFormDto());
+        return new ModelAndView("admin/discipline", "fullDisciplineFormDto", new FullDisciplineFormDto());
     }
 
     private ModelAndView addDisciplineForm() {
