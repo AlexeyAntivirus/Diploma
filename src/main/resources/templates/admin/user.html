@@ -9,7 +9,7 @@
             <p th:text="${'User with id ' + id + ' is not exists'}"></p>
         </div>
         <div th:unless="${user == null}">
-            <form id="fullUserFormDto" action="#" th:action="@{'/admin/user/get/' + ${id}}" method="post"
+            <form id="fullUserFormDto" action="#" th:action="@{'/admin/get-user/' + ${id}}" method="post"
                   th:object="${fullUserFormDto}">
 
                 <div>
@@ -18,23 +18,57 @@
                         <label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
                     </label>
                 </div>
+                <div>
+                    <label>
+                        Email <input type="email" th:id="email" th:name="email" th:value="${user.getEmail()}"/>
+                        <label th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></label>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Пароль <input type="password" th:id="password" th:name="password" th:value="${user.getPassword()}"/>
+                        <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></label>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Прізвище <input type="text" th:id="lastName" th:name="lastName" th:value="${user.getLastName()}"/>
+                        <label th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></label>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Ім'я <input type="text" th:id="firstName" th:name="firstName" th:value="${user.getFirstName()}"/>
+                        <label th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></label>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        По батькові <input type="text" th:id="middleName" th:name="middleName"
+                                           th:value="${user.getMiddleName()}"/>
+                        <label th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></label>
+                    </label>
+                </div>
+                <div th:with="userRoles = ${T(com.rx.dao.UserRole).values()}">
+                    <label>
+                        Роль <select th:id="userRole" th:name="userRole">
+                        <option th:each="userRoleValue: ${T(com.rx.dao.UserRole).values()}"
+                                th:text="#{${userRoleValue.getString()}}"
+                                th:value="${userRoleValue}"
+                                th:selected="${userRoleValue == user.getUserRole().getString()}"></option>
+                    </select>
+                    </label>
+                </div>
+                <div>
+                    <p th:text="'Дисципліни'"></p>
+                    <div th:each="discipline: ${user.getDisciplines()}">
+                        <a th:text="${discipline.getName()}" th:href="@{'/admin/get-discipline/' + ${discipline.getId()}}"></a>
+                    </div>
+                </div>
 
-                <th:block th:include="fragments/user :: user-form-fragment">
-                    Default user form
-                </th:block>
+                <button type="submit" th:form="'fullUserFormDto'" th:text="'Редагувати'"></button>
 
-                <th:block th:include="fragments/user :: role-editing-fragment">
-                    User role editing select
-                </th:block>
-
-                <th:block th:include="fragments/basic-fragments :: submit-button-fragment('Редагувати', 'fullUserFormDto')">
-
-                </th:block>
-
-                <th:block th:include="fragments/basic-fragments :: deleting-link-fragment('Видалити', '/admin/delete-user', ${user.getId()})">
-
-                </th:block>
-
+                <a th:href="@{${'/admin/delete-user/' + user.getId()}}">Видалити</a>
             </form>
         </div>
     </body>

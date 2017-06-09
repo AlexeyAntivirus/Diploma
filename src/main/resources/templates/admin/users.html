@@ -2,14 +2,14 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8"/>
-        <title>Title</title>
+        <title>Users</title>
     </head>
     <body>
         <div th:each="user: ${users}">
             <p th:text="${'Логін: ' + user.getLogin()}"></p>
             <p th:text="${'Email: ' + user.getEmail()}"></p>
             <p th:text="${'ПІБ: ' + user.getLastName() + ' ' + user.getFirstName() + ' ' + user.getMiddleName()}"></p>
-            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).SENIOR_LECTURER}" th:text="'Роль: Старший викладач'"></p>
+            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).LECTURER}" th:text="'Роль: Старший викладач'"></p>
             <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ASSISTANT_LECTURER}" th:text="'Роль: Асистент'"></p>
             <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}" th:text="'Роль: Завідуючий кафедри'"></p>
             <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}" th:text="'Роль: Методист'"></p>

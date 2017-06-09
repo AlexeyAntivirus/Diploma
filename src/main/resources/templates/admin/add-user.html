@@ -5,7 +5,7 @@
         <title>Title</title>
     </head>
     <body>
-        <form id="fullUserFormDto" action="#" th:action="@{/user/add-user}" method="post" th:object="${fullUserFormDto}">
+        <form id="fullUserFormDto" action="#" th:action="@{/admin/add-user}" method="post" th:object="${fullUserFormDto}">
             <label>
                 Логін <input type="text" th:field="*{login}"/>
                 <label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
@@ -36,16 +36,18 @@
                 <label th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></label>
             </label>
             <br/>
-            <label>
-                Роль <select th:field="*{userRole}">
-                    <option th:text="''" th:value="null" selected="selected"></option>
-                    <option th:text="#{${T(com.rx.dao.UserRole).ASSISTANT_LECTURER}}" th:value="${T(com.rx.dao.UserRole).ASSISTANT_LECTURER}"></option>
-                    <option th:text="#{${T(com.rx.dao.UserRole).SENIOR_LECTURER}}" th:value="${T(com.rx.dao.UserRole).SENIOR_LECTURER}"></option>
-                    <option th:text="#{${T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}}" th:value="${T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}"></option>
-                    <option th:text="#{${T(com.rx.dao.UserRole).METHODOLOGIST}}" th:value="${T(com.rx.dao.UserRole).METHODOLOGIST}"></option>
-                </select>
-                <label th:if="${#fields.hasErrors('userRole')}" th:errors="*{userRole}"></label>
-            </label>
+            <div>
+                <label>
+                    Роль <select th:field="*{userRole}">
+                        <option th:text="''" th:value="null" selected="selected"></option>
+                        <option th:each="userRoleValue: ${T(com.rx.dao.UserRole).values()}"
+                            th:text="#{${userRoleValue.getString()}}"
+                            th:value="${userRoleValue}"
+                            th:if="${userRoleValue != T(com.rx.dao.UserRole).ADMINISTRATOR}"></option>
+                    </select>
+                    <label th:if="${#fields.hasErrors('userRole')}" th:errors="*{userRole}"></label>
+                </label>
+            </div>
             <br/>
             <button type="submit" form="fullUserFormDto">Додати</button>
         </form>

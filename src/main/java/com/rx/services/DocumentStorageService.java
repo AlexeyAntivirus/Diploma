@@ -5,7 +5,7 @@ import com.rx.dao.Document;
 import com.rx.dao.DocumentType;
 import com.rx.dao.repositories.DocumentRepository;
 import com.rx.dto.FileDownloadResultDto;
-import com.rx.dto.FileUploadResultDto;
+import com.rx.dto.DocumentUploadResultDto;
 import com.rx.helpers.FileStorageHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,23 +18,23 @@ import java.io.File;
 import java.sql.Date;
 
 import static com.rx.dto.FileDownloadResultDto.FileDownloadResultDtoBuilder;
-import static com.rx.dto.FileUploadResultDto.FileUploadResultDtoBuilder;
+import static com.rx.dto.DocumentUploadResultDto.FileUploadResultDtoBuilder;
 
 @Service
-public class FileStorageService {
+public class DocumentStorageService {
 
-    private static final Logger LOGGER = LogManager.getLogger(FileStorageService.class);
+    private static final Logger LOGGER = LogManager.getLogger(DocumentStorageService.class);
 
     private DocumentRepository documentRepository;
     private FileStorageHelper fileStorageHelper;
 
     @Autowired
-    public FileStorageService(DocumentRepository documentRepository, FileStorageHelper fileStorageHelper) {
+    public DocumentStorageService(DocumentRepository documentRepository, FileStorageHelper fileStorageHelper) {
         this.documentRepository = documentRepository;
         this.fileStorageHelper = fileStorageHelper;
     }
 
-    public FileUploadResultDto saveFileInStorage(MultipartFile file, DocumentType documentType, Date uploadingDate) {
+    public DocumentUploadResultDto saveFileInStorage(MultipartFile file, DocumentType documentType, Date uploadingDate) {
         String uploadedFilename = fileStorageHelper.saveNewFile(file);
         Document document = Document.builder()
                 .withDocumentFilename(uploadedFilename)
@@ -44,7 +44,7 @@ public class FileStorageService {
 
         Long fileId = documentRepository.save(document).getId(); //метод save возращает тот же объект что мы добавляем
 
-        return new FileUploadResultDtoBuilder().withFileUUID(fileId).build();
+        return new FileUploadResultDtoBuilder().withFileId(fileId).build();
     }
 
     public FileDownloadResultDto getFileFromStorageById(Long fileId) {

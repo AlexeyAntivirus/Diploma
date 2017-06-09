@@ -5,7 +5,7 @@
         <title>Загрузка файла</title>
     </head>
     <body>
-        <form method="post" enctype="multipart/form-data" action="#" th:action="@{/upload}" th:object="${fileUploadFormDto}">
+        <form method="post" enctype="multipart/form-data" action="#" th:action="@{/upload}" th:object="${documentUploadFormDto}">
             <input type="file" th:field="*{multipartFile}"/>
             <label th:if="${#fields.hasErrors('multipartFile')}" th:errors="*{multipartFile}" for="multipartFile"></label>
             <label th:if="${exception instanceof T(com.rx.controllers.exceptions.FileUploadIOException)}" th:text="#{upload.file.internal.error}" for="multipartFile"></label>

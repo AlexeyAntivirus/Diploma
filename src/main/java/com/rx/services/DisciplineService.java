@@ -6,7 +6,7 @@ import com.rx.dao.DocumentType;
 import com.rx.dao.User;
 import com.rx.dao.repositories.DisciplineRepository;
 import com.rx.dto.CurriculumStateDto;
-import com.rx.dto.DisciplineUpdatingResultDto;
+import com.rx.dto.DisciplineAddingResultDto;
 import com.rx.dto.forms.AddDisciplineFormDto;
 import com.rx.dto.forms.FullDisciplineFormDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +56,24 @@ public class DisciplineService {
         return disciplineRepository.findAll();
     }
 
-    public Long addDiscipline(Discipline discipline) {
-        return disciplineRepository.save(discipline).getId();
+    public DisciplineAddingResultDto addDiscipline(AddDisciplineFormDto addDisciplineFormDto) {
+        String errorField = null;
+        String errorMessage = null;
+        Long disciplineId = null;
+
+        if (disciplineRepository.existsByName(addDisciplineFormDto.getName())) {
+            errorField = "name";
+            errorMessage = "discipline.isPresent";
+        } else {
+            disciplineId = disciplineRepository.save(Discipline.builder()
+                    .withName(addDisciplineFormDto.getName())
+                    .build()).getId();
+        }
+        return DisciplineAddingResultDto.builder()
+                .withDisciplineId(disciplineId)
+                .withErrorField(errorField)
+                .withErrorMessage(errorMessage)
+                .build();
     }
 
 
@@ -117,5 +133,13 @@ public class DisciplineService {
         }
 
         return states;
+    }
+
+    public void detachUserFromDiscipline(Long disciplineId, Long userId) {
+        Discipline discipline = disciplineRepository.findOne(disciplineId);
+        User user = userService.getUserById(userId);
+
+        discipline.getUsers().remove(user);
+        user.getDisciplines().remove(discipline);
     }
 }

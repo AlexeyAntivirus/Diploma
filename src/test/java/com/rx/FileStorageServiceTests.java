@@ -3,11 +3,8 @@ package com.rx;
 import com.rx.controllers.exceptions.FileDownloadNotFoundException;
 import com.rx.controllers.exceptions.FileUploadIOException;
 import com.rx.controllers.exceptions.FileUploadInvalidPathException;
-import com.rx.dto.FileDownloadResultDto;
-import com.rx.dto.FileUploadResultDto;
 import com.rx.helpers.FileStorageHelper;
-import com.rx.services.FileStorageService;
-import org.junit.Assert;
+import com.rx.services.DocumentStorageService;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -22,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,7 +37,7 @@ public class FileStorageServiceTests {
     private FileStorageHelper fileStorageHelper;
 
     private MockMultipartFile mockMultipartFile;
-    private FileStorageService fileStorageService;
+    private DocumentStorageService documentStorageService;
 
     @Before
     public void init() {
@@ -69,15 +65,15 @@ public class FileStorageServiceTests {
 
         given(fileStorageHelper.saveNewFile(any(MultipartFile.class))).willReturn(testPath);
 
-        /*FileUploadResultDto result = fileStorageService.saveFileInStorage(mockMultipartFile);
+        /*DocumentUploadResultDto result = fileStorageService.saveFileInStorage(mockMultipartFile);
 
-        Assert.assertNotNull(result.getFileId());
-        Assert.assertEquals(testPath, ((Map<UUID, String>) Whitebox.getInternalState(fileStorageService, "database")).get(result.getFileId()));
+        Assert.assertNotNull(result.getDocumentId());
+        Assert.assertEquals(testPath, ((Map<UUID, String>) Whitebox.getInternalState(fileStorageService, "database")).get(result.getDocumentId()));
  */   }
 
     @Test(expected = FileDownloadNotFoundException.class)
     public void testGetFileWhenUuidIsNull() {
-        fileStorageService.getFileFromStorageById(null);
+        documentStorageService.getFileFromStorageById(null);
     }
 
     @Test(expected = FileDownloadNotFoundException.class)
@@ -94,7 +90,7 @@ public class FileStorageServiceTests {
 
         hashMap.put(uuid, filename);
 
-        Whitebox.setInternalState(fileStorageService, "database", hashMap);
+        Whitebox.setInternalState(documentStorageService, "database", hashMap);
         given(fileStorageHelper.getFileByName(anyString())).willReturn(tempFile);
 
         /*FileDownloadResultDto fileFromStorage = fileStorageService.getFileFromStorageById(uuid);

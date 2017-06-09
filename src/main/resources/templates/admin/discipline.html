@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8"/>
-        <title>Title</title>
+        <title>Discipline</title>
     </head>
     <body>
         <div th:if="${discipline == null}">
@@ -18,32 +18,44 @@
                     </label>
                 </div>
 
-                <th:block th:include="fragments/discipline :: user-showing-fragment">
-
-                </th:block>
+                <div>
+                    <p th:text="'Викладачі'"></p>
+                    <div th:each="user: ${discipline.getUsers()}">
+                        <a th:text="#{${user.getUserRole().getString()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|"
+                           th:href="@{'/admin/get-user/' + ${user.getId()}}"></a>
+                        <span th:text="'  '"></span>
+                        <a th:href="@{/admin/detach(disciplineId=${discipline.getId()}, userId=${user.getId()})}" th:text="'Відв\'язати'"></a>
+                    </div>
+                </div>
 
                 <div>
                     <label>
-                        Додати викладача <select th:id="userId" th:name="userId">
+                        Додати викладача <select th:field="*{userId}">
                             <option th:text="''" th:value="null" selected="selected"></option>
                             <option th:each="user: ${users}" th:value="${user.getId()}"
-                                    th:text="#{${user.getUserRole()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|">
+                                    th:text="#{${user.getUserRole().getString()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|">
                             </option>
                         </select>
                     </label>
                 </div>
 
-                <th:block th:include="fragments/discipline :: curriculums-showing-fragment">
+                <p>НМК</p>
+                <div th:each="documentRootType: ${T(com.rx.misc.DocumentRootType).values()}"
+                     th:if="${documentRootType.isCurriculum()}">
+                    <p th:text="#{${documentRootType.getString()}}"></p>
+                    <div th:each="documentSubType: ${T(com.rx.misc.DocumentSubType).resolveSubTypes(documentRootType)}">
+                        <p th:text="#{${documentSubType.getString()}}"></p>
+                        <div th:each="curriculum: ${discipline.getCurriculums()}"
+                             th:if="${curriculum.getDocumentType() == T(com.rx.misc.DocumentTypeResolver).resolve(documentRootType, documentSubType)}">
+                            <a th:text="${curriculum.getDocumentFilename()}"></a>
+                            <br/>
+                        </div>
+                    </div>
+                </div>
 
-                </th:block>
+                <button type="submit" th:form="fullDisciplineFormDto" th:text="'Редагувати'"></button>
 
-                <th:block th:include="fragments/basic-fragments :: submit-button-fragment('Редагувати', 'fullDisciplineFormDto')">
-
-                </th:block>
-
-                <th:block th:include="fragments/basic-fragments :: deleting-link-fragment('Видалити', '/admin/delete-discipline', ${discipline.getId()})">
-
-                </th:block>
+                <a th:text="'Видалити'" th:href="@{${'/admin/delete-discipline/' + discipline.getId()}}"></a>
             </form>
 
         </div>

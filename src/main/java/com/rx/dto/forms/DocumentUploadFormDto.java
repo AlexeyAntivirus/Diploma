@@ -1,15 +1,19 @@
 package com.rx.dto.forms;
 
+import com.rx.dao.DocumentType;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 
-public class FileUploadFormDto {
+public class DocumentUploadFormDto {
 
     @NotNull
     private MultipartFile multipartFile;
 
-    public FileUploadFormDto() {
+    @NotNull
+    private DocumentType documentType;
+
+    public DocumentUploadFormDto() {
     }
 
     public MultipartFile getMultipartFile() {
@@ -18,5 +22,14 @@ public class FileUploadFormDto {
 
     public void setMultipartFile(MultipartFile multipartFile) {
         this.multipartFile = multipartFile;
+    }
+
+
+    public DocumentType getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
     }
 }

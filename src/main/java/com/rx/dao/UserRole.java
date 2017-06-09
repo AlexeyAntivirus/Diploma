@@ -2,17 +2,16 @@ package com.rx.dao;
 
 
 public enum UserRole {
-    SENIOR_LECTURER,
+    LECTURER,
     ASSISTANT_LECTURER,
     HEAD_OF_DEPARTMENT,
     METHODOLOGIST,
     ADMINISTRATOR;
 
-    @Override
-    public String toString() {
+    public String getString() {
         switch (this) {
-            case SENIOR_LECTURER:
-                return "user.role.senior-lecturer";
+            case LECTURER:
+                return "user.role.lecturer";
             case ASSISTANT_LECTURER:
                 return "user.role.assistant-lecturer";
             case HEAD_OF_DEPARTMENT:

@@ -1,8 +1,7 @@
 package com.rx;
 
 import com.rx.controllers.FileDownloadController;
-import com.rx.controllers.exceptions.FileDownloadNotFoundException;
-import com.rx.services.FileStorageService;
+import com.rx.services.DocumentStorageService;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,9 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.io.ByteArrayInputStream;
 import java.util.UUID;
 
-import static com.rx.dto.FileDownloadResultDto.FileDownloadResultDtoBuilder;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -35,7 +32,7 @@ public class FileDownloadControllerTests {
     private FileSystemResource mockFileSystemResource;
 
     @MockBean
-    private FileStorageService mockFileStorageService;
+    private DocumentStorageService mockDocumentStorageService;
 
     @Autowired
     private MockMvc mvc;

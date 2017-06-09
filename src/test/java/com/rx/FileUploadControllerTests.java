@@ -3,9 +3,8 @@ package com.rx;
 import com.rx.controllers.FileUploadController;
 import com.rx.controllers.exceptions.FileUploadIOException;
 import com.rx.controllers.exceptions.FileUploadInvalidPathException;
-import com.rx.dto.FileUploadResultDto;
-import com.rx.services.FileStorageService;
-import com.rx.validators.FileUploadFormDtoValidator;
+import com.rx.services.DocumentStorageService;
+import com.rx.validators.DocumentUploadFormDtoValidator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -21,10 +20,6 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.util.UUID;
 
-import static com.rx.dto.FileUploadResultDto.FileUploadResultDtoBuilder;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -40,7 +35,7 @@ public class FileUploadControllerTests {
     private String allowedFilenamePattern;
 
     @MockBean
-    private FileStorageService mockFileStorageService;
+    private DocumentStorageService mockDocumentStorageService;
 
     private MockMvc mvc;
     private MockMultipartFile file;
@@ -53,8 +48,8 @@ public class FileUploadControllerTests {
         viewResolver.setPrefix("/WEB-INF/templates");
         viewResolver.setSuffix(".html");
 
-        FileUploadFormDtoValidator validator = new FileUploadFormDtoValidator(allowedFilenamePattern);
-        FileUploadController controller = new FileUploadController(mockFileStorageService, validator);
+        DocumentUploadFormDtoValidator validator = new DocumentUploadFormDtoValidator(allowedFilenamePattern);
+        FileUploadController controller = new FileUploadController(mockDocumentStorageService, validator);
 
         mvc = MockMvcBuilders.standaloneSetup(controller).setViewResolvers(viewResolver).build();
     }
@@ -72,7 +67,7 @@ public class FileUploadControllerTests {
     @Test
     public void testHandleUploadWhenFileUploaded() throws Exception {
         UUID uuid = UUID.randomUUID();
-        //FileUploadResultDto result = new FileUploadResultDtoBuilder().withFileUUID(uuid).build();
+        //DocumentUploadResultDto result = new FileUploadResultDtoBuilder().withFileId(uuid).build();
 
         //given(mockFileStorageService.saveFileInStorage(file)).willReturn(result);
 

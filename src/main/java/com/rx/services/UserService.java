@@ -1,5 +1,6 @@
 package com.rx.services;
 
+import com.rx.dao.Discipline;
 import com.rx.dao.User;
 import com.rx.dao.repositories.UserRepository;
 import com.rx.dto.UserAddingResultDto;
@@ -88,7 +89,6 @@ public class UserService {
     }
 
     public UserUpdatingResultDto updateUserFully(Long id, FullUserFormDto fullUserFormDto) {
-
         User user = this.getUserById(id);
         String errorMessage = null;
 
@@ -120,6 +120,10 @@ public class UserService {
     }
 
     public void deleteById(Long id) {
+        User one = userRepository.findOne(id);
+        for (Discipline discipline: one.getDisciplines()) {
+            discipline.getUsers().remove(one);
+        }
         userRepository.delete(id);
     }
 

@@ -21,10 +21,10 @@ public class Discipline {
     @Column(length = 512, nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Set<Document> curriculums;
 
-    @ManyToMany(mappedBy = "disciplines", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "disciplines", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<User> users;
 
 

@@ -28,8 +28,8 @@ public enum DocumentRootType {
                 this != DocumentRootType.TEACHING_LOAD;
     }
 
-    @Override
-    public String toString() {
+
+    public String getString() {
         switch (this) {
             case SYLLABUS:
                 return "document.type.syllabus";

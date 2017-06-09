@@ -143,7 +143,7 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
                 .withLastName("Попков")
                 .withFirstName("Денис")
                 .withMiddleName("Миколайович")
-                .withUserRole(UserRole.SENIOR_LECTURER)
+                .withUserRole(UserRole.LECTURER)
                 .build());
     }
 }

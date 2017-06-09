@@ -15,8 +15,7 @@ public enum DocumentSubType {
     PRACTICE_GUIDELINES,
     NO_SUB_TYPE;
 
-    @Override
-    public String toString() {
+    public String getString() {
         switch (this) {
             case TEXT_BOOK:
                 return "document.sub-type.text-book";

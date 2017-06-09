@@ -1,7 +1,7 @@
 package com.rx;
 
-import com.rx.dto.forms.FileUploadFormDto;
-import com.rx.validators.FileUploadFormDtoValidator;
+import com.rx.dto.forms.DocumentUploadFormDto;
+import com.rx.validators.DocumentUploadFormDtoValidator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -27,16 +27,16 @@ public class FileUploadFormDtoValidatorTests {
     @Value("${app.storage.allowed.filename}")
     private String allowedFilenamePattern;
 
-    private FileUploadFormDtoValidator validator;
+    private DocumentUploadFormDtoValidator validator;
 
     @Before
     public void init() {
-        validator = new FileUploadFormDtoValidator(allowedFilenamePattern);
+        validator = new DocumentUploadFormDtoValidator(allowedFilenamePattern);
     }
 
     @Test(expected = PatternSyntaxException.class)
     public void testConstructorWhenAllowedFilenamePatternIsInvalid() {
-        new FileUploadFormDtoValidator("^[a-zA-Z0-9.()\\-_\\pInCyrillic}]+\\.(doc|docx|xls|xlsx|pdf|txt|rtf)$");
+        new DocumentUploadFormDtoValidator("^[a-zA-Z0-9.()\\-_\\pInCyrillic}]+\\.(doc|docx|xls|xlsx|pdf|txt|rtf)$");
     }
 
     @Test
@@ -48,7 +48,7 @@ public class FileUploadFormDtoValidatorTests {
 
     @Test
     public void testSupportsWhenAllIsWell() {
-        Assert.assertTrue(validator.supports(FileUploadFormDto.class));
+        Assert.assertTrue(validator.supports(DocumentUploadFormDto.class));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class FileUploadFormDtoValidatorTests {
 
     @Test
     public void testValidateWhenAllIsWell() {
-        FileUploadFormDto dto = new FileUploadFormDto();
+        DocumentUploadFormDto dto = new DocumentUploadFormDto();
         Errors errors = new BeanPropertyBindingResult(dto, "fileUploadFormDto");
 
         dto.setMultipartFile(new MockMultipartFile("multipartFile", "text.txt", "text/plain", "This is a test".getBytes()));
@@ -70,7 +70,7 @@ public class FileUploadFormDtoValidatorTests {
 
     @Test
     public void testValidateMultipartFileIsEmpty() {
-        FileUploadFormDto dto = new FileUploadFormDto();
+        DocumentUploadFormDto dto = new DocumentUploadFormDto();
         Errors errors = new BeanPropertyBindingResult(dto, "fileUploadFormDto");
 
         dto.setMultipartFile(new MockMultipartFile("multipartFile", "text.txt", "text/plain", (byte[]) null));
@@ -84,7 +84,7 @@ public class FileUploadFormDtoValidatorTests {
 
     @Test
     public void testValidateMultipartFileOriginalNameIsInvalid() {
-        FileUploadFormDto dto = new FileUploadFormDto();
+        DocumentUploadFormDto dto = new DocumentUploadFormDto();
         Errors errors = new BeanPropertyBindingResult(dto, "fileUploadFormDto");
 
         dto.setMultipartFile(new MockMultipartFile("multipartFile", "text.sh", "text/plain", "echo \"Hello!\"".getBytes()));

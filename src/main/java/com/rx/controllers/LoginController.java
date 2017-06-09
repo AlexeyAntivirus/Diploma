@@ -17,12 +17,12 @@ import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/login")
-public class AuthorizationController {
+public class LoginController {
 
     private UserService userService;
 
     @Autowired
-    public AuthorizationController(UserService userService) {
+    public LoginController(UserService userService) {
         this.userService = userService;
     }
 
@@ -34,9 +34,9 @@ public class AuthorizationController {
     }
 
     @PostMapping
-    public String authorize(@Valid LoginFormDto loginFormDto,
-                            BindingResult bindingResult,
-                            Model model) {
+    public String login(@Valid LoginFormDto loginFormDto,
+                        BindingResult bindingResult,
+                        Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("authorizationError", "user.login.errors");
             return "login";

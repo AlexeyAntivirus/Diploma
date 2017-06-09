@@ -4,7 +4,7 @@ package com.rx.controllers;
 import com.rx.dao.Discipline;
 import com.rx.dao.User;
 import com.rx.dao.UserRole;
-import com.rx.dto.DisciplineUpdatingResultDto;
+import com.rx.dto.DisciplineAddingResultDto;
 import com.rx.dto.UserAddingResultDto;
 import com.rx.dto.UserUpdatingResultDto;
 import com.rx.dto.forms.AddDisciplineFormDto;
@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Controller
@@ -63,15 +63,15 @@ public class AdminController {
         }
 
         UserUpdatingResultDto userUpdatingResultDto = userService.updateUserFully(id, fullUserFormDto);
-        String errorMessage = userUpdatingResultDto.getErrorMessage();
+        User user = userUpdatingResultDto.getUpdatedUser();
 
-        if (errorMessage != null) {
-            bindingResult.rejectValue(userUpdatingResultDto.getErrorField(), errorMessage);
+        if (user == null) {
+            bindingResult.rejectValue(userUpdatingResultDto.getErrorField(), userUpdatingResultDto.getErrorMessage());
             model.addAttribute("fullUserFormDto", fullUserFormDto);
         }
 
-        model.addAttribute("user", userUpdatingResultDto.getUpdatedUser());
-        return "user";
+        model.addAttribute("user", user);
+        return "admin/user";
     }
 
     @GetMapping(name = "/add-user", value = "/add-user")
@@ -85,21 +85,21 @@ public class AdminController {
                           Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("userFormDto", fullUserFormDto);
-            return "add-user";
+            return "admin/add-user";
         }
 
         UserAddingResultDto userAddingResultDto = userService.addUser(fullUserFormDto);
-        String errorMessage = userAddingResultDto.getErrorMessage();
+        Long userId = userAddingResultDto.getUserId();
 
-        if (errorMessage != null) {
-            bindingResult.rejectValue(userAddingResultDto.getErrorField(), errorMessage);
+        if (userId == null) {
+            bindingResult.rejectValue(userAddingResultDto.getErrorField(), userAddingResultDto.getErrorMessage());
             model.addAttribute("fullUserFormDto", fullUserFormDto);
-            return "add-user";
+            return "admin/add-user";
         } else {
             model.addAttribute("resultText", "user.add.message");
             model.addAttribute("linkText", "user.add.link.text");
-            model.addAttribute("link", "/user/get/" + userAddingResultDto.getUserId());
-            return "add-result";
+            model.addAttribute("link", "/admin/get-user/" + userId);
+            return "admin/add-result";
         }
     }
 
@@ -122,16 +122,18 @@ public class AdminController {
                                 Model model) {
         if (bindingResult.hasErrors()) {
             return "admin/add-discipline";
-        } else if (disciplineService.existsByName(addDisciplineFormDto.getName())) {
-            bindingResult.rejectValue("name", "discipline.isPresent");
+        }
+
+        DisciplineAddingResultDto disciplineAddingResultDto = disciplineService.addDiscipline(addDisciplineFormDto);
+        Long disciplineId = disciplineAddingResultDto.getDisciplineId();
+
+        if (disciplineId == null) {
+            bindingResult.rejectValue(disciplineAddingResultDto.getErrorField(), disciplineAddingResultDto.getErrorMessage());
             return "admin/add-discipline";
         } else {
-            Long id = disciplineService.addDiscipline(Discipline.builder()
-                    .withName(addDisciplineFormDto.getName())
-                    .build());
             model.addAttribute("resultText", "discipline.add.message");
             model.addAttribute("linkText", "discipline.add.link.text");
-            model.addAttribute("link", "/admin/get-discipline/" + id);
+            model.addAttribute("link", "/admin/get-discipline/" + disciplineId);
             return "admin/add-result";
         }
     }
@@ -142,12 +144,14 @@ public class AdminController {
         modelAndView.getModel().put("id", id);
         Discipline disciplineById = disciplineService.getDisciplineById(id);
 
-        List<User> notTeachingThisDisciplineUsers = StreamSupport.stream(userService.getAllUsers().spliterator(), false)
-                .filter(user -> !disciplineById.getUsers().contains(user) && user.getUserRole() != UserRole.ADMINISTRATOR)
-                .collect(Collectors.toList());
+        if (disciplineById != null) {
+            List<User> notTeachingThisDisciplineUsers = StreamSupport.stream(userService.getAllUsers().spliterator(), false)
+                    .filter(user -> !disciplineById.getUsers().contains(user) && user.getUserRole() != UserRole.ADMINISTRATOR)
+                    .collect(Collectors.toList());
+            modelAndView.getModel().put("users", notTeachingThisDisciplineUsers);
+        }
 
         modelAndView.getModel().put("discipline", disciplineById);
-        modelAndView.getModel().put("users", notTeachingThisDisciplineUsers);
 
         return modelAndView;
     }
@@ -161,8 +165,10 @@ public class AdminController {
             model.addAttribute("fullDisciplineFormDto", fullDisciplineFormDto);
         }
 
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
         model.addAttribute("discipline", disciplineService.updateDiscipline(id, fullDisciplineFormDto));
-        return "admin/discipline";
+
+        return "redirect:/admin/get-discipline/" + id;
     }
 
     @GetMapping(name = "/delete-discipline/{id}", value = "/delete-discipline/{id}")
@@ -170,7 +176,18 @@ public class AdminController {
                                    Model model) {
         disciplineService.deleteById(id);
         model.addAttribute("resultText", "discipline.delete.message");
+
         return "admin/delete-result";
+    }
+
+    @GetMapping(name = "/detach", value = "/detach")
+    public String detachUserFromDiscipline(@RequestParam("disciplineId") Long disciplineId,
+                                           @RequestParam("userId") Long userId,
+                                           Model model) {
+        disciplineService.detachUserFromDiscipline(disciplineId, userId);
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
+
+        return "redirect:/admin/get-discipline/" + disciplineId;
     }
 
     private ModelAndView fullUserForm() {
@@ -178,7 +195,7 @@ public class AdminController {
     }
 
     private ModelAndView addUserForm() {
-        return new ModelAndView("admin/add-user", "userFormDto", new FullUserFormDto());
+        return new ModelAndView("admin/add-user", "fullUserFormDto", new FullUserFormDto());
     }
 
     private ModelAndView fullDisciplineForm() {
@@ -188,6 +205,4 @@ public class AdminController {
     private ModelAndView addDisciplineForm() {
         return new ModelAndView("admin/add-discipline", "addDisciplineFormDto", new AddDisciplineFormDto());
     }
-
-
 }

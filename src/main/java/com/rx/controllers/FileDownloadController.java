@@ -2,7 +2,7 @@ package com.rx.controllers;
 
 import com.rx.controllers.exceptions.FileDownloadNotFoundException;
 import com.rx.dto.FileDownloadResultDto;
-import com.rx.services.FileStorageService;
+import com.rx.services.DocumentStorageService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,6 @@ import org.springframework.web.util.UriUtils;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/download")
@@ -31,18 +30,18 @@ public class FileDownloadController {
 
     private static final Logger LOGGER = LogManager.getLogger(FileDownloadController.class);
 
-    private FileStorageService fileStorageService;
+    private DocumentStorageService documentStorageService;
 
     @Autowired
-    public FileDownloadController(FileStorageService fileStorageService) {
-        this.fileStorageService = fileStorageService;
+    public FileDownloadController(DocumentStorageService documentStorageService) {
+        this.documentStorageService = documentStorageService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public Resource handleDownload(@RequestParam("fileId") Long fileId, HttpServletResponse response) throws IOException {
 
-        FileDownloadResultDto result = this.fileStorageService.getFileFromStorageById(fileId);
+        FileDownloadResultDto result = this.documentStorageService.getFileFromStorageById(fileId);
         FileSystemResource resource = result.getFileResource();
         String filename = UriUtils.encode(resource.getFilename(), StandardCharsets.UTF_8.name());
 
