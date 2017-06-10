@@ -3,7 +3,7 @@ package com.rx.dao;
 
 public enum UserRole {
     LECTURER,
-    ASSISTANT_LECTURER,
+    ASSISTANT,
     HEAD_OF_DEPARTMENT,
     METHODOLOGIST,
     ADMINISTRATOR;
@@ -12,7 +12,7 @@ public enum UserRole {
         switch (this) {
             case LECTURER:
                 return "user.role.lecturer";
-            case ASSISTANT_LECTURER:
+            case ASSISTANT:
                 return "user.role.assistant-lecturer";
             case HEAD_OF_DEPARTMENT:
                 return "user.role.head-of-department";

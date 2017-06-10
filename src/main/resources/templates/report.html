@@ -3,41 +3,52 @@
     <head>
         <meta charset="UTF-8"/>
         <title>Report</title>
+
+        <link rel="stylesheet" type="text/css" href="../static/css/normalize.css" th:href="@{/css/normalize.css}"/>
+        <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}"/>
+        <link rel="stylesheet" type="text/css" href="../static/css/custom.css" th:href="@{/css/custom.css}"/>
     </head>
     <body>
-        <table border="1">
-            <tr th:with="list = ${#lists.toList(T(com.rx.misc.DocumentRootType).values())}">
-                <th th:text="|Назва дисципліни|" th:rowspan="2">
-                </th>
-                <th:block th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
-                          th:with="documentRootType = ${T(com.rx.misc.DocumentRootType).resolve(documentType)},
+        <th:block th:fragment="report">
+            <div class="report-container">
+                <table class="report-table" border="1">
+                    <tr th:with="list = ${#lists.toList(T(com.rx.misc.DocumentRootType).values())}">
+                        <th th:text="|Назва дисципліни|" th:rowspan="2">
+                        </th>
+                        <th:block th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
+                                  th:with="documentRootType = ${T(com.rx.misc.DocumentRootType).resolve(documentType)},
                             subTypeCount = ${T(com.rx.misc.DocumentSubType).resolveSubTypes(documentRootType).length}">
-                    <th th:colspan="${subTypeCount}"
-                        th:rowspan="${subTypeCount > 1 ? 1 : 2}"
-                        th:if="${list.remove(documentRootType) and documentRootType.isCurriculum()}">
-                        <p th:text="#{${documentRootType.getString()}}"></p>
-                    </th>
-                </th:block>
-            </tr>
-            <tr>
-                <th:block th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
-                          th:with="documentSubType = ${T(com.rx.misc.DocumentSubType).resolve(documentType)}">
-                    <th th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()
+                            <th th:colspan="${subTypeCount}"
+                                th:rowspan="${subTypeCount > 1 ? 1 : 2}"
+                                th:if="${list.remove(documentRootType) and documentRootType.isCurriculum()}">
+                                <p th:text="#{${documentRootType.getString()}}"></p>
+                            </th>
+                        </th:block>
+                    </tr>
+                    <tr>
+                        <th:block th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
+                                  th:with="documentSubType = ${T(com.rx.misc.DocumentSubType).resolve(documentType)}">
+                            <th th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()
                                 and documentSubType != T(com.rx.misc.DocumentSubType).NO_SUB_TYPE}">
-                        <p th:text="#{${documentSubType.getString()}}"></p>
-                    </th>
-                </th:block>
-            </tr>
-            <tr th:each="curriculumState: ${curriculumStates}">
-                <td>
-                    <a th:text="${curriculumState.getDisciplineName()}" th:href="@{'/admin/get-discipline/' + ${curriculumState.getDisciplineId()}}"></a>
-                </td>
-                <th:block th:with="map = ${curriculumState.getCurriculumState()}">
-                    <td th:each="documentType: ${T(com.rx.dao.DocumentType).values()}" th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()}">
-                        <p th:text="${map.get(documentType) ? '+' : '-'}"></p>
-                    </td>
-                </th:block>
-            </tr>
-        </table>
+                                <p th:text="#{${documentSubType.getString()}}"></p>
+                            </th>
+                        </th:block>
+                    </tr>
+                    <tr th:each="curriculumState: ${curriculumStates}">
+                        <td>
+                            <a th:text="${curriculumState.getDisciplineName()}" th:href="@{'/discipline/' + ${curriculumState.getDisciplineId()}(teacherId=${user.getId()})}"></a>
+                        </td>
+                        <th:block th:with="map = ${curriculumState.getCurriculumState()}">
+                            <td th:each="documentType: ${T(com.rx.dao.DocumentType).values()}" th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()}">
+                                <p th:text="${map.get(documentType) ? '+' : '-'}"></p>
+                            </td>
+                        </th:block>
+                    </tr>
+                </table>
+            </div>
+        </th:block>
+
+        <script src="../static/js/jquery-3.2.1.js" th:src="@{/js/jquery-3.2.1.js}"></script>
+        <script src="../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
     </body>
 </html>

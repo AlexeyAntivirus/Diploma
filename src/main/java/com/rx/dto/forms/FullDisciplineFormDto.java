@@ -13,7 +13,7 @@ public class FullDisciplineFormDto {
     @NotEmpty(message = "{field.not.specified}")
     private String name;
 
-    private Long userId;
+    private Long teacherId;
 
     public String getName() {
         return name;
@@ -23,11 +23,11 @@ public class FullDisciplineFormDto {
         this.name = name;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getTeacherId() {
+        return teacherId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setTeacherId(Long teacherId) {
+        this.teacherId = teacherId;
     }
 }

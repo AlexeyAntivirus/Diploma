@@ -47,7 +47,7 @@ public class LoginController {
             model.addAttribute("authorizationError", "user.login.not-authorize");
             return "login";
         } else {
-            return "redirect:/user/get/" + user.getId();
+            return "redirect:/user?userId=" + user.getId();
         }
     }
 

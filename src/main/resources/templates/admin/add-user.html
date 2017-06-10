@@ -5,51 +5,93 @@
         <title>Title</title>
     </head>
     <body>
-        <form id="fullUserFormDto" action="#" th:action="@{/admin/add-user}" method="post" th:object="${fullUserFormDto}">
-            <label>
-                Логін <input type="text" th:field="*{login}"/>
+        <th:block th:fragment="admin-add-user">
+            <form id="fullUserFormDto" action="#" th:action="@{/admin/add-user(userId=${userId})}" method="post" th:object="${fullUserFormDto}">
                 <label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
-            </label>
-            <br/>
-            <label>
-                Email <input type="email" th:field="*{email}"/>
                 <label th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></label>
-            </label>
-            <br/>
-            <label>
-                Пароль <input type="password" th:field="*{password}"/>
                 <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></label>
-            </label>
-            <br/>
-            <label>
-                Прізвище <input type="text" th:field="*{lastName}"/>
                 <label th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></label>
-            </label>
-            <br/>
-            <label>
-                Ім'я <input type="text" th:field="*{firstName}"/>
                 <label th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></label>
-            </label>
-            <br/>
-            <label>
-                По батькові <input type="text" th:field="*{middleName}"/>
                 <label th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></label>
-            </label>
-            <br/>
-            <div>
-                <label>
-                    Роль <select th:field="*{userRole}">
-                        <option th:text="''" th:value="null" selected="selected"></option>
-                        <option th:each="userRoleValue: ${T(com.rx.dao.UserRole).values()}"
-                            th:text="#{${userRoleValue.getString()}}"
-                            th:value="${userRoleValue}"
-                            th:if="${userRoleValue != T(com.rx.dao.UserRole).ADMINISTRATOR}"></option>
-                    </select>
-                    <label th:if="${#fields.hasErrors('userRole')}" th:errors="*{userRole}"></label>
-                </label>
-            </div>
-            <br/>
-            <button type="submit" form="fullUserFormDto">Додати</button>
-        </form>
+                <label th:if="${#fields.hasErrors('userRole')}" th:errors="*{userRole}"></label>
+
+                <div class="container-fluid">
+                    <div class="row form-group">
+                        <div class="col-md-2">
+                            <p>Логін</p>
+                        </div>
+                        <div class="col-md-10">
+                            <input class="form-control" type="text" th:field="*{login}"/>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-2">
+                            <p>Email</p>
+                        </div>
+                        <div class="col-md-10">
+                            <input class="form-control" type="email" th:field="*{email}"/>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-2">
+                            <p>Пароль</p>
+                        </div>
+                        <div class="col-md-10">
+                            <input class="form-control" type="password" th:field="*{password}"/>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-2">
+                            <p>Прізвище</p>
+                        </div>
+                        <div class="col-md-10">
+                            <input class="form-control" type="text" th:field="*{lastName}"/>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-2">
+                            <p>Ім'я</p>
+                        </div>
+                        <div class="col-md-10">
+                            <input class="form-control" type="text" th:field="*{firstName}"/>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-2">
+                            <p>По батькові</p>
+                        </div>
+                        <div class="col-md-10">
+                            <input class="form-control" type="text" th:field="*{middleName}"/>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-2">
+                            <p>Роль</p>
+                        </div>
+                        <div class="col-md-10">
+                            <select class="form-control" th:field="*{userRole}">
+                                <option th:text="''" th:value="null" selected="selected"></option>
+                                <option th:each="userRoleValue: ${T(com.rx.dao.UserRole).values()}"
+                                        th:text="#{${userRoleValue.getString()}}"
+                                        th:value="${userRoleValue}"
+                                        th:if="${userRoleValue != T(com.rx.dao.UserRole).ADMINISTRATOR}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-12">
+                            <button class="btn btn-lg btn-success btn-block" type="submit" form="fullUserFormDto" th:text="'Додати'"></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </th:block>
     </body>
 </html>

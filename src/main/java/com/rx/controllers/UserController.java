@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -28,18 +29,30 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(name = "/get/{id}", value = "/get/{id}")
-    public ModelAndView getUser(@PathVariable("id") Long id) {
+    @GetMapping(name = "/dashboard", value = "/dashboard")
+    public ModelAndView getUserDashboard(@RequestParam("userId") Long id) {
 
         ModelAndView modelAndView = userForm();
         modelAndView.getModel().put("user", userService.getUserById(id));
+        modelAndView.getModel().put("page", "dashboard");
         modelAndView.getModel().put("id", id);
 
         return modelAndView;
     }
 
-    @PostMapping(name = "/get/{id}", value = "/get/{id}")
-    public String updateUser(@PathVariable("id") Long id,
+    @GetMapping(name = "/profile", value = "/profile")
+    public ModelAndView getUserProfile(@RequestParam("userId") Long id) {
+
+        ModelAndView modelAndView = userForm();
+        modelAndView.getModel().put("user", userService.getUserById(id));
+        modelAndView.getModel().put("page", "profile");
+        modelAndView.getModel().put("id", id);
+
+        return modelAndView;
+    }
+
+    @PostMapping(name = "/profile", value = "/profile")
+    public String updateUser(@RequestParam("userId") Long userId,
                              @Valid UserFormDto userFormDto,
                              BindingResult bindingResult,
                              Model model) {
@@ -48,7 +61,7 @@ public class UserController {
             model.addAttribute("userFormDto", userFormDto);
         }
 
-        UserUpdatingResultDto userUpdatingResultDto = userService.updateUser(id, userFormDto);
+        UserUpdatingResultDto userUpdatingResultDto = userService.updateUser(userId, userFormDto);
         String errorMessage = userUpdatingResultDto.getErrorMessage();
 
         if (errorMessage != null) {
@@ -57,19 +70,11 @@ public class UserController {
         }
 
         model.addAttribute("user", userUpdatingResultDto.getUpdatedUser());
-        return "user";
-    }
-
-    @GetMapping(name = "/users", value = "/users")
-    public String getUsers(Model model) {
-
-        Iterable<User> users = userService.getAllUsers();
-
-        model.addAttribute("users", users);
-        return "users";
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
+        return "redirect:/user/profile?userId=" + userId;
     }
 
     private ModelAndView userForm() {
-        return new ModelAndView("user", "userFormDto", new FullUserFormDto());
+        return new ModelAndView("main", "userFormDto", new FullUserFormDto());
     }
 }

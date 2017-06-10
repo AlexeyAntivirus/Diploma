@@ -3,61 +3,77 @@
     <head>
         <meta charset="UTF-8"/>
         <title>Discipline</title>
+
+        <link rel="stylesheet" type="text/css" href="../../static/css/normalize.css" th:href="@{/css/normalize.css}"/>
+        <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}"/>
+        <link rel="stylesheet" type="text/css" href="../../static/css/custom.css" th:href="@{/css/custom.css}"/>
     </head>
     <body>
-        <div th:if="${discipline == null}">
-            <p th:text="${'Discipline with id ' + id + ' is not exists'}"></p>
-        </div>
-        <div th:unless="${discipline == null}">
-            <form id="fullDisciplineFormDto" th:action="@{'/admin/get-discipline/' + ${id}}" method="post"
-                  th:object="${fullDisciplineFormDto}">
-                <div>
-                    <label>
-                        Назва <input type="text" th:id="name" th:name="name" th:value="${discipline.getName()}"/>
-                        <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></label>
-                    </label>
-                </div>
+        <th:block th:fragment="admin-discipline">
+            <div th:if="${discipline == null}">
+                <p th:text="${'Discipline with id ' + id + ' is not exists'}"></p>
+            </div>
+            <div th:unless="${discipline == null}">
+                <form id="fullDisciplineFormDto" th:action="@{'/admin/get-discipline/' + ${id}(userId=${user.getId()})}" method="post"
+                      th:object="${fullDisciplineFormDto}">
+                    <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></label>
 
-                <div>
-                    <p th:text="'Викладачі'"></p>
-                    <div th:each="user: ${discipline.getUsers()}">
-                        <a th:text="#{${user.getUserRole().getString()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|"
-                           th:href="@{'/admin/get-user/' + ${user.getId()}}"></a>
-                        <span th:text="'  '"></span>
-                        <a th:href="@{/admin/detach(disciplineId=${discipline.getId()}, userId=${user.getId()})}" th:text="'Відв\'язати'"></a>
-                    </div>
-                </div>
+                    <div class="container-fluid">
+                        <div class="row form-group">
+                            <div class="col-md-2">
+                                <p>Назва</p>
+                            </div>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" th:id="name" th:name="name" th:value="${discipline.getName()}"/>
+                            </div>
+                        </div>
 
-                <div>
-                    <label>
-                        Додати викладача <select th:field="*{userId}">
-                            <option th:text="''" th:value="null" selected="selected"></option>
-                            <option th:each="user: ${users}" th:value="${user.getId()}"
-                                    th:text="#{${user.getUserRole().getString()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|">
-                            </option>
-                        </select>
-                    </label>
-                </div>
+                        <div class="row form-group">
+                            <h3 class="col-md-12" th:text="'Викладачі'"></h3>
+                            <div class="col-md-12" th:each="value: ${discipline.getUsers()}">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <a class="discipline-link-mini" th:text="#{${value.getUserRole().getString()}} + ' ' + |${value.getLastName()} ${value.getFirstName()} ${value.getMiddleName()}|"
+                                           th:href="@{'/admin/get-user/' + ${value.getId()}(userId=${user.getId()})}"></a>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a class="remove-color discipline-link-mini" th:href="@{/admin/detach(disciplineId=${discipline.getId()}, userId=${user.getId()}, teacherId=${value.getId()})}">
+                                            <span class="glyphicon glyphicon-minus-sign remove-color discipline-link-mini"></span> Відв'язати
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                <p>НМК</p>
-                <div th:each="documentRootType: ${T(com.rx.misc.DocumentRootType).values()}"
-                     th:if="${documentRootType.isCurriculum()}">
-                    <p th:text="#{${documentRootType.getString()}}"></p>
-                    <div th:each="documentSubType: ${T(com.rx.misc.DocumentSubType).resolveSubTypes(documentRootType)}">
-                        <p th:text="#{${documentSubType.getString()}}"></p>
-                        <div th:each="curriculum: ${discipline.getCurriculums()}"
-                             th:if="${curriculum.getDocumentType() == T(com.rx.misc.DocumentTypeResolver).resolve(documentRootType, documentSubType)}">
-                            <a th:text="${curriculum.getDocumentFilename()}"></a>
-                            <br/>
+                        <div class="row form-group">
+                            <div class="col-md-2">
+                                <p>Додати викладача</p>
+                            </div>
+                            <div class="col-md-10">
+                                <select class="form-control" th:field="*{teacherId}">
+                                    <option th:text="''" th:value="null" selected="selected"></option>
+                                    <option th:each="user: ${users}" th:value="${user.getId()}"
+                                            th:text="#{${user.getUserRole().getString()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <button class="btn btn-lg btn-success btn-block" type="submit" th:form="fullDisciplineFormDto" th:text="'Редагувати'"></button>
+                            </div>
+                            <div class="col-md-6">
+                                <a class="remove-color discipline-link" th:href="@{${'/admin/delete-discipline/' + discipline.getId()}(userId=${user.getId()})}">
+                                    <span class="glyphicon glyphicon-remove-circle remove-color discipline-link" aria-hidden="true"></span> Видалити</a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
+            </div>
+        </th:block>
 
-                <button type="submit" th:form="fullDisciplineFormDto" th:text="'Редагувати'"></button>
-
-                <a th:text="'Видалити'" th:href="@{${'/admin/delete-discipline/' + discipline.getId()}}"></a>
-            </form>
-
-        </div>
+        <script src="../../static/js/jquery-3.2.1.js" th:src="@{/js/jquery-3.2.1.js}"></script>
+        <script src="../../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
     </body>
 </html>

@@ -2,4 +2,15 @@
 
 .idea
 .mvn
+.gitignore
+target
+
 *.iml
+*.log
+*.db
+
+bootstrap*
+normalize*
+glyphicons*
+jquery*
+npm*

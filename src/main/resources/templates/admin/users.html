@@ -3,20 +3,30 @@
     <head>
         <meta charset="UTF-8"/>
         <title>Users</title>
+
+        <link rel="stylesheet" type="text/css" href="../../static/css/normalize.css" th:href="@{/css/normalize.css}"/>
+        <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}"/>
+        <link rel="stylesheet" type="text/css" href="../../static/css/custom.css" th:href="@{/css/custom.css}"/>
     </head>
     <body>
-        <div th:each="user: ${users}">
-            <p th:text="${'Логін: ' + user.getLogin()}"></p>
-            <p th:text="${'Email: ' + user.getEmail()}"></p>
-            <p th:text="${'ПІБ: ' + user.getLastName() + ' ' + user.getFirstName() + ' ' + user.getMiddleName()}"></p>
-            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).LECTURER}" th:text="'Роль: Старший викладач'"></p>
-            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ASSISTANT_LECTURER}" th:text="'Роль: Асистент'"></p>
-            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}" th:text="'Роль: Завідуючий кафедри'"></p>
-            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}" th:text="'Роль: Методист'"></p>
-            <p th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ADMINISTRATOR}" th:text="'Роль: Адміністратор'"></p>
-            <a th:href="@{${'/user/delete-user/' + user.getId()}}">Видалити</a>
-            <br/>
-            <br/>
-        </div>
+        <th:block th:fragment="admin-users">
+            <div class="container-fluid">
+                <div class="row" th:each="value: ${users}">
+                    <div class="col-md-6">
+                        <a class="discipline-link-mini" th:text="#{${value.getUserRole().getString()}} + ' ' + |${value.getLastName()} ${value.getFirstName()} ${value.getMiddleName()}|"
+                           th:href="@{'/admin/get-user/' + ${value.getId()}(userId=${user.getId()})}"></a>
+                    </div>
+                    <div class="col-md-6">
+                        <a class="remove-color discipline-link"
+                           th:href="@{${'/admin/delete-user/' + user.getId()}(userId=${userId})}">
+                            <span class="glyphicon glyphicon-remove-circle remove-color discipline-link"
+                                  aria-hidden="true"></span> Видалити</a>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+
+        <script src="../../static/js/jquery-3.2.1.js" th:src="@{/js/jquery-3.2.1.js}"></script>
+        <script src="../../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
     </body>
 </html>

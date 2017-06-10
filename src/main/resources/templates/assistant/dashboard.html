@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <title>Dashboard</title>
+
+        <link rel="stylesheet" type="text/css" href="../../static/css/normalize.css" th:href="@{/css/normalize.css}"/>
+        <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}"/>
+        <link rel="stylesheet" type="text/css" href="../../static/css/custom.css" th:href="@{/css/custom.css}"/>
+    </head>
+    <body>
+        <th:block th:fragment="dashboard">
+            <section>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="dashboard-function col-md-4">
+                            <div class="text-center">
+                                <div class="box-top">
+                                    <h2>Профіль</h2>
+                                </div>
+                                <div class="box-down">
+                                    <p>Переглянути та редагувати свої персональні дані.</p>
+                                </div>
+                                <a th:href="@{/user/profile(userId=${user.getId()})}">
+                                    <span class="dashboard-function-hyper-span"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="dashboard-function col-md-4">
+                            <div class="text-center">
+                                <div class="box-top">
+                                    <h2>Перелік дисциплін</h2>
+                                </div>
+                                <div class="box-down">
+                                    <p>Переглянути дисципліни, які ведуться Вами.</p>
+                                </div>
+                                <a th:href="@{/discipline/disciplines(userId=${user.getId()})}">
+                                    <span class="dashboard-function-hyper-span"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="dashboard-function col-md-4">
+                            <div class="text-center">
+                                <div class="box-top">
+                                    <h2>Нормативні акти</h2>
+                                </div>
+                                <div class="box-down">
+                                    <p>Переглянути усі прикази, розпорядження та інші нормативні акти.</p>
+                                </div>
+                                <a th:href="@{/user/disciplines(userId=${user.getId()})}">
+                                    <span class="dashboard-function-hyper-span"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="dashboard-function col-md-4">
+                            <div class="text-center">
+                                <div class="box-top">
+                                    <h2>Навчальні плани</h2>
+                                </div>
+                                <div class="box-down">
+                                    <p>Переглянути усі навчальні плани.</p>
+                                </div>
+                                <a th:href="@{/syllabuses(userId=${user.getId()})}">
+                                    <span class="dashboard-function-hyper-span"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </th:block>
+    </body>
+</html>

@@ -43,10 +43,14 @@ public class AdminController {
     }
 
     @GetMapping(name = "/get-user/{id}", value = "/get-user/{id}")
-    public ModelAndView getUser(@PathVariable("id") Long id) {
+    public ModelAndView getUser(@PathVariable("id") Long id,
+                                @RequestParam("userId") Long userId) {
 
         ModelAndView modelAndView = fullUserForm();
-        modelAndView.getModel().put("user", userService.getUserById(id));
+        modelAndView.getModel().put("teacher", userService.getUserById(id));
+        modelAndView.getModel().put("userId", userId);
+        modelAndView.getModel().put("user", userService.getUserById(userId));
+        modelAndView.getModel().put("page", "admin-user");
         modelAndView.getModel().put("id", id);
 
         return modelAndView;
@@ -54,6 +58,7 @@ public class AdminController {
 
     @PostMapping(name = "/get-user/{id}", value = "/get-user/{id}")
     public String updateUserFully(@PathVariable("id") Long id,
+                                  @RequestParam("userId") Long userId,
                                   @Valid FullUserFormDto fullUserFormDto,
                                   BindingResult bindingResult,
                                   Model model) {
@@ -70,58 +75,87 @@ public class AdminController {
             model.addAttribute("fullUserFormDto", fullUserFormDto);
         }
 
-        model.addAttribute("user", user);
-        return "admin/user";
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
+
+        return "redirect:/admin/get-user/" + id + "?userId=" + userId;
     }
 
     @GetMapping(name = "/add-user", value = "/add-user")
-    public ModelAndView getAddingUserForm() {
-        return addUserForm();
+    public ModelAndView getAddingUserForm(@RequestParam("userId") Long userId) {
+        ModelAndView modelAndView = addUserForm();
+
+        modelAndView.getModel().put("user", userService.getUserById(userId));
+        modelAndView.getModel().put("userId", userId);
+        modelAndView.getModel().put("page", "admin-add-user");
+        return modelAndView;
     }
 
     @PostMapping(name = "/add-user", value = "/add-user")
     public String addUser(@Valid FullUserFormDto fullUserFormDto,
+                          @RequestParam("userId") Long userId,
                           BindingResult bindingResult,
                           Model model) {
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("userFormDto", fullUserFormDto);
-            return "admin/add-user";
+            return "main";
         }
 
         UserAddingResultDto userAddingResultDto = userService.addUser(fullUserFormDto);
-        Long userId = userAddingResultDto.getUserId();
+        Long newUserId = userAddingResultDto.getUserId();
 
-        if (userId == null) {
+        if (newUserId == null) {
             bindingResult.rejectValue(userAddingResultDto.getErrorField(), userAddingResultDto.getErrorMessage());
             model.addAttribute("fullUserFormDto", fullUserFormDto);
-            return "admin/add-user";
+            return "main";
         } else {
-            model.addAttribute("resultText", "user.add.message");
-            model.addAttribute("linkText", "user.add.link.text");
-            model.addAttribute("link", "/admin/get-user/" + userId);
-            return "admin/add-result";
+            model.addAttribute("attribute", "redirectWithRedirectPrefix");
+            return "redirect:/admin/get-user/" + newUserId + "?userId=" + userId;
         }
     }
 
     @GetMapping(name = "/delete-user/{id}", value = "/delete-user/{id}")
     public String deleteUser(@PathVariable("id") Long id,
+                             @RequestParam("userId") Long userId,
                              Model model) {
         userService.deleteById(id);
-        model.addAttribute("resultText", "user.delete.message");
-        return "admin/delete-result";
+
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
+        model.addAttribute("user", userService.getUserById(userId));
+        model.addAttribute("page", "admin-users");
+        return "redirect:/admin/users?userId=" + userId;
+    }
+
+    @GetMapping(name = "/users", value = "/users")
+    public String getUsers(Model model,
+                           @RequestParam("userId") Long userId) {
+
+        Iterable<User> users = userService.getAllUsers();
+
+        model.addAttribute("users", users);
+        model.addAttribute("user", userService.getUserById(userId));
+        model.addAttribute("page", "admin-users");
+        return "main";
     }
 
     @GetMapping(name = "/add-discipline", value = "/add-discipline")
-    public ModelAndView getAddingDisciplineForm() {
-        return addDisciplineForm();
+    public ModelAndView getAddingDisciplineForm(@RequestParam("userId") Long userId) {
+        ModelAndView modelAndView = addDisciplineForm();
+        modelAndView.getModel().put("user", userService.getUserById(userId));
+        modelAndView.getModel().put("userId", userId);
+        modelAndView.getModel().put("page", "admin-add-discipline");
+
+        return modelAndView;
     }
 
     @PostMapping(name = "/add-discipline", value = "/add-discipline")
     public String addDiscipline(@Valid AddDisciplineFormDto addDisciplineFormDto,
+                                @RequestParam("userId") Long userId,
                                 BindingResult bindingResult,
                                 Model model) {
+        model.addAttribute("userId", userId);
         if (bindingResult.hasErrors()) {
-            return "admin/add-discipline";
+            return "main";
         }
 
         DisciplineAddingResultDto disciplineAddingResultDto = disciplineService.addDiscipline(addDisciplineFormDto);
@@ -129,19 +163,21 @@ public class AdminController {
 
         if (disciplineId == null) {
             bindingResult.rejectValue(disciplineAddingResultDto.getErrorField(), disciplineAddingResultDto.getErrorMessage());
-            return "admin/add-discipline";
+            return "main";
         } else {
-            model.addAttribute("resultText", "discipline.add.message");
-            model.addAttribute("linkText", "discipline.add.link.text");
-            model.addAttribute("link", "/admin/get-discipline/" + disciplineId);
-            return "admin/add-result";
+            model.addAttribute("attribute", "redirectWithRedirectPrefix");
+            return "redirect:/admin/get-discipline/" + disciplineId + "?userId=" + userId;
         }
     }
 
     @GetMapping(name = "/get-discipline/{id}", value = "/get-discipline/{id}")
-    public ModelAndView getDiscipline(@PathVariable("id") Long id) {
+    public ModelAndView getDiscipline(@PathVariable("id") Long id,
+                                      @RequestParam("userId") Long userId) {
         ModelAndView modelAndView = fullDisciplineForm();
         modelAndView.getModel().put("id", id);
+        modelAndView.getModel().put("user", userService.getUserById(userId));
+        modelAndView.getModel().put("page", "admin-discipline");
+
         Discipline disciplineById = disciplineService.getDisciplineById(id);
 
         if (disciplineById != null) {
@@ -158,6 +194,7 @@ public class AdminController {
 
     @PostMapping(name = "/get-discipline/{id}", value = "/get-discipline/{id}")
     public String updateDisciplineFully(@PathVariable("id") Long id,
+                                        @RequestParam("userId") Long userId,
                                         @Valid FullDisciplineFormDto fullDisciplineFormDto,
                                         BindingResult bindingResult,
                                         Model model) {
@@ -168,41 +205,56 @@ public class AdminController {
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
         model.addAttribute("discipline", disciplineService.updateDiscipline(id, fullDisciplineFormDto));
 
-        return "redirect:/admin/get-discipline/" + id;
+        return "redirect:/admin/get-discipline/" + id + "?userId=" + userId;
     }
 
     @GetMapping(name = "/delete-discipline/{id}", value = "/delete-discipline/{id}")
     public String deleteDiscipline(@PathVariable("id") Long id,
+                                   @RequestParam("userId") Long userId,
                                    Model model) {
         disciplineService.deleteById(id);
-        model.addAttribute("resultText", "discipline.delete.message");
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
+        model.addAttribute("user", userService.getUserById(userId));
+        model.addAttribute("page", "admin-disciplines");
 
-        return "admin/delete-result";
+        return "redirect:/admin/disciplines?userId=" + userId;
     }
 
     @GetMapping(name = "/detach", value = "/detach")
-    public String detachUserFromDiscipline(@RequestParam("disciplineId") Long disciplineId,
-                                           @RequestParam("userId") Long userId,
+    public String detachUserFromDiscipline(@RequestParam("userId") Long userId,
+                                           @RequestParam("disciplineId") Long disciplineId,
+                                           @RequestParam("teacherId") Long teacherId,
                                            Model model) {
-        disciplineService.detachUserFromDiscipline(disciplineId, userId);
+        disciplineService.detachUserFromDiscipline(disciplineId, teacherId);
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
 
-        return "redirect:/admin/get-discipline/" + disciplineId;
+        return "redirect:/admin/get-discipline/" + disciplineId + "?userId=" + userId;
+    }
+
+    @GetMapping(name = "/disciplines", value = "/disciplines")
+    public String getAllDisciplines(Model model,
+                                    @RequestParam("userId") Long userId) {
+        Iterable<Discipline> disciplines = disciplineService.getAllDisciplines();
+
+        model.addAttribute("disciplines", disciplines);
+        model.addAttribute("user", userService.getUserById(userId));
+        model.addAttribute("page", "admin-disciplines");
+        return "main";
     }
 
     private ModelAndView fullUserForm() {
-        return new ModelAndView("admin/user", "fullUserFormDto", new FullUserFormDto());
+        return new ModelAndView("main", "fullUserFormDto", new FullUserFormDto());
     }
 
     private ModelAndView addUserForm() {
-        return new ModelAndView("admin/add-user", "fullUserFormDto", new FullUserFormDto());
+        return new ModelAndView("main", "fullUserFormDto", new FullUserFormDto());
     }
 
     private ModelAndView fullDisciplineForm() {
-        return new ModelAndView("admin/discipline", "fullDisciplineFormDto", new FullDisciplineFormDto());
+        return new ModelAndView("main", "fullDisciplineFormDto", new FullDisciplineFormDto());
     }
 
     private ModelAndView addDisciplineForm() {
-        return new ModelAndView("admin/add-discipline", "addDisciplineFormDto", new AddDisciplineFormDto());
+        return new ModelAndView("main", "addDisciplineFormDto", new AddDisciplineFormDto());
     }
 }

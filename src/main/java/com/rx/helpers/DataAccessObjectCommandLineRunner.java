@@ -100,7 +100,7 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
                 .withLastName("Мітрофанова")
                 .withFirstName("Наталя")
                 .withMiddleName("Федорівна")
-                .withUserRole(UserRole.ASSISTANT_LECTURER)
+                .withUserRole(UserRole.ASSISTANT)
                 .build();
         HashSet<Discipline> disciplines = new HashSet<Discipline>() {{
             add(discipline1);

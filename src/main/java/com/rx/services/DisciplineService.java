@@ -52,6 +52,10 @@ public class DisciplineService {
         disciplineRepository.delete(id);
     }
 
+    public Iterable<Discipline> getTeacherDisciplines(Long userId) {
+        return disciplineRepository.findByUsersId(userId);
+    }
+
     public Iterable<Discipline> getAllDisciplines() {
         return disciplineRepository.findAll();
     }
@@ -82,9 +86,9 @@ public class DisciplineService {
 
         discipline.setName(fullDisciplineFormDto.getName());
 
-        Long userId = fullDisciplineFormDto.getUserId();
+        Long userId = fullDisciplineFormDto.getTeacherId();
         if (userId != null) {
-            User user = userService.getUserById(fullDisciplineFormDto.getUserId());
+            User user = userService.getUserById(fullDisciplineFormDto.getTeacherId());
             user.setDisciplines(new HashSet<Discipline>() {{
                 add(discipline);
                 addAll(user.getDisciplines());

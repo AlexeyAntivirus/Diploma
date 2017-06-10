@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Sidebar</title>
+        <link rel="stylesheet" type="text/css" href="../../static/css/normalize.css" th:href="@{/css/normalize.css}"/>
+        <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}"/>
+        <link rel="stylesheet" type="text/css" href="../../static/css/custom.css" th:href="@{/css/custom.css}"/>
+    </head>
+    <body>
+        <th:block th:fragment="sidebar">
+            <ul class="nav nav-sidebar nav-pills nav-stacked">
+                <li>
+                    <a th:href="@{/user/dashboard(userId=${user.getId()})}">Головна</a>
+                </li>
+                <li>
+                    <a th:href="@{/user/profile(userId=${user.getId()})}">Профіль</a>
+                </li>
+                <li>
+                    <a th:href="@{/discipline/disciplines(userId=${user.getId()})}">Перелік дисциплін</a>
+                </li>
+                <li>
+                    <a th:href="@{/acts(userId=${user.getId()})}">Нормативні акти</a>
+                </li>
+                <li>
+                    <a th:href="@{/syllabuses(userId=${user.getId()})}">Навчальні плани</a>
+                </li>
+                <li>
+                    <a th:href="@{/syllabuses(userId=${user.getId()})}">Завантаження</a>
+                </li>
+            </ul>
+        </th:block>
+
+        <script src="../../static/js/jquery-3.2.1.js" th:src="@{/js/jquery-3.2.1.js}"></script>
+        <script src="../../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+    </body>
+</html>

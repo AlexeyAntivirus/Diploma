@@ -9,16 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 
 public interface DisciplineRepository extends JpaRepository<Discipline, Long> {
     boolean existsByName(String name);
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE Discipline d SET d.name = :name, d.users = :users WHERE d.id = :id")
-    int updateDiscipline(@Param("id") Long id,
-                         @Param("name") String name,
-                         @Param("users") Set<User> users);
+    List<Discipline> findByUsersId(Long userId);
 }
