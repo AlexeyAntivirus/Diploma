@@ -1,23 +1,22 @@
 package com.rx.dto.forms;
 
-
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 
-@Component
 public class AddDisciplineFormDto {
 
     @NotNull(message = "{field.not.specified}")
     @NotEmpty(message = "{field.not.specified}")
-    private String name;
+    @NotBlank(message = "{field.not.specified}")
+    private String disciplineName;
 
-    public String getName() {
-        return name;
+    public String getDisciplineName() {
+        return disciplineName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDisciplineName(String disciplineName) {
+        this.disciplineName = disciplineName;
     }
 }

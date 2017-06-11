@@ -65,12 +65,12 @@ public class DisciplineService {
         String errorMessage = null;
         Long disciplineId = null;
 
-        if (disciplineRepository.existsByName(addDisciplineFormDto.getName())) {
-            errorField = "name";
+        if (disciplineRepository.existsByName(addDisciplineFormDto.getDisciplineName())) {
+            errorField = "disciplineName";
             errorMessage = "discipline.isPresent";
         } else {
             disciplineId = disciplineRepository.save(Discipline.builder()
-                    .withName(addDisciplineFormDto.getName())
+                    .withName(addDisciplineFormDto.getDisciplineName())
                     .build()).getId();
         }
         return DisciplineAddingResultDto.builder()

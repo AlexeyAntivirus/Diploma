@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Component
 public class UserFormDto {
 
     @NotNull(message = "{field.not.specified}")

@@ -7,7 +7,7 @@
     <body>
         <th:block th:fragment="admin-add-discipline">
             <form id="addDisciplineFormDto" action="#" th:action="@{/admin/add-discipline(userId=${userId})}" method="post" th:object="${addDisciplineFormDto}">
-                <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></label>
+                <label th:if="${#fields.hasErrors('disciplineName')}" th:errors="*{disciplineName}"></label>
 
                 <div class="container-fluid">
                     <div class="row form-group">
@@ -15,7 +15,7 @@
                             <p>Назва дисципліни</p>
                         </div>
                         <div class="col-md-10">
-                            <input class="form-control" type="text" th:field="*{name}"/>
+                            <input class="form-control" type="text" th:field="*{disciplineName}"/>
                         </div>
                     </div>
                 </div>

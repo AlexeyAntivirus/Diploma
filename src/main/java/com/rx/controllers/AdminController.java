@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -98,7 +100,7 @@ public class AdminController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("userFormDto", fullUserFormDto);
-            return "main";
+            return "index";
         }
 
         UserAddingResultDto userAddingResultDto = userService.addUser(fullUserFormDto);
@@ -107,7 +109,7 @@ public class AdminController {
         if (newUserId == null) {
             bindingResult.rejectValue(userAddingResultDto.getErrorField(), userAddingResultDto.getErrorMessage());
             model.addAttribute("fullUserFormDto", fullUserFormDto);
-            return "main";
+            return "index";
         } else {
             model.addAttribute("attribute", "redirectWithRedirectPrefix");
             return "redirect:/admin/get-user/" + newUserId + "?userId=" + userId;
@@ -135,7 +137,7 @@ public class AdminController {
         model.addAttribute("users", users);
         model.addAttribute("user", userService.getUserById(userId));
         model.addAttribute("page", "admin-users");
-        return "main";
+        return "index";
     }
 
     @GetMapping(name = "/add-discipline", value = "/add-discipline")
@@ -154,8 +156,12 @@ public class AdminController {
                                 BindingResult bindingResult,
                                 Model model) {
         model.addAttribute("userId", userId);
+        model.addAttribute("page", "admin-add-discipline");
+        model.addAttribute("user", userService.getUserById(userId));
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
+
         if (bindingResult.hasErrors()) {
-            return "main";
+            return "index";
         }
 
         DisciplineAddingResultDto disciplineAddingResultDto = disciplineService.addDiscipline(addDisciplineFormDto);
@@ -163,11 +169,11 @@ public class AdminController {
 
         if (disciplineId == null) {
             bindingResult.rejectValue(disciplineAddingResultDto.getErrorField(), disciplineAddingResultDto.getErrorMessage());
-            return "main";
-        } else {
-            model.addAttribute("attribute", "redirectWithRedirectPrefix");
-            return "redirect:/admin/get-discipline/" + disciplineId + "?userId=" + userId;
+            return "index";
         }
+
+
+        return "redirect:/admin/get-discipline/" + disciplineId + "?userId=" + userId;
     }
 
     @GetMapping(name = "/get-discipline/{id}", value = "/get-discipline/{id}")
@@ -239,22 +245,22 @@ public class AdminController {
         model.addAttribute("disciplines", disciplines);
         model.addAttribute("user", userService.getUserById(userId));
         model.addAttribute("page", "admin-disciplines");
-        return "main";
+        return "index";
     }
 
     private ModelAndView fullUserForm() {
-        return new ModelAndView("main", "fullUserFormDto", new FullUserFormDto());
+        return new ModelAndView("index", "fullUserFormDto", new FullUserFormDto());
     }
 
     private ModelAndView addUserForm() {
-        return new ModelAndView("main", "fullUserFormDto", new FullUserFormDto());
+        return new ModelAndView("index", "fullUserFormDto", new FullUserFormDto());
     }
 
     private ModelAndView fullDisciplineForm() {
-        return new ModelAndView("main", "fullDisciplineFormDto", new FullDisciplineFormDto());
+        return new ModelAndView("index", "fullDisciplineFormDto", new FullDisciplineFormDto());
     }
 
     private ModelAndView addDisciplineForm() {
-        return new ModelAndView("main", "addDisciplineFormDto", new AddDisciplineFormDto());
+        return new ModelAndView("index", "addDisciplineFormDto", new AddDisciplineFormDto());
     }
 }

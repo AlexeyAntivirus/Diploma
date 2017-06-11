@@ -1,7 +1,6 @@
 package com.rx.controllers;
 
 
-import com.rx.services.DisciplineService;
 import com.rx.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,27 +9,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @Controller
-@RequestMapping("/report")
-public class ReportController {
+@RequestMapping({"/", "/index"})
+public class IndexController {
+
 
     private UserService userService;
-    private DisciplineService service;
 
     @Autowired
-    public ReportController(UserService userService, DisciplineService service) {
+    public IndexController(UserService userService) {
         this.userService = userService;
-        this.service = service;
     }
 
     @GetMapping
-    public String getReport(@RequestParam("userId") Long id,
-                            Model model) {
+    public String getUserDashboard(@RequestParam("userId") Long id,
+                                   Model model) {
 
-        model.addAttribute("curriculumStates", service.getCurriculumsStateOfAllDisciplines());
         model.addAttribute("user", userService.getUserById(id));
-        model.addAttribute("page", "report");
+        model.addAttribute("page", "dashboard");
+        model.addAttribute("id", id);
+
         return "index";
     }
 }

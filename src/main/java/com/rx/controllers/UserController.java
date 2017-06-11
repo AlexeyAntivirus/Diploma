@@ -29,17 +29,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(name = "/dashboard", value = "/dashboard")
-    public ModelAndView getUserDashboard(@RequestParam("userId") Long id) {
-
-        ModelAndView modelAndView = userForm();
-        modelAndView.getModel().put("user", userService.getUserById(id));
-        modelAndView.getModel().put("page", "dashboard");
-        modelAndView.getModel().put("id", id);
-
-        return modelAndView;
-    }
-
     @GetMapping(name = "/profile", value = "/profile")
     public ModelAndView getUserProfile(@RequestParam("userId") Long id) {
 
@@ -75,6 +64,6 @@ public class UserController {
     }
 
     private ModelAndView userForm() {
-        return new ModelAndView("main", "userFormDto", new FullUserFormDto());
+        return new ModelAndView("index", "userFormDto", new FullUserFormDto());
     }
 }
