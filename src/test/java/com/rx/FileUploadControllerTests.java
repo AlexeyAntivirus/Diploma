@@ -1,6 +1,6 @@
 package com.rx;
 
-import com.rx.controllers.FileUploadController;
+import com.rx.controllers.DocumentUploadController;
 import com.rx.controllers.exceptions.FileUploadIOException;
 import com.rx.controllers.exceptions.FileUploadInvalidPathException;
 import com.rx.services.DocumentStorageService;
@@ -49,9 +49,9 @@ public class FileUploadControllerTests {
         viewResolver.setSuffix(".html");
 
         DocumentUploadFormDtoValidator validator = new DocumentUploadFormDtoValidator(allowedFilenamePattern);
-        FileUploadController controller = new FileUploadController(mockDocumentStorageService, validator);
+        //DocumentUploadController controller = new DocumentUploadController(mockDocumentStorageService, validator);
 
-        mvc = MockMvcBuilders.standaloneSetup(controller).setViewResolvers(viewResolver).build();
+        //mvc = MockMvcBuilders.standaloneSetup(controller).setViewResolvers(viewResolver).build();
     }
 
     @Test
@@ -61,15 +61,15 @@ public class FileUploadControllerTests {
                 .andExpect(view().name("upload"))
                 .andExpect(model().hasNoErrors());
 
-        //then(mockFileStorageService).should(times(0)).saveFileInStorage(file);
+        //then(mockFileStorageService).should(times(0)).saveDocumentInStorage(file);
     }
 
     @Test
     public void testHandleUploadWhenFileUploaded() throws Exception {
         UUID uuid = UUID.randomUUID();
-        //DocumentUploadResultDto result = new FileUploadResultDtoBuilder().withFileId(uuid).build();
+        //DocumentUploadResultDto result = new DocumentUploadResultDtoBuilder().withFileId(uuid).build();
 
-        //given(mockFileStorageService.saveFileInStorage(file)).willReturn(result);
+        //given(mockFileStorageService.saveDocumentInStorage(file)).willReturn(result);
 
         mvc.perform(fileUpload("/upload").file(file))
                 .andExpect(status().isOk())
@@ -77,14 +77,14 @@ public class FileUploadControllerTests {
                 .andExpect(model().attribute("uploadedFileUUID", uuid))
                 .andExpect(model().hasNoErrors());
 
-        //then(mockFileStorageService).should().saveFileInStorage(file);
+        //then(mockFileStorageService).should().saveDocumentInStorage(file);
     }
 
     @Test
     public void testHandleUploadIOException() throws Exception {
         FileUploadIOException fileUploadIOException = new FileUploadIOException();
 
-        //given(mockFileStorageService.saveFileInStorage(file)).willThrow(fileUploadIOException);
+        //given(mockFileStorageService.saveDocumentInStorage(file)).willThrow(fileUploadIOException);
 
         mvc.perform(fileUpload("/upload").file(file))
                 .andExpect(status().isInternalServerError())
@@ -92,14 +92,14 @@ public class FileUploadControllerTests {
                 .andExpect(model().attribute("exception", fileUploadIOException))
                 .andExpect(model().hasNoErrors());
 
-        //then(mockFileStorageService).should().saveFileInStorage(file);
+        //then(mockFileStorageService).should().saveDocumentInStorage(file);
     }
 
     @Test
     public void testHandleUploadInvalidPathException() throws Exception {
         FileUploadInvalidPathException fileUploadInvalidPathException = new FileUploadInvalidPathException();
 
-        //given(mockFileStorageService.saveFileInStorage(file)).willThrow(fileUploadInvalidPathException);
+        //given(mockFileStorageService.saveDocumentInStorage(file)).willThrow(fileUploadInvalidPathException);
 
         mvc.perform(fileUpload("/upload").file(file))
                 .andExpect(status().isBadRequest())
@@ -107,7 +107,7 @@ public class FileUploadControllerTests {
                 .andExpect(model().attribute("exception", fileUploadInvalidPathException))
                 .andExpect(model().hasNoErrors());
 
-        //then(mockFileStorageService).should().saveFileInStorage(file);
+        //then(mockFileStorageService).should().saveDocumentInStorage(file);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class FileUploadControllerTests {
                 .andExpect(model().attributeHasFieldErrorCode("fileUploadFormDto", "multipartFile", "upload.file.invalid.name"))
                 .andExpect(view().name("upload"));
 
-        //then(mockFileStorageService).should(times(0)).saveFileInStorage(file);
+        //then(mockFileStorageService).should(times(0)).saveDocumentInStorage(file);
     }
 
     @Test
@@ -133,6 +133,6 @@ public class FileUploadControllerTests {
                 .andExpect(model().attributeHasFieldErrorCode("fileUploadFormDto", "multipartFile", "upload.file.empty"))
                 .andExpect(view().name("upload"));
 
-        //then(mockFileStorageService).should(times(0)).saveFileInStorage(file);
+        //then(mockFileStorageService).should(times(0)).saveDocumentInStorage(file);
     }
 }

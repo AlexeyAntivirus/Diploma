@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Admin add discipline</title>
+        <th:block th:replace="head :: head">Head</th:block>
+    </head>
+    <body>
+        <th:block th:replace="nav :: nav">Navigation</th:block>
+
+        <div class="container-fluid container-custom">
+            <div class="row">
+                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <div class="col-md-8 main">
+                    <form id="addDisciplineFormDto" action="#" th:action="@{/admin/add-discipline(userId=${userId})}" method="post" th:object="${addDisciplineFormDto}">
+                        <div class="container-fluid">
+                            <div class="row form-group">
+                                <div class="div-offset col-md-1">
+                                    <p class="p-size">Назва дисципліни</p>
+                                </div>
+                                <div th:class="${#fields.hasErrors('disciplineName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                    <input id="disciplineName" class="form-control" type="text" th:field="*{disciplineName}"/>
+                                </div>
+                            </div>
+                            <label class="col-md-4 control-label" for="disciplineName"
+                                   th:if="${#fields.hasErrors('disciplineName')}" th:errors="*{disciplineName}"></label>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                <button class="btn btn-lg btn-success btn-block" type="submit" form="addDisciplineFormDto" th:text="'Додати'"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

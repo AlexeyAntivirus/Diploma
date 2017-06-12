@@ -7,6 +7,7 @@ import com.rx.dao.User;
 import com.rx.dao.repositories.DisciplineRepository;
 import com.rx.dto.CurriculumStateDto;
 import com.rx.dto.DisciplineAddingResultDto;
+import com.rx.dto.DisciplineUpdatingResultDto;
 import com.rx.dto.forms.AddDisciplineFormDto;
 import com.rx.dto.forms.FullDisciplineFormDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +41,6 @@ public class DisciplineService {
         return disciplineRepository.findOne(id);
     }
 
-    public boolean existsByName(String name) {
-        return disciplineRepository.existsByName(name);
-    }
-
     public void deleteById(Long id) {
         Discipline one = disciplineRepository.findOne(id);
         for (User user: one.getUsers()) {
@@ -73,6 +70,7 @@ public class DisciplineService {
                     .withName(addDisciplineFormDto.getDisciplineName())
                     .build()).getId();
         }
+
         return DisciplineAddingResultDto.builder()
                 .withDisciplineId(disciplineId)
                 .withErrorField(errorField)
@@ -80,29 +78,37 @@ public class DisciplineService {
                 .build();
     }
 
-
-    public Discipline updateDiscipline(Long id, FullDisciplineFormDto fullDisciplineFormDto) {
+    public DisciplineUpdatingResultDto updateDiscipline(Long id, FullDisciplineFormDto fullDisciplineFormDto) {
         Discipline discipline = disciplineRepository.findOne(id);
+        String errorMessage = null;
+        String errorField = null;
 
-        discipline.setName(fullDisciplineFormDto.getName());
+        if (disciplineRepository.existsByName(fullDisciplineFormDto.getName())) {
+            errorField = "name";
+            errorMessage = "discipline.isPresent";
+        } else {
+            discipline.setName(fullDisciplineFormDto.getName());
 
-        Long userId = fullDisciplineFormDto.getTeacherId();
-        if (userId != null) {
-            User user = userService.getUserById(fullDisciplineFormDto.getTeacherId());
-            user.setDisciplines(new HashSet<Discipline>() {{
-                add(discipline);
-                addAll(user.getDisciplines());
-            }});
+            Long userId = fullDisciplineFormDto.getTeacherId();
+            if (userId != null) {
+                User user = userService.getUserById(fullDisciplineFormDto.getTeacherId());
+                user.setDisciplines(new HashSet<Discipline>() {{
+                    add(discipline);
+                    addAll(user.getDisciplines());
+                }});
 
-            Set<User> users = discipline.getUsers();
-            users.add(user);
+                Set<User> users = discipline.getUsers();
+                users.add(user);
 
-            discipline.setUsers(users);
-
-            return disciplineRepository.save(discipline);
+                discipline.setUsers(users);
+            }
         }
 
-        return discipline;
+        return DisciplineUpdatingResultDto.builder()
+                .withErrorMessage(errorMessage)
+                .withErrorField(errorField)
+                .isUpdated(errorField == null)
+                .build();
     }
 
     public List<CurriculumStateDto> getCurriculumsStateOfAllDisciplines() {

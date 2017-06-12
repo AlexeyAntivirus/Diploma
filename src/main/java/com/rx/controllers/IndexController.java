@@ -24,9 +24,7 @@ public class IndexController {
     @GetMapping
     public String getUserDashboard(@RequestParam("userId") Long id,
                                    Model model) {
-
         model.addAttribute("user", userService.getUserById(id));
-        model.addAttribute("page", "dashboard");
         model.addAttribute("id", id);
 
         return "index";

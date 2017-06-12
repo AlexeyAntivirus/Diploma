@@ -9,14 +9,8 @@ import javax.validation.constraints.Size;
 
 public class LoginFormDto {
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Size(min = 6, max = 255, message = "{invalid.field.size.range}")
     private String login;
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Size(min = 6, max = 255, message = "{invalid.field.size.range}")
     private String password;
 
     public String getLogin() {

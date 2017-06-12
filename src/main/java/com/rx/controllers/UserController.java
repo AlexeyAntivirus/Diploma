@@ -1,16 +1,16 @@
 package com.rx.controllers;
 
-import com.rx.dao.User;
 import com.rx.dto.UserUpdatingResultDto;
-import com.rx.dto.forms.FullUserFormDto;
 import com.rx.dto.forms.UserFormDto;
 import com.rx.services.UserService;
+import com.rx.validators.UserFormDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,11 +22,18 @@ import javax.validation.Valid;
 @RequestMapping("/user")
 public class UserController {
 
+    private UserFormDtoValidator userFormDtoValidator;
     private UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserFormDtoValidator userFormDtoValidator) {
         this.userService = userService;
+        this.userFormDtoValidator = userFormDtoValidator;
+    }
+
+    @InitBinder("userFormDto")
+    private void initBinder(WebDataBinder binder) {
+        binder.setValidator(userFormDtoValidator);
     }
 
     @GetMapping(name = "/profile", value = "/profile")
@@ -34,7 +41,6 @@ public class UserController {
 
         ModelAndView modelAndView = userForm();
         modelAndView.getModel().put("user", userService.getUserById(id));
-        modelAndView.getModel().put("page", "profile");
         modelAndView.getModel().put("id", id);
 
         return modelAndView;
@@ -46,8 +52,12 @@ public class UserController {
                              BindingResult bindingResult,
                              Model model) {
 
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
         if (bindingResult.hasErrors()) {
             model.addAttribute("userFormDto", userFormDto);
+            model.addAttribute("id", userId);
+            model.addAttribute("user", userService.getUserById(userId));
+            return "user";
         }
 
         UserUpdatingResultDto userUpdatingResultDto = userService.updateUser(userId, userFormDto);
@@ -56,14 +66,15 @@ public class UserController {
         if (errorMessage != null) {
             bindingResult.rejectValue(userUpdatingResultDto.getErrorField(), errorMessage);
             model.addAttribute("userFormDto", userFormDto);
+            model.addAttribute("id", userId);
+            model.addAttribute("user", userService.getUserById(userId));
+            return "user";
         }
 
-        model.addAttribute("user", userUpdatingResultDto.getUpdatedUser());
-        model.addAttribute("attribute", "redirectWithRedirectPrefix");
         return "redirect:/user/profile?userId=" + userId;
     }
 
     private ModelAndView userForm() {
-        return new ModelAndView("index", "userFormDto", new FullUserFormDto());
+        return new ModelAndView("user", "userFormDto", new UserFormDto());
     }
 }

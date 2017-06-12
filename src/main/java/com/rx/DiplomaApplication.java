@@ -1,6 +1,7 @@
 package com.rx;
 
 import com.rx.dao.repositories.DisciplineRepository;
+import com.rx.dao.repositories.DocumentRepository;
 import com.rx.dao.repositories.UserRepository;
 import com.rx.helpers.DataAccessObjectCommandLineRunner;
 import org.springframework.boot.CommandLineRunner;
@@ -19,7 +20,7 @@ public class DiplomaApplication {
 
 	@Bean
     @Profile("dev")
-	public CommandLineRunner runner(UserRepository userRepository, DisciplineRepository disciplineRepository) {
-		return new DataAccessObjectCommandLineRunner(userRepository, disciplineRepository);
+	public CommandLineRunner runner(UserRepository userRepository, DocumentRepository documentRepository, DisciplineRepository disciplineRepository) {
+		return new DataAccessObjectCommandLineRunner(userRepository, disciplineRepository, documentRepository);
 	}
 }

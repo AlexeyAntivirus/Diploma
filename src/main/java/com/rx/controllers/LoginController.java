@@ -4,11 +4,14 @@ package com.rx.controllers;
 import com.rx.dao.User;
 import com.rx.dto.forms.LoginFormDto;
 import com.rx.services.UserService;
+import com.rx.validators.LoginFormDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,9 +24,17 @@ public class LoginController {
 
     private UserService userService;
 
+    private LoginFormDtoValidator validator;
+
     @Autowired
-    public LoginController(UserService userService) {
+    public LoginController(UserService userService, LoginFormDtoValidator validator) {
         this.userService = userService;
+        this.validator = validator;
+    }
+
+    @InitBinder("loginFormDto")
+    public void loginFormDtoInitBinder(WebDataBinder webDataBinder) {
+        webDataBinder.setValidator(validator);
     }
 
     @GetMapping
@@ -47,7 +58,7 @@ public class LoginController {
             model.addAttribute("authorizationError", "user.login.not-authorize");
             return "login";
         } else {
-            return "redirect:/user?userId=" + user.getId();
+            return "redirect:/index?userId=" + user.getId();
         }
     }
 

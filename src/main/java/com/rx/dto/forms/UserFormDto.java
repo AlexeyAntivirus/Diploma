@@ -1,38 +1,15 @@
 package com.rx.dto.forms;
 
-
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 public class UserFormDto {
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Email(message = "{email.invalid}")
     private String email;
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Size(min = 6, max = 255, message = "{invalid.field.size.range}")
     private String password;
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Size(max = 255, message = "{invalid.field.size}")
     private String lastName;
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Size(max = 255, message = "{invalid.field.size}")
     private String firstName;
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Size(max = 255, message = "{invalid.field.size}")
     private String middleName;
 
 

@@ -7,6 +7,7 @@ import com.rx.dao.DocumentType;
 import com.rx.dao.User;
 import com.rx.dao.UserRole;
 import com.rx.dao.repositories.DisciplineRepository;
+import com.rx.dao.repositories.DocumentRepository;
 import com.rx.dao.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 
@@ -19,10 +20,15 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
 
     private final UserRepository userRepository;
 
+    private final DocumentRepository documentRepository;
+
     private final DisciplineRepository disciplineRepository;
 
-    public DataAccessObjectCommandLineRunner(UserRepository userRepository, DisciplineRepository disciplineRepository) {
+    public DataAccessObjectCommandLineRunner(UserRepository userRepository,
+                                             DisciplineRepository disciplineRepository,
+                                             DocumentRepository documentRepository) {
         this.userRepository = userRepository;
+        this.documentRepository = documentRepository;
         this.disciplineRepository = disciplineRepository;
     }
 

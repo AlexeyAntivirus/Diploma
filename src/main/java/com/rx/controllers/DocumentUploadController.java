@@ -2,10 +2,10 @@ package com.rx.controllers;
 
 import com.rx.controllers.exceptions.FileUploadIOException;
 import com.rx.controllers.exceptions.FileUploadInvalidPathException;
-import com.rx.dao.DocumentType;
 import com.rx.dto.forms.DocumentUploadFormDto;
 import com.rx.dto.DocumentUploadResultDto;
 import com.rx.services.DocumentStorageService;
+import com.rx.services.UserService;
 import com.rx.validators.DocumentUploadFormDtoValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,12 +31,13 @@ import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/upload")
-public class FileUploadController {
+public class DocumentUploadController {
 
-    private static final Logger LOGGER = LogManager.getLogger(FileUploadController.class);
+    private static final Logger LOGGER = LogManager.getLogger(DocumentUploadController.class);
 
     private DocumentStorageService documentStorageService;
     private DocumentUploadFormDtoValidator validator;
+    private UserService userService;
 
     @InitBinder("fileUploadFormDto")
     private void initBinder(WebDataBinder binder) {
@@ -43,52 +45,40 @@ public class FileUploadController {
     }
 
     @Autowired
-    public FileUploadController(DocumentStorageService storageService, DocumentUploadFormDtoValidator validator) {
+    public DocumentUploadController(UserService userService,
+                                    DocumentStorageService storageService,
+                                    DocumentUploadFormDtoValidator validator) {
         this.documentStorageService = storageService;
+        this.userService = userService;
         this.validator = validator;
     }
 
-    @GetMapping
-    public ModelAndView getUploadForm() {
-        return uploadModelAndView();
+    @GetMapping(value = "/syllabus")
+    public ModelAndView getSyllabusUploadForm(@RequestParam("userId") Long userId) {
+        ModelAndView modelAndView = uploadModelAndView();
+
+        modelAndView.getModel().put("user", userService.getUserById(userId));
+
+        return modelAndView;
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String handleUpload(@Valid DocumentUploadFormDto documentUploadFormDto,
-                               BindingResult bindingResult,
-                               Model model) {
-
+    @PostMapping(name = "/syllabus", value = "/syllabus", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String uploadSyllabus(@RequestParam("userId") Long userId,
+                                 @Valid DocumentUploadFormDto documentUploadFormDto,
+                                 BindingResult bindingResult,
+                                 Model model) {
+        model.addAttribute("user", userService.getUserById(userId));
         if (bindingResult.hasErrors()) {
             return "upload";
         }
 
         DocumentUploadResultDto result = this.documentStorageService.
-                saveFileInStorage(documentUploadFormDto.getMultipartFile(),
-                        documentUploadFormDto.getDocumentType(),
-                        Date.valueOf(LocalDate.now()));
-
-        model.addAttribute("uploadedFileId", result.getDocumentId());
-
-        return "upload-result";
-    }
-
-    @PostMapping(name = "/curriculum", value = "/curriculum")
-    public String handleUploadCurriculum(@Valid DocumentUploadFormDto documentUploadFormDto,
-                                         BindingResult bindingResult,
-                                         Model model) {
-        if (bindingResult.hasErrors()) {
-            return "upload";
-        }
-
-        DocumentUploadResultDto result = this.documentStorageService.
-                saveFileInStorage(documentUploadFormDto.getMultipartFile(),
-                        documentUploadFormDto.getDocumentType(),
-                        Date.valueOf(LocalDate.now()));
+                saveSyllabusInStorage(documentUploadFormDto.getMultipartFile(), Date.valueOf(LocalDate.now()));
 
         model.addAttribute("uploadedFileId", result.getDocumentId());
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
 
-        return "redirect:/admin/get-discipline/upload-result";
+        return "redirect:/syllabuses";
     }
 
     @ExceptionHandler(value = FileUploadInvalidPathException.class)
@@ -114,6 +104,6 @@ public class FileUploadController {
     }
 
     private ModelAndView uploadModelAndView() {
-        return new ModelAndView("upload", "fileUploadFormDto", new DocumentUploadFormDto());
+        return new ModelAndView("upload", "documentUploadFormDto", new DocumentUploadFormDto());
     }
 }

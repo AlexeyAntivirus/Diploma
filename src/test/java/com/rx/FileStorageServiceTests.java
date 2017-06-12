@@ -73,12 +73,12 @@ public class FileStorageServiceTests {
 
     @Test(expected = FileDownloadNotFoundException.class)
     public void testGetFileWhenUuidIsNull() {
-        documentStorageService.getFileFromStorageById(null);
+        documentStorageService.getDocumentFromStorageById(null);
     }
 
     @Test(expected = FileDownloadNotFoundException.class)
     public void testGetFileWhenUuidIsNotInDb() {
-        //fileStorageService.getFileFromStorageById(UUID.randomUUID());
+        //fileStorageService.getDocumentFromStorageById(UUID.randomUUID());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class FileStorageServiceTests {
         Whitebox.setInternalState(documentStorageService, "database", hashMap);
         given(fileStorageHelper.getFileByName(anyString())).willReturn(tempFile);
 
-        /*FileDownloadResultDto fileFromStorage = fileStorageService.getFileFromStorageById(uuid);
+        /*FileDownloadResultDto fileFromStorage = fileStorageService.getDocumentFromStorageById(uuid);
 
         Assert.assertEquals(fileFromStorage.getFileResource().getFile(), tempFile);*/
     }

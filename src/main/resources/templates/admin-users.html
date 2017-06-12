@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Admin users</title>
+        <th:block th:replace="head :: head">Head</th:block>
+    </head>
+    <body>
+
+        <th:block th:replace="nav :: nav">Navigation</th:block>
+
+        <div class="container-fluid container-custom">
+            <div class="row">
+
+                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+
+                <div class="col-md-8 main">
+                    <div class="container-fluid">
+                        <div class="row list-element" th:each="value: ${users}">
+                            <div class="col-md-12">
+                                <a class="discipline-link" th:text="#{${value.getUserRole().getString()}} + ' ' + |${value.getLastName()} ${value.getFirstName()} ${value.getMiddleName()}|"
+                                   th:href="@{'/admin/get-user/' + ${value.getId()}(userId=${user.getId()})}"></a>
+                            </div>
+                            <div class="col-md-2">
+                                <a class="remove-color discipline-link-mini"
+                                   th:href="@{${'/admin/delete-user/' + value.getId()}(userId=${user.getId()})}">
+                            <span class="glyphicon glyphicon-remove-circle remove-color discipline-link-mini"
+                                  aria-hidden="true"></span>Видалити</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,21 +1,16 @@
 package com.rx.controllers;
 
 import com.rx.dao.Discipline;
-import com.rx.dto.forms.AddDisciplineFormDto;
 import com.rx.services.DisciplineService;
 import com.rx.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Validator;
 
 @Controller
 @RequestMapping("/discipline")
@@ -31,15 +26,15 @@ public class DisciplineController {
     }
 
     @GetMapping(name = "/{id}", value = "/{id}")
-    public ModelAndView getDiscipline(@PathVariable("id") Long id,
-                                      @RequestParam("userId") Long userId) {
-        ModelAndView modelAndView = disciplineForm();
-        modelAndView.getModel().put("id", id);
-        modelAndView.getModel().put("user", userService.getUserById(userId));
-        modelAndView.getModel().put("discipline", disciplineService.getDisciplineById(id));
-        modelAndView.getModel().put("page", "discipline");
+    public String getDiscipline(@PathVariable("id") Long id,
+                                      @RequestParam("userId") Long userId,
+                                      Model model) {
 
-        return modelAndView;
+        model.addAttribute("id", id);
+        model.addAttribute("user", userService.getUserById(userId));
+        model.addAttribute("discipline", disciplineService.getDisciplineById(id));
+
+        return "discipline";
     }
 
     @GetMapping(name = "disciplines", value = "disciplines")
@@ -49,13 +44,7 @@ public class DisciplineController {
 
         model.addAttribute("disciplines", disciplines);
         model.addAttribute("user", userService.getUserById(userId));
-        model.addAttribute("page", "disciplines");
-        return "main";
+        return "disciplines";
     }
-
-    private ModelAndView disciplineForm() {
-        return new ModelAndView("main", "disciplineFormDto", new AddDisciplineFormDto());
-    }
-
 
 }

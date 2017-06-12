@@ -26,14 +26,14 @@ import java.nio.charset.StandardCharsets;
 
 @Controller
 @RequestMapping("/download")
-public class FileDownloadController {
+public class DocumentDownloadController {
 
-    private static final Logger LOGGER = LogManager.getLogger(FileDownloadController.class);
+    private static final Logger LOGGER = LogManager.getLogger(DocumentDownloadController.class);
 
     private DocumentStorageService documentStorageService;
 
     @Autowired
-    public FileDownloadController(DocumentStorageService documentStorageService) {
+    public DocumentDownloadController(DocumentStorageService documentStorageService) {
         this.documentStorageService = documentStorageService;
     }
 
@@ -41,7 +41,7 @@ public class FileDownloadController {
     @ResponseBody
     public Resource handleDownload(@RequestParam("fileId") Long fileId, HttpServletResponse response) throws IOException {
 
-        FileDownloadResultDto result = this.documentStorageService.getFileFromStorageById(fileId);
+        FileDownloadResultDto result = this.documentStorageService.getDocumentFromStorageById(fileId);
         FileSystemResource resource = result.getFileResource();
         String filename = UriUtils.encode(resource.getFilename(), StandardCharsets.UTF_8.name());
 

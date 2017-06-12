@@ -11,37 +11,18 @@ import javax.validation.constraints.Size;
 
 public class FullUserFormDto {
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Size(min = 6, max = 255, message = "{invalid.field.size.range}")
     private String login;
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Email(message = "{email.invalid}")
-    private String email;
-
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Size(min = 6, max = 255, message = "{invalid.field.size.range}")
     private String password;
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Size(max = 255, message = "{invalid.field.size}")
+    private String email;
+
     private String lastName;
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Size(max = 255, message = "{invalid.field.size}")
     private String firstName;
 
-    @NotNull(message = "{field.not.specified}")
-    @NotEmpty(message = "{field.not.specified}")
-    @Size(max = 255, message = "{invalid.field.size}")
     private String middleName;
 
-    @NotNull(message = "{field.not.specified}")
     private UserRole userRole;
 
 
@@ -59,14 +40,6 @@ public class FullUserFormDto {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getLastName() {
@@ -99,5 +72,13 @@ public class FullUserFormDto {
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -1,6 +1,6 @@
 package com.rx;
 
-import com.rx.controllers.FileDownloadController;
+import com.rx.controllers.DocumentDownloadController;
 import com.rx.services.DocumentStorageService;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Ignore
 @RunWith(SpringRunner.class)
-@WebMvcTest(FileDownloadController.class)
+@WebMvcTest(DocumentDownloadController.class)
 public class FileDownloadControllerTests {
 
     @MockBean
@@ -50,7 +50,7 @@ public class FileDownloadControllerTests {
         given(mockFileSystemResource.getFilename()).willReturn("тест файл.docx");
         given(mockFileSystemResource.contentLength()).willReturn(contentLength);
 
-        /*given(mockFileStorageService.getFileFromStorageById(randomUUID))
+        /*given(mockFileStorageService.getDocumentFromStorageById(randomUUID))
                 .willReturn(new FileDownloadResultDtoBuilder()
                         .withFileResource(mockFileSystemResource)
                         .build());*/
@@ -62,19 +62,19 @@ public class FileDownloadControllerTests {
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"%D1%82%D0%B5%D1%81%D1%82%20%D1%84%D0%B0%D0%B9%D0%BB.docx\"; filename*=UTF-8''%D1%82%D0%B5%D1%81%D1%82%20%D1%84%D0%B0%D0%B9%D0%BB.docx"))
                 .andExpect(header().string(HttpHeaders.CONTENT_LENGTH, String.valueOf(contentLength)));
 
-        /*then(mockFileStorageService).should().getFileFromStorageById(randomUUID);*/
+        /*then(mockFileStorageService).should().getDocumentFromStorageById(randomUUID);*/
     }
 
     @Test
     public void should404WhenFileNotFound() throws Exception {
         UUID randomUUID = UUID.randomUUID();
 
-        /*given(mockFileStorageService.getFileFromStorageById(randomUUID))
+        /*given(mockFileStorageService.getDocumentFromStorageById(randomUUID))
                 .willThrow(new FileDownloadNotFoundException());
 
         this.mvc.perform(get("/download?fileUUID=" + randomUUID))
                 .andExpect(status().isNotFound());
 
-        then(mockFileStorageService).should().getFileFromStorageById(randomUUID);*/
+        then(mockFileStorageService).should().getDocumentFromStorageById(randomUUID);*/
     }
 }

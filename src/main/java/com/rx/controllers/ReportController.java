@@ -30,7 +30,6 @@ public class ReportController {
 
         model.addAttribute("curriculumStates", service.getCurriculumsStateOfAllDisciplines());
         model.addAttribute("user", userService.getUserById(id));
-        model.addAttribute("page", "report");
-        return "index";
+        return "report";
     }
 }

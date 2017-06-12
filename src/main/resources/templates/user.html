@@ -1,99 +1,100 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <meta charset="UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-
-        <title>Title</title>
-
-        <link rel="stylesheet" type="text/css" href="../static/css/normalize.css" th:href="@{/css/normalize.css}"/>
-        <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}"/>
-        <link rel="stylesheet" type="text/css" href="../static/css/custom.css" th:href="@{/css/custom.css}"/>
+        <title>Profile</title>
+        <th:block th:replace="head :: head">Head</th:block>
     </head>
     <body>
-        <th:block th:fragment="default-user-form">
-            <div class="panel-body" th:if="${user == null}">
-                <p th:text="${'User with id ' + id + ' is not exists'}"></p>
-            </div>
-            <div class="panel-body" th:unless="${user == null}">
-                <form id="userFormDto" action="#" th:action="@{/user/profile(userId=${id})}" method="post"
-                      th:object="${userFormDto}">
-                    <label class="alert alert-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></label>
-                    <label class="alert alert-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></label>
-                    <label class="alert alert-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></label>
-                    <label class="alert alert-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></label>
-                    <label class="alert alert-danger" th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></label>
 
-                    <div class="container-fluid">
-                        <div class="row form-group">
-                            <div class="col-md-2">
-                                <p>Email</p>
-                            </div>
-                            <div class="col-md-10">
-                                <input class="form-control" type="email" th:id="email" th:name="email" th:value="${user.getEmail()}"/>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-2">
-                                <p>Пароль</p>
-                            </div>
-                            <div class="col-md-10">
-                                <input class="form-control" type="password" th:id="password" th:name="password" th:value="${user.getPassword()}"/>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-2">
-                                <p>Прізвище</p>
-                            </div>
-                            <div class="col-md-10">
-                                <input class="form-control" type="text" th:id="lastName" th:name="lastName" th:value="${user.getLastName()}"/>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-2">
-                                <p>Ім'я</p>
-                            </div>
-                            <div class="col-md-10">
-                                <input class="form-control" type="text" th:id="firstName" th:name="firstName" th:value="${user.getFirstName()}"/>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-2">
-                                <p>По батькові</p>
-                            </div>
-                            <div class="col-md-10">
-                                <input class="form-control" type="text" th:id="middleName" th:name="middleName" th:value="${user.getMiddleName()}"/>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-2">
-                                <p>Роль</p>
-                            </div>
-                            <div class="col-md-10">
-                                <p th:text="|#{${user.getUserRole().getString()}}|"></p>
-                            </div>
-                        </div>
-                        <!--<div>-->
-                        <!--<p th:text="'Дисципліни'"></p>-->
-                        <!--<div th:each="discipline: ${user.getDisciplines()}">-->
-                        <!--<a th:text="${discipline.getName()}" th:href="@{'/admin/get-discipline/' + ${discipline.getId()}}"></a>-->
-                        <!--</div>-->
-                        <!--</div>-->
+        <th:block th:replace="nav :: nav">Navigation</th:block>
 
-                        <div class="row form-group">
-                            <div class="col-md-12">
-                                <button class="btn btn-lg btn-success btn-block" type="submit" th:form="'userFormDto'" th:text="'Редагувати'"></button>
-                            </div>
-                        </div>
+        <div class="container-fluid container-custom">
+            <div class="row">
+
+                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+
+                <div class="col-md-8 main">
+                    <div class="panel-body" th:if="${user == null}">
+                        <p th:text="${'User with id ' + id + ' is not exists'}"></p>
                     </div>
+                    <div class="panel-body" th:unless="${user == null}">
+                        <form id="userFormDto" action="#" th:action="@{/user/profile(userId=${id})}" method="post"
+                              th:object="${userFormDto}">
 
-                    <!--<a th:href="@{${'/admin/delete-user/' + user.getId()}}">Видалити</a>-->
-
-                </form>
+                            <div class="container-fluid">
+                                <div class="row form-group">
+                                    <div class="div-offset col-md-1">
+                                        <p class="p-size">Email</p>
+                                    </div>
+                                    <div th:class="${#fields.hasErrors('email') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                        <input id="email" class="form-control" type="email" th:id="email" th:name="email"
+                                               th:value="${user.getEmail()}"/>
+                                    </div>
+                                    <label for="email" class="col-md-4 control-label" th:if="${#fields.hasErrors('email')}"
+                                           th:errors="*{email}"></label>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="div-offset col-md-1">
+                                        <p class="p-size">Пароль</p>
+                                    </div>
+                                    <div th:class="${#fields.hasErrors('password') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                        <input id="password" class="form-control" type="password" th:id="password" th:name="password"/>
+                                    </div>
+                                    <label class="col-md-4 control-label" for="password" th:if="${#fields.hasErrors('password')}"
+                                           th:errors="*{password}"></label>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="div-offset col-md-1">
+                                        <p class="p-size">Прізвище</p>
+                                    </div>
+                                    <div th:class="${#fields.hasErrors('lastName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                        <input id="lastName" class="form-control" type="text" th:id="lastName" th:name="lastName"
+                                               th:value="${user.getLastName()}"/>
+                                    </div>
+                                    <label class="col-md-4 control-label" for="lastName" th:if="${#fields.hasErrors('password')}"
+                                           th:errors="*{lastName}"></label>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="div-offset col-md-1">
+                                        <p class="p-size">Ім'я</p>
+                                    </div>
+                                    <div th:class="${#fields.hasErrors('firstName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                        <input id="firstName" class="form-control" type="text" th:id="firstName" th:name="firstName"
+                                               th:value="${user.getFirstName()}"/>
+                                    </div>
+                                    <label class="col-md-4 control-label" for="firstName" th:if="${#fields.hasErrors('firstName')}"
+                                           th:errors="*{firstName}"></label>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="div-offset col-md-1">
+                                        <p class="p-size">По батькові</p>
+                                    </div>
+                                    <div th:class="${#fields.hasErrors('middleName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                        <input id="middleName" class="form-control" type="text" th:id="middleName" th:name="middleName"
+                                               th:value="${user.getMiddleName()}"/>
+                                    </div>
+                                    <label class="col-md-4 control-label" for="middleName" th:if="${#fields.hasErrors('middleName')}"
+                                           th:errors="*{middleName}"></label>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="div-offset col-md-1">
+                                        <p class="p-size">Роль</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p class="p-size" th:text="|#{${user.getUserRole().getString()}}|"></p>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <button class="btn btn-lg btn-success btn-block" type="submit" th:form="'userFormDto'"
+                                                th:text="'Редагувати'"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </th:block>
-
-        <script src="../static/js/jquery-3.2.1.js" th:src="@{/js/jquery-3.2.1.js}"></script>
-        <script src="../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+        </div>
     </body>
 </html>

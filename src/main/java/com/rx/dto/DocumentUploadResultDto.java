@@ -4,7 +4,7 @@ public class DocumentUploadResultDto {
 
     private final Long documentId;
 
-    protected DocumentUploadResultDto(FileUploadResultDtoBuilder builder) {
+    protected DocumentUploadResultDto(DocumentUploadResultDtoBuilder builder) {
         this.documentId = builder.fileId;
     }
 
@@ -12,11 +12,15 @@ public class DocumentUploadResultDto {
         return documentId;
     }
 
-    public static class FileUploadResultDtoBuilder {
+    public static DocumentUploadResultDtoBuilder builder() {
+        return new DocumentUploadResultDtoBuilder();
+    }
+
+    public static class DocumentUploadResultDtoBuilder {
 
         private Long fileId;
 
-        public FileUploadResultDtoBuilder withFileId(Long uploadedFileId) {
+        public DocumentUploadResultDtoBuilder withFileId(Long uploadedFileId) {
             this.fileId = uploadedFileId;
             return this;
         }

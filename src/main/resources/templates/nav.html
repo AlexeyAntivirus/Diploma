@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Title</title>
+    </head>
+    <body>
+        <th:block th:fragment="nav">
+            <nav class="navbar background-custom navbar-inverse navbar-fixed-top">
+                <div class="container-fluid">
+                    <div class="navbar-header navbar-right">
+                        <a class=" navbar-text navbar-text-custom" th:href="@{/user/profile(userId=${user.getId()})}"
+                           th:text="#{${user.getUserRole().getString()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|">
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </th:block>
+    </body>
+</html>

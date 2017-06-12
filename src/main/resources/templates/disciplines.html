@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <meta charset="UTF-8"/>
         <title>Disciplines</title>
-
-        <link rel="stylesheet" type="text/css" href="../static/css/normalize.css" th:href="@{/css/normalize.css}"/>
-        <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}"/>
-        <link rel="stylesheet" type="text/css" href="../static/css/custom.css" th:href="@{/css/custom.css}"/>
+        <th:block th:replace="head :: head">Head</th:block>
     </head>
     <body>
-        <th:block th:fragment="disciplines">
-            <div th:each="discipline: ${disciplines}">
-                <a class="discipline-link" th:text="${discipline.getName()}"
-                   th:href="@{'/discipline/' + ${discipline.getId()}(userId=${user.getId()})}"></a>
-            </div>
-        </th:block>
 
-        <script src="../static/js/jquery-3.2.1.js" th:src="@{/js/jquery-3.2.1.js}"></script>
-        <script src="../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+        <th:block th:replace="nav :: nav">Navigation</th:block>
+
+        <div class="container-fluid container-custom">
+            <div class="row">
+
+                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+
+                <div class="col-md-8 main">
+                    <div th:each="discipline: ${disciplines}">
+                        <a class="discipline-link" th:text="${discipline.getName()}"
+                           th:href="@{'/discipline/' + ${discipline.getId()}(userId=${user.getId()})}"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

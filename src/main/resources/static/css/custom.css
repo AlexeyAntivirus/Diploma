@@ -35,6 +35,7 @@
     border: none;
     padding-bottom: 4px !important;
     position: relative;
+    min-height: 120px;
 }
 
 .dashboard-function:hover {
@@ -49,6 +50,10 @@
     height: 100%;
     left: 0;
     top: 0;
+}
+
+.list-element {
+    margin-bottom: 20px;
 }
 
 .report-table {
@@ -89,6 +94,19 @@
 
 .discipline-link-mini {
     font-size: 20px;
+}
+
+.discipline-link-nano {
+    font-size: 15px;
+}
+
+.p-size {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.div-offset {
+    margin-right: 36px;
 }
 
 .remove-color {

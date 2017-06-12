@@ -47,7 +47,6 @@ public class UserService {
             User user = User.builder()
                     .withLogin(fullUserFormDto.getLogin())
                     .withEmail(fullUserFormDto.getEmail())
-                    .withPassword(fullUserFormDto.getPassword())
                     .withLastName(fullUserFormDto.getLastName())
                     .withFirstName(fullUserFormDto.getFirstName())
                     .withMiddleName(fullUserFormDto.getMiddleName())
@@ -84,7 +83,7 @@ public class UserService {
         return UserUpdatingResultDto.builder()
                 .withErrorField(errorField)
                 .withErrorMessage(errorMessage)
-                .withUpdatedUser(user)
+                .isUpdated(errorField == null)
                 .build();
     }
 
@@ -104,7 +103,6 @@ public class UserService {
         } else {
             user.setLogin(fullUserFormDto.getLogin());
             user.setEmail(fullUserFormDto.getEmail());
-            user.setPassword(fullUserFormDto.getPassword());
             user.setLastName(fullUserFormDto.getLastName());
             user.setFirstName(fullUserFormDto.getFirstName());
             user.setMiddleName(fullUserFormDto.getMiddleName());
@@ -115,7 +113,7 @@ public class UserService {
         return UserUpdatingResultDto.builder()
                 .withErrorField(errorField)
                 .withErrorMessage(errorMessage)
-                .withUpdatedUser(user)
+                .isUpdated(errorField == null)
                 .build();
     }
 
