@@ -13,7 +13,7 @@
 
                 <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
 
-                <div class="col-md-8 main">
+                <div class="col-md-6 main">
                     <div th:if="${discipline == null}">
                         <p th:text="${'Discipline with id ' + id + ' is not exists'}"></p>
                     </div>
@@ -45,7 +45,16 @@
                                                             <p th:text="#{${documentSubType.getString()}}"></p>
                                                             <div th:each="curriculum: ${discipline.getCurriculums()}"
                                                                  th:if="${curriculum.getDocumentType() == T(com.rx.misc.DocumentTypeResolver).resolve(documentRootType, documentSubType)}">
-                                                                <a th:text="${curriculum.getDocumentFilename()}"></a>
+
+
+                                                                <div class="col-md-12">
+                                                                    <a th:text="${curriculum.getDocumentFilename()}" th:href="@{/download(fileId=${curriculum.getId()})}"></a>
+                                                                </div>
+                                                                <div class="col-md-2" th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
+                                                                    <a class="remove-color discipline-link-mini"
+                                                                       th:href="@{'/upload/delete-curriculum/' + ${curriculum.getId()}(userId=${user.getId()}, disciplineId=${discipline.getId()})}">
+                                                                        <span class="glyphicon glyphicon-remove-circle remove-color" aria-hidden="true"></span>Видалити</a>
+                                                                </div>
                                                                 <br/>
                                                             </div>
                                                         </td>

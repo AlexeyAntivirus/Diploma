@@ -84,6 +84,24 @@
                                         <p class="p-size" th:text="|#{${user.getUserRole().getString()}}|"></p>
                                     </div>
                                 </div>
+
+                                <div class="row" th:if="${user.getUserRole() != T(com.rx.dao.UserRole).ADMINISTRATOR}">
+                                    <h3 class="col-md-12">Педагогічна нагрузка</h3>
+                                </div>
+
+                                <div class="row" th:if="${user.getUserRole() != T(com.rx.dao.UserRole).ADMINISTRATOR}"
+                                     th:each="teachingLoad: ${user.getTeachingLoads()}">
+                                    <div class="col-md-12">
+                                        <a th:href="@{/download(fileId=${teachingLoad.getId()})}"
+                                           th:text="${teachingLoad.getDocumentFilename()}"></a>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a class="remove-color discipline-link-mini"
+                                           th:href="@{'/upload/delete-teaching-load/' + ${teachingLoad.getId()}(userId=${user.getId()})}">
+                                            <span class="glyphicon glyphicon-remove-circle remove-color" aria-hidden="true"></span>Видалити</a>
+                                    </div>
+                                </div>
+
                                 <div class="row form-group">
                                     <div class="col-md-4">
                                         <button class="btn btn-lg btn-success btn-block" type="submit" th:form="'userFormDto'"

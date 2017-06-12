@@ -29,20 +29,26 @@ public class DocumentStorageService {
 
     private static final Logger LOGGER = LogManager.getLogger(DocumentStorageService.class);
 
+    private UserService userService;
+    private DisciplineService disciplineService;
     private DocumentRepository documentRepository;
     private FileStorageHelper fileStorageHelper;
 
     @Autowired
     public DocumentStorageService(DocumentRepository documentRepository,
+                                  UserService userService,
+                                  DisciplineService disciplineService,
                                   FileStorageHelper fileStorageHelper) {
         this.documentRepository = documentRepository;
+        this.userService = userService;
         this.fileStorageHelper = fileStorageHelper;
+        this.disciplineService = disciplineService;
     }
 
     public DocumentUploadResultDto saveTeachingLoadInStorage(User user, MultipartFile file, Date uploadingDate) {
         Document document = this.saveDocumentInStorage(file, DocumentType.TEACHING_LOAD, uploadingDate);
 
-        user.getTeachingLoads().add(document);
+        userService.updateUserTeachingLoad(user, document);
 
         return DocumentUploadResultDto.builder()
                 .withFileId(document.getId())
@@ -52,7 +58,7 @@ public class DocumentStorageService {
     public DocumentUploadResultDto saveCurriculumInStorage(Discipline discipline, MultipartFile file, DocumentType documentType, Date uploadingDate) {
         Document document = this.saveDocumentInStorage(file, documentType, uploadingDate);
 
-        discipline.getCurriculums().add(document);
+        disciplineService.updateDisciplineWithCurriculum(discipline, document);
 
         return DocumentUploadResultDto.builder()
                 .withFileId(document.getId())
@@ -106,6 +112,45 @@ public class DocumentStorageService {
         return StreamSupport.stream(allDocuments.spliterator(), false)
                 .filter(document -> document.getDocumentType() == DocumentType.NORMATIVE_ACT)
                 .collect(Collectors.toList());
+    }
+
+
+
+    public boolean isFileExists(String filename) {
+        Iterable<Document> documents = documentRepository.findAll();
+
+        for (Document document: documents) {
+            if (document.getDocumentFilename().equals(filename)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void deleteCurriculum(Long disciplineId, Long documentId) {
+        Discipline discipline = disciplineService.getDisciplineById(disciplineId);
+        Document one = documentRepository.findOne(documentId);
+
+        discipline.getCurriculums().remove(one);
+        documentRepository.delete(documentId);
+        fileStorageHelper.deleteFile(one);
+    }
+
+    public void deleteTeachingLoad(Long userId, Long documentId) {
+        User user = userService.getUserById(userId);
+        Document one = documentRepository.findOne(documentId);
+
+        user.getTeachingLoads().remove(one);
+        documentRepository.delete(documentId);
+        fileStorageHelper.deleteFile(one);
+    }
+
+    public void deleteDocument(Long documentId) {
+        Document one = documentRepository.findOne(documentId);
+
+        documentRepository.delete(documentId);
+        fileStorageHelper.deleteFile(one);
     }
 
     private Document saveDocumentInStorage(MultipartFile file, DocumentType documentType, Date uploadingDate) {

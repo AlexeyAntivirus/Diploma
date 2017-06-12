@@ -29,7 +29,6 @@ public class DisciplineController {
     public String getDiscipline(@PathVariable("id") Long id,
                                       @RequestParam("userId") Long userId,
                                       Model model) {
-
         model.addAttribute("id", id);
         model.addAttribute("user", userService.getUserById(userId));
         model.addAttribute("discipline", disciplineService.getDisciplineById(id));

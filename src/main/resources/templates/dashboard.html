@@ -45,7 +45,7 @@
                                         <div class="box-down">
                                             <p>Переглянути усі прикази, розпорядження та інші нормативні акти.</p>
                                         </div>
-                                        <a th:href="@{/user/disciplines(userId=${user.getId()})}">
+                                        <a th:href="@{/user/acts(userId=${user.getId()})}">
                                             <span class="dashboard-function-hyper-span"></span>
                                         </a>
                                     </div>
@@ -58,14 +58,41 @@
                                         <div class="box-down">
                                             <p>Переглянути усі навчальні плани.</p>
                                         </div>
-                                        <a th:href="@{/syllabuses(userId=${user.getId()})}">
+                                        <a th:href="@{/user/syllabuses(userId=${user.getId()})}">
+                                            <span class="dashboard-function-hyper-span"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="dashboard-function col-md-3">
+                                    <div class="text-center">
+                                        <div class="box-top">
+                                            <h3>Завантаження ПН</h3>
+                                        </div>
+                                        <div class="box-down">
+                                            <p>Завантажити педагогічні нагрузки.</p>
+                                        </div>
+                                        <a th:href="@{/upload/teaching-load(userId=${user.getId()})}">
                                             <span class="dashboard-function-hyper-span"></span>
                                         </a>
                                     </div>
                                 </div>
                             </th:block>
-                            <th:block th:if="${user.getUserRole() != T(com.rx.dao.UserRole).ADMINISTRATOR} and
-                                            ${user.getUserRole() != T(com.rx.dao.UserRole).ASSISTANT}">
+                            <th:block th:if="${user.getUserRole() != T(com.rx.dao.UserRole).ADMINISTRATOR and user.getUserRole() != T(com.rx.dao.UserRole).ASSISTANT}">
+                                <div class="dashboard-function col-md-3">
+                                    <div class="text-center">
+                                        <div class="box-top">
+                                            <h3>Завантаження НМК</h3>
+                                        </div>
+                                        <div class="box-down">
+                                            <p>Завантажити документи, які відносяться до навчально-методичного комплексу.</p>
+                                        </div>
+                                        <a th:href="@{/upload/curriculum(userId=${user.getId()})}">
+                                            <span class="dashboard-function-hyper-span"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
                                 <div class="dashboard-function col-md-3">
                                     <div class="text-center">
                                         <div class="box-top">
@@ -75,6 +102,19 @@
                                             <p>Завантажити навчальні плани.</p>
                                         </div>
                                         <a th:href="@{/upload/syllabus(userId=${user.getId()})}">
+                                            <span class="dashboard-function-hyper-span"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="dashboard-function col-md-3">
+                                    <div class="text-center">
+                                        <div class="box-top">
+                                            <h3>Завантаження НА</h3>
+                                        </div>
+                                        <div class="box-down">
+                                            <p>Завантажити нормативні акти.</p>
+                                        </div>
+                                        <a th:href="@{/upload/act(userId=${user.getId()})}">
                                             <span class="dashboard-function-hyper-span"></span>
                                         </a>
                                     </div>

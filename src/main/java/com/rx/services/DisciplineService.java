@@ -49,6 +49,10 @@ public class DisciplineService {
         disciplineRepository.delete(id);
     }
 
+    public void saveDiscipline(Discipline discipline) {
+        disciplineRepository.save(discipline);
+    }
+
     public Iterable<Discipline> getTeacherDisciplines(Long userId) {
         return disciplineRepository.findByUsersId(userId);
     }
@@ -83,7 +87,8 @@ public class DisciplineService {
         String errorMessage = null;
         String errorField = null;
 
-        if (disciplineRepository.existsByName(fullDisciplineFormDto.getName())) {
+        if (disciplineRepository.existsByName(fullDisciplineFormDto.getName())
+                && !discipline.getName().equals(fullDisciplineFormDto.getName())) {
             errorField = "name";
             errorMessage = "discipline.isPresent";
         } else {
@@ -151,5 +156,11 @@ public class DisciplineService {
 
         discipline.getUsers().remove(user);
         user.getDisciplines().remove(discipline);
+    }
+
+    public void updateDisciplineWithCurriculum(Discipline discipline, Document curriculum) {
+        discipline.getCurriculums().add(curriculum);
+
+        this.disciplineRepository.save(discipline);
     }
 }

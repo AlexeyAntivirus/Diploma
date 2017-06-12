@@ -128,10 +128,11 @@ public class AdminDisciplineController {
                                         Model model) {
         model.addAttribute("userId", userId);
         model.addAttribute("user", userService.getUserById(userId));
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("fullDisciplineFormDto", fullDisciplineFormDto);
-            return "admin-discipline";
+            return "redirect:/admin/get-discipline/" + id + "?userId=" + userId;
         }
 
         DisciplineUpdatingResultDto disciplineUpdatingResultDto = disciplineService.updateDiscipline(id, fullDisciplineFormDto);
@@ -140,10 +141,8 @@ public class AdminDisciplineController {
             bindingResult.rejectValue(disciplineUpdatingResultDto.getErrorField(),
                     disciplineUpdatingResultDto.getErrorMessage());
             model.addAttribute("fullDisciplineFormDto", fullDisciplineFormDto);
-            return "admin-discipline";
+            return "redirect:/admin/get-discipline/" + id + "?userId=" + userId;
         }
-
-        model.addAttribute("attribute", "redirectWithRedirectPrefix");
 
         return "redirect:/admin/get-discipline/" + id + "?userId=" + userId;
     }

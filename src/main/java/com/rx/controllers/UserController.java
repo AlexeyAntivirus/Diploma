@@ -2,6 +2,7 @@ package com.rx.controllers;
 
 import com.rx.dto.UserUpdatingResultDto;
 import com.rx.dto.forms.UserFormDto;
+import com.rx.services.DocumentStorageService;
 import com.rx.services.UserService;
 import com.rx.validators.UserFormDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,16 @@ import javax.validation.Valid;
 public class UserController {
 
     private UserFormDtoValidator userFormDtoValidator;
+    private DocumentStorageService documentStorageService;
     private UserService userService;
 
     @Autowired
-    public UserController(UserService userService, UserFormDtoValidator userFormDtoValidator) {
+    public UserController(UserService userService,
+                          DocumentStorageService documentStorageService,
+                          UserFormDtoValidator userFormDtoValidator) {
         this.userService = userService;
         this.userFormDtoValidator = userFormDtoValidator;
+        this.documentStorageService = documentStorageService;
     }
 
     @InitBinder("userFormDto")
@@ -72,6 +77,22 @@ public class UserController {
         }
 
         return "redirect:/user/profile?userId=" + userId;
+    }
+
+    @GetMapping(name = "/syllabuses", value = "/syllabuses")
+    public String getSyllabuses(@RequestParam("userId") Long userId,
+                                Model model) {
+        model.addAttribute("user", userService.getUserById(userId));
+        model.addAttribute("syllabuses", documentStorageService.getAllSyllabuses());
+        return "syllabuses";
+    }
+
+    @GetMapping(name = "/acts", value = "/acts")
+    public String getActs(@RequestParam("userId") Long userId,
+                                Model model) {
+        model.addAttribute("user", userService.getUserById(userId));
+        model.addAttribute("acts", documentStorageService.getAllNormativeActs());
+        return "acts";
     }
 
     private ModelAndView userForm() {

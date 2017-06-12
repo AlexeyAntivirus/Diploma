@@ -21,7 +21,7 @@
                 <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
                 <div class="col-md-8 main">
                     <form id="documentUploadFormDto" method="post" enctype="multipart/form-data" action="#"
-                          th:action="@{/upload/syllabus(userId=${user.getId()})}"
+                          th:action="@{'/upload/' + ${type}(userId=${user.getId()})}"
                           th:object="${documentUploadFormDto}">
 
                         <div class="container-fluid">

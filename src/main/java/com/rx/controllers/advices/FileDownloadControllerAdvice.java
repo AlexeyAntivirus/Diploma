@@ -21,8 +21,4 @@ public class FileDownloadControllerAdvice {
         LOGGER.warn("Unexpected error appeared!", e);
     }
 
-    @InitBinder()
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-    }
 }

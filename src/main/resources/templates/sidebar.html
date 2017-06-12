@@ -19,16 +19,26 @@
                             <a th:href="@{/discipline/disciplines(userId=${user.getId()})}">Перелік дисциплін</a>
                         </li>
                         <li>
-                            <a th:href="@{/acts(userId=${user.getId()})}">Нормативні акти</a>
+                            <a th:href="@{/user/acts(userId=${user.getId()})}">Нормативні акти</a>
                         </li>
                         <li>
-                            <a th:href="@{/syllabuses(userId=${user.getId()})}">Навчальні плани</a>
+                            <a th:href="@{/user/syllabuses(userId=${user.getId()})}">Навчальні плани</a>
+                        </li>
+                        <li>
+                            <a th:href="@{/upload/teaching-load(userId=${user.getId()})}">Завантаження ПН</a>
                         </li>
                     </th:block>
-                    <th:block
-                            th:if="${user.getUserRole() != T(com.rx.dao.UserRole).ADMINISTRATOR}">
+                    <th:block th:if="${user.getUserRole() != T(com.rx.dao.UserRole).ADMINISTRATOR and user.getUserRole() != T(com.rx.dao.UserRole).ASSISTANT}">
+                        <li>
+                            <a th:href="@{/upload/curriculum(userId=${user.getId()})}">Завантаження НМК</a>
+                        </li>
+                    </th:block>
+                    <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
                         <li>
                             <a th:href="@{/upload/syllabus(userId=${user.getId()})}">Завантаження НП</a>
+                        </li>
+                        <li>
+                            <a th:href="@{/upload/act(userId=${user.getId()})}">Завантаження НА</a>
                         </li>
                     </th:block>
                     <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST} or ${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">

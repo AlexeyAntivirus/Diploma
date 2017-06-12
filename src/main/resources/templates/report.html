@@ -40,7 +40,7 @@
                             </tr>
                             <tr th:each="curriculumState: ${curriculumStates}">
                                 <td>
-                                    <a th:text="${curriculumState.getDisciplineName()}" th:href="@{'/discipline/' + ${curriculumState.getDisciplineId()}(teacherId=${user.getId()})}"></a>
+                                    <a th:text="${curriculumState.getDisciplineName()}" th:href="@{'/discipline/' + ${curriculumState.getDisciplineId()}(userId=${user.getId()})}"></a>
                                 </td>
                                 <th:block th:with="map = ${curriculumState.getCurriculumState()}">
                                     <td th:each="documentType: ${T(com.rx.dao.DocumentType).values()}" th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()}">

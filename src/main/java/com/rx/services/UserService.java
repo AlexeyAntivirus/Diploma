@@ -1,6 +1,7 @@
 package com.rx.services;
 
 import com.rx.dao.Discipline;
+import com.rx.dao.Document;
 import com.rx.dao.User;
 import com.rx.dao.repositories.UserRepository;
 import com.rx.dto.UserAddingResultDto;
@@ -115,6 +116,13 @@ public class UserService {
                 .withErrorMessage(errorMessage)
                 .isUpdated(errorField == null)
                 .build();
+    }
+
+    public void updateUserTeachingLoad(User user, Document teachingLoad) {
+
+        user.getTeachingLoads().add(teachingLoad);
+
+        this.userRepository.save(user);
     }
 
     public void deleteById(Long id) {

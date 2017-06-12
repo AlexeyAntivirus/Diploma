@@ -3,6 +3,7 @@ package com.rx.helpers;
 import com.rx.controllers.exceptions.FileDownloadNotFoundException;
 import com.rx.controllers.exceptions.FileUploadIOException;
 import com.rx.controllers.exceptions.FileUploadInvalidPathException;
+import com.rx.dao.Document;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.BeanCreationException;
@@ -87,5 +88,15 @@ public class FileStorageHelper {
 
     void setRunningTests(boolean isRunningTests) {
         this.isRunningTests = isRunningTests;
+    }
+
+    public void deleteFile(Document one) {
+        Path desiredFilePath = this.fileStoragePath.resolve(one.getDocumentFilename()).normalize();
+
+        try {
+            Files.deleteIfExists(desiredFilePath);
+        } catch (IOException e) {
+            throw new FileUploadIOException("File is not uploaded into storage, because io error occurs", e);
+        }
     }
 }

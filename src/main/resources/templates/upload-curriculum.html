@@ -1,34 +1,80 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <meta charset="UTF-8">
         <title>Upload curriculum</title>
+        <th:block th:replace="head :: head">Head</th:block>
+
+        <link href="../static/css/fileinput.css" th:href="@{/css/fileinput.css}" media="all" rel="stylesheet" type="text/css"/>
+        <link href="../static/themes/explorer/theme.css" th:href="@{/themes/explorer/theme.css}" media="all" rel="stylesheet" type="text/css"/>
+
+        <script src="../static/js/plugins/sortable.js" th:src="@{/js/plugins/sortable.js}"></script>
+        <script src="../static/js/fileinput.js" th:src="@{/js/fileinput.js}"></script>
+        <script src="../static/js/locales/fr.js" th:src="@{/js/locales/fr.js}"></script>
+        <script src="../static/js/locales/es.js" th:src="@{/js/locales/es.js}"></script>
+        <script src="../static/themes/explorer/theme.js" th:src="@{/themes/explorer/theme.js}"></script>
     </head>
     <body>
-        <form method="post" enctype="multipart/form-data" action="#" th:action="@{/upload}" th:object="${documentUploadFormDto}">
-            <div>
-                <label>
-                    Документ <input type="file" th:field="*{multipartFile}"/>
-                    <label th:if="${#fields.hasErrors('multipartFile')}" th:errors="*{multipartFile}" for="multipartFile"></label>
-                    <label th:if="${exception instanceof T(com.rx.controllers.exceptions.FileUploadIOException)}" th:text="#{upload.file.internal.error}" for="multipartFile"></label>
-                    <label th:if="${exception instanceof T(com.rx.controllers.exceptions.FileUploadInvalidPathException)}" th:text="#{upload.file.invalid.name}" for="multipartFile"></label>
-                </label>
+        <th:block th:replace="nav :: nav">Navigation</th:block>
+
+        <div class="container-fluid container-custom">
+            <div class="row">
+                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <div class="col-md-8 main">
+                    <form id="curriculumUploadFormDto" method="post" enctype="multipart/form-data" action="#"
+                          th:action="@{/upload/curriculum(userId=${user.getId()})}"
+                          th:object="${curriculumUploadFormDto}">
+
+                        <div class="container-fluid">
+                            <div class="row form-group">
+                                <div class="div-offset col-md-1">
+                                    <p class="p-size">Дисципліна</p>
+                                </div>
+                                <div th:class="${#fields.hasErrors('disciplineId') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                    <select id="disciplineId" class="form-control" th:field="*{disciplineId}">
+                                        <option th:text="''" th:value="null" selected="selected"></option>
+                                        <option th:each="value: ${user.getDisciplines()}"
+                                                th:text="${value.getName()}"
+                                                th:value="${value.getId()}"></option>
+                                    </select>
+                                </div>
+                                <label class="col-md-4 control-label" for="disciplineId" th:if="${#fields.hasErrors('disciplineId')}"
+                                       th:errors="*{disciplineId}"></label>
+                            </div>
+                            <div class="row form-group">
+                                <div class="div-offset col-md-1">
+                                    <p class="p-size">Тип документа</p>
+                                </div>
+                                <div th:class="${#fields.hasErrors('documentType') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                    <select id="documentType" class="form-control" th:field="*{documentType}">
+                                        <option th:text="''" th:value="null" selected="selected"></option>
+                                        <option th:each="value: ${T(com.rx.dao.DocumentType).values()}"
+                                                th:text="|#{${T(com.rx.misc.DocumentRootType).resolve(value).getString()}} #{${T(com.rx.misc.DocumentSubType).resolve(value).getString()}}|"
+                                                th:value="${value}"
+                                                th:if="${T(com.rx.misc.DocumentRootType).resolve(value).isCurriculum()}"></option>
+                                    </select>
+                                </div>
+                                <label class="col-md-4 control-label" for="documentType" th:if="${#fields.hasErrors('documentType')}"
+                                       th:errors="*{documentType}"></label>
+                            </div>
+                            <div class="row form-group">
+                                <div th:class="${#fields.hasErrors('multipartFile') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                    <label class="control-label" for="input-1a multipartFile">Документ</label>
+                                    <input id="input-1a multipartFile" type="file" class="file" th:field="*{multipartFile}" data-show-preview="false"/>
+                                </div>
+                                <label class="col-md-4 control-label" th:if="${#fields.hasErrors('multipartFile')}"
+                                       th:errors="*{multipartFile}" for="input-1a multipartFile"></label>
+                                <label class="col-md-4 control-label"
+                                       th:if="${exception instanceof T(com.rx.controllers.exceptions.FileUploadIOException)}"
+                                       th:text="#{upload.file.internal.error}" for="input-1a multipartFile"></label>
+                                <label class="col-md-4 control-label"
+                                       th:if="${exception instanceof T(com.rx.controllers.exceptions.FileUploadInvalidPathException)}"
+                                       th:text="#{upload.file.invalid.name}" for="input-1a multipartFile"></label>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div>
-                <label>
-                    Тип <select th:field="*{documentType}">
-                        <option th:text="''" th:value="null" selected="selected"></option>
-                        <option th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
-                            th:value="${documentType}"
-                            th:text="#{${documentType.getString()}}"
-                            th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()}">
-                        </option>
-                    </select>
-                    <label th:if="${#fields.hasErrors('documentType')}" th:errors="*{documentType}" for="multipartFile"></label>
-                </label>
-            </div>
-            <br/>
-            <input type="submit" name="send" value="Загрузить"/>
-        </form>
+        </div>
     </body>
 </html>
