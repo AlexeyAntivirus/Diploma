@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Syllabuses</title>
+        <title>Навчальні плани</title>
         <th:block th:replace="head :: head">Head</th:block>
     </head>
     <body>
@@ -9,17 +9,24 @@
         <div class="container-fluid container-custom">
             <div class="row">
                 <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
-                <div class="col-md-8 main">
+                <div class="col-md-10">
                     <div class="container-fluid">
-                        <div class="row list-element" th:each="syllabus: ${syllabuses}">
-                            <div class="col-md-12">
-                                <a class="discipline-link" th:text="${syllabus.getDocumentFilename()}"
-                                   th:href="@{/download(fileId=${syllabus.getId()})}"></a>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Навчальні плани</h3>
                             </div>
-                            <div class="col-md-2" th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
-                                <a class="remove-color discipline-link-mini"
-                                   th:href="@{'/upload/delete-syllabus/' + ${syllabus.getId()}(userId=${user.getId()})}">
-                                    <span class="glyphicon glyphicon-remove-circle remove-color" aria-hidden="true"></span>Видалити</a>
+                            <div class="panel-body">
+                                <div class="row list-element" th:each="syllabus: ${syllabuses}">
+                                    <div class="col-md-12">
+                                        <a class="discipline-link" th:text="${syllabus.getDocumentFilename()}"
+                                           th:href="@{/download(fileId=${syllabus.getId()})}"></a>
+                                    </div>
+                                    <div class="col-md-2" th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
+                                        <a class="remove-color discipline-link-mini"
+                                           th:href="@{'/upload/delete-syllabus/' + ${syllabus.getId()}(userId=${user.getId()})}">
+                                            <span class="glyphicon glyphicon-remove-circle remove-color" aria-hidden="true"></span>Видалити</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

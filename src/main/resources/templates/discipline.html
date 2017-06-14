@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Discipline</title>
+        <title>НМК дисциплини</title>
         <th:block th:replace="head :: head">Head</th:block>
     </head>
     <body>
@@ -13,57 +13,59 @@
 
                 <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
 
-                <div class="col-md-6 main">
-                    <div th:if="${discipline == null}">
-                        <p th:text="${'Discipline with id ' + id + ' is not exists'}"></p>
-                    </div>
-                    <div class="container-fluid" th:unless="${discipline == null}">
-                        <div>
-                            <h3 th:text="|Назва дисципліни: ${discipline.getName()}|"></h3>
+                <div class="col-md-10">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">НМК дисциплини</h3>
                         </div>
+                        <div class="panel-body">
+                            <div th:if="${discipline == null}">
+                                <p th:text="${'Discipline with id ' + id + ' does not exist'}"></p>
+                            </div>
+                            <div class="container-fluid" th:unless="${discipline == null}">
+                                <div class="page-header">
+                                    <h3 th:text="${discipline.getName()}"></h3>
+                                </div>
+                                <div class="panel-group" id="accordion">
+                                    <th:block th:each="documentRootType: ${T(com.rx.misc.DocumentRootType).values()}"
+                                              th:if="${documentRootType.isCurriculum()}"
+                                              th:with="collapseId = ${'collapse' + (documentRootType.ordinal() - 2)}">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a th:text="#{${documentRootType.getString()}}" data-toggle="collapse"
+                                                       data-parent="#accordion" th:href="@{'#' + ${collapseId}}"></a>
+                                                </h4>
+                                            </div>
+                                            <div th:id="${collapseId}" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    <table class="table">
+                                                        <tr th:each="documentSubType: ${T(com.rx.misc.DocumentSubType).resolveSubTypes(documentRootType)}"
+                                                            th:with="anotherCollapseId = ${'collapse' + (documentRootType.ordinal() - 2) + (documentSubType.ordinal())}">
+                                                            <td>
+                                                                <p th:text="#{${documentSubType.getString()}}"></p>
+                                                                <div th:each="curriculum: ${discipline.getCurriculums()}"
+                                                                     th:if="${curriculum.getDocumentType() == T(com.rx.misc.DocumentTypeResolver).resolve(documentRootType, documentSubType)}">
 
-                        <p>НМК</p>
 
-                        <div>
-                            <div class="panel-group" id="accordion">
-                                <th:block th:each="documentRootType: ${T(com.rx.misc.DocumentRootType).values()}"
-                                          th:if="${documentRootType.isCurriculum()}"
-                                          th:with="collapseId = ${'collapse' + (documentRootType.ordinal() - 2)}">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <h4 class="panel-title">
-                                                <a th:text="#{${documentRootType.getString()}}" data-toggle="collapse"
-                                                   data-parent="#accordion" th:href="@{'#' + ${collapseId}}"></a>
-                                            </h4>
-                                        </div>
-                                        <div th:id="${collapseId}" class="panel-collapse collapse">
-                                            <div class="panel-body">
-                                                <table class="table">
-                                                    <tr th:each="documentSubType: ${T(com.rx.misc.DocumentSubType).resolveSubTypes(documentRootType)}"
-                                                        th:with="anotherCollapseId = ${'collapse' + (documentRootType.ordinal() - 2) + (documentSubType.ordinal())}">
-                                                        <td>
-                                                            <p th:text="#{${documentSubType.getString()}}"></p>
-                                                            <div th:each="curriculum: ${discipline.getCurriculums()}"
-                                                                 th:if="${curriculum.getDocumentType() == T(com.rx.misc.DocumentTypeResolver).resolve(documentRootType, documentSubType)}">
-
-
-                                                                <div class="col-md-12">
-                                                                    <a th:text="${curriculum.getDocumentFilename()}" th:href="@{/download(fileId=${curriculum.getId()})}"></a>
+                                                                    <div class="col-md-12">
+                                                                        <a th:text="${curriculum.getDocumentFilename()}" th:href="@{/download(fileId=${curriculum.getId()})}"></a>
+                                                                    </div>
+                                                                    <div class="col-md-2" th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
+                                                                        <a class="remove-color discipline-link-mini"
+                                                                           th:href="@{'/upload/delete-curriculum/' + ${curriculum.getId()}(userId=${user.getId()}, disciplineId=${discipline.getId()})}">
+                                                                            <span class="glyphicon glyphicon-remove-circle remove-color" aria-hidden="true"></span>Видалити</a>
+                                                                    </div>
+                                                                    <br/>
                                                                 </div>
-                                                                <div class="col-md-2" th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
-                                                                    <a class="remove-color discipline-link-mini"
-                                                                       th:href="@{'/upload/delete-curriculum/' + ${curriculum.getId()}(userId=${user.getId()}, disciplineId=${discipline.getId()})}">
-                                                                        <span class="glyphicon glyphicon-remove-circle remove-color" aria-hidden="true"></span>Видалити</a>
-                                                                </div>
-                                                                <br/>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </th:block>
+                                    </th:block>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Admin user</title>
+        <title>Редагувати користувача</title>
 
         <th:block th:replace="head :: head">Head</th:block>
 
@@ -14,103 +14,110 @@
             <div class="row">
                 <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
 
-                <div class="col-md-8 main">
-                    <div th:if="${teacher == null}">
-                        <p th:text="${'User with id ' + id + ' is not exists'}"></p>
-                    </div>
-                    <div th:unless="${teacher == null}">
-                        <form id="fullUserFormDto" action="#" th:action="@{'/admin/get-user/' + ${id}(userId=${userId})}" method="post"
-                              th:object="${fullUserFormDto}">
-                            <div class="container-fluid">
-                                <div class="row form-group">
-                                    <div class="div-offset col-md-1">
-                                        <p class="p-size">Логін</p>
-                                    </div>
-                                    <div th:class="${#fields.hasErrors('login') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                        <input id="login" class="form-control" type="text" th:value="${teacher.getLogin()}" th:id="login" th:name="login"/>
-                                    </div>
-                                    <label for="login" class="col-md-4 control-label" th:if="${#fields.hasErrors('login')}"
-                                           th:errors="*{login}"></label>
-                                </div>
-                                <div class="row form-group">
-                                    <div class="div-offset col-md-1">
-                                        <p class="p-size">Пароль</p>
-                                    </div>
-                                    <div th:class="${#fields.hasErrors('password') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                        <input id="password" class="form-control" type="text" th:field="*{password}"/>
-                                    </div>
-                                    <label for="password" class="col-md-4 control-label" th:if="${#fields.hasErrors('password')}"
-                                           th:errors="*{password}"></label>
-                                </div>
-
-                                <div class="row form-group">
-                                    <div class="div-offset col-md-1">
-                                        <p class="p-size">Email</p>
-                                    </div>
-                                    <div th:class="${#fields.hasErrors('email') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                        <input id="email" class="form-control" type="email" th:id="email" th:name="email" th:value="${teacher.getEmail()}"/>
-                                    </div>
-                                    <label class="col-md-4 control-label" for="email" th:if="${#fields.hasErrors('email')}"
-                                           th:errors="*{email}"></label>
-                                </div>
-                                <div class="row form-group">
-                                    <div class="div-offset col-md-1">
-                                        <p class="p-size">Прізвище</p>
-                                    </div>
-                                    <div th:class="${#fields.hasErrors('lastName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                        <input id="lastName" class="form-control" type="text" th:id="lastName" th:name="lastName" th:value="${teacher.getLastName()}"/>
-                                    </div>
-                                    <label class="col-md-4 control-label" for="lastName" th:if="${#fields.hasErrors('lastName')}"
-                                           th:errors="*{lastName}"></label>
-                                </div>
-                                <div class="row form-group">
-                                    <div class="div-offset col-md-1">
-                                        <p class="p-size">Ім'я</p>
-                                    </div>
-                                    <div th:class="${#fields.hasErrors('firstName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                        <input id="firstName" class="form-control" type="text" th:id="firstName" th:name="firstName" th:value="${teacher.getFirstName()}"/>
-                                    </div>
-                                    <label class="col-md-4 control-label" for="firstName" th:if="${#fields.hasErrors('firstName')}"
-                                           th:errors="*{firstName}"></label>
-                                </div>
-                                <div class="row form-group">
-                                    <div class="div-offset col-md-1">
-                                        <p class="p-size">По батькові</p>
-                                    </div>
-                                    <div th:class="${#fields.hasErrors('middleName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                        <input id="middleName" class="form-control" type="text" th:id="middleName" th:name="middleName" th:value="${teacher.getMiddleName()}"/>
-                                    </div>
-                                    <label class="col-md-4 control-label" for="middleName" th:if="${#fields.hasErrors('middleName')}"
-                                           th:errors="*{middleName}"></label>
-                                </div>
-
-                                <div class="row form-group">
-                                    <div class="div-offset col-md-1">
-                                        <p class="p-size">Роль</p>
-                                    </div>
-                                    <div th:class="${#fields.hasErrors('userRole') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                        <select id="userRole" class="form-control" th:id="userRole" th:name="userRole">
-                                            <option th:each="userRoleValue: ${T(com.rx.dao.UserRole).values()}"
-                                                    th:text="#{${userRoleValue.getString()}}"
-                                                    th:value="${userRoleValue}"
-                                                    th:selected="${userRoleValue == teacher.getUserRole()}"></option>
-                                        </select>
-                                    </div>
-                                    <label class="col-md-4 control-label" for="userRole" th:if="${#fields.hasErrors('userRole')}"
-                                           th:errors="*{userRole}"></label>
-                                </div>
-
-                                <div class="row form-group">
-                                    <div class="col-md-4">
-                                        <button class="btn btn-lg btn-success btn-block" type="submit" th:form="'fullUserFormDto'" th:text="'Редагувати'"></button>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <a class="remove-color discipline-link-mini" th:href="@{${'/admin/delete-user/' + id}(userId=${userId})}">
-                                            <span class="glyphicon glyphicon-remove-circle remove-color discipline-link-mini" aria-hidden="true"></span>Видалити</a>
-                                    </div>
-                                </div>
+                <div class="col-md-10">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Редагувати користувача</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div th:if="${teacher == null}">
+                                <p th:text="${'User with id ' + id + ' is not exists'}"></p>
                             </div>
-                        </form>
+                            <div th:unless="${teacher == null}">
+                                <form id="fullUserFormDto" action="#" th:action="@{'/admin/get-user/' + ${id}(userId=${userId})}" method="post"
+                                      th:object="${fullUserFormDto}">
+                                    <div class="container-fluid">
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Логін</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('login') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                <input id="login" class="form-control" type="text" th:value="${teacher.getLogin()}" th:id="login" th:name="login"/>
+                                            </div>
+                                            <label for="login" class="col-md-4 control-label" th:if="${#fields.hasErrors('login')}"
+                                                   th:errors="*{login}"></label>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Пароль</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('password') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                <input id="password" class="form-control" type="text" th:field="*{password}"/>
+                                            </div>
+                                            <label for="password" class="col-md-4 control-label" th:if="${#fields.hasErrors('password')}"
+                                                   th:errors="*{password}"></label>
+                                        </div>
+
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Email</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('email') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                <input id="email" class="form-control" type="email" th:id="email" th:name="email" th:value="${teacher.getEmail()}"/>
+                                            </div>
+                                            <label class="col-md-4 control-label" for="email" th:if="${#fields.hasErrors('email')}"
+                                                   th:errors="*{email}"></label>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Прізвище</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('lastName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                <input id="lastName" class="form-control" type="text" th:id="lastName" th:name="lastName" th:value="${teacher.getLastName()}"/>
+                                            </div>
+                                            <label class="col-md-4 control-label" for="lastName" th:if="${#fields.hasErrors('lastName')}"
+                                                   th:errors="*{lastName}"></label>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Ім'я</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('firstName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                <input id="firstName" class="form-control" type="text" th:id="firstName" th:name="firstName" th:value="${teacher.getFirstName()}"/>
+                                            </div>
+                                            <label class="col-md-4 control-label" for="firstName" th:if="${#fields.hasErrors('firstName')}"
+                                                   th:errors="*{firstName}"></label>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">По батькові</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('middleName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                <input id="middleName" class="form-control" type="text" th:id="middleName" th:name="middleName" th:value="${teacher.getMiddleName()}"/>
+                                            </div>
+                                            <label class="col-md-4 control-label" for="middleName" th:if="${#fields.hasErrors('middleName')}"
+                                                   th:errors="*{middleName}"></label>
+                                        </div>
+
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Роль</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('userRole') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                <select id="userRole" class="form-control" th:id="userRole" th:name="userRole">
+                                                    <option th:each="userRoleValue: ${T(com.rx.dao.UserRole).values()}"
+                                                            th:text="#{${userRoleValue.getString()}}"
+                                                            th:value="${userRoleValue}"
+                                                            th:selected="${userRoleValue == teacher.getUserRole()}"></option>
+                                                </select>
+                                            </div>
+                                            <label class="col-md-4 control-label" for="userRole" th:if="${#fields.hasErrors('userRole')}"
+                                                   th:errors="*{userRole}"></label>
+                                        </div>
+
+                                        <div class="row form-group">
+                                            <div class="col-md-4">
+                                                <button class="btn btn-lg btn-success btn-block" type="submit" th:form="'fullUserFormDto'" th:text="'Редагувати'"></button>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <a class="remove-color discipline-link-mini" th:href="@{${'/admin/delete-user/' + id}(userId=${userId})}">
+                                                    <span class="glyphicon glyphicon-remove-circle remove-color discipline-link-mini" aria-hidden="true"></span>Видалити</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

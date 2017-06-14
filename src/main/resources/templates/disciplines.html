@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Disciplines</title>
+        <title>Перелік дисциплін</title>
         <th:block th:replace="head :: head">Head</th:block>
     </head>
     <body>
@@ -13,10 +13,17 @@
 
                 <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
 
-                <div class="col-md-8 main">
-                    <div th:each="discipline: ${disciplines}">
-                        <a class="discipline-link" th:text="${discipline.getName()}"
-                           th:href="@{'/discipline/' + ${discipline.getId()}(userId=${user.getId()})}"></a>
+                <div class="col-md-10">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Перелік дисциплін</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div th:each="discipline: ${disciplines}">
+                                <a class="discipline-link" th:text="${discipline.getName()}"
+                                   th:href="@{'/discipline/' + ${discipline.getId()}(userId=${user.getId()})}"></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
