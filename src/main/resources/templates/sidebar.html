@@ -43,7 +43,7 @@
                     </th:block>
                     <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST} or ${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">
                         <li>
-                            <a th:href="@{/report(userId=${user.getId()})}">Стан нмк</a>
+                            <a th:href="@{/report(userId=${user.getId()})}">Стан НМК</a>
                         </li>
                     </th:block>
                     <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ADMINISTRATOR}">
