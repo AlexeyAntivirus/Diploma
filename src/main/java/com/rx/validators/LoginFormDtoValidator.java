@@ -24,16 +24,12 @@ public class LoginFormDtoValidator implements Validator {
     private void validatePassword(String password, Errors errors) {
         if (password == null || password.isEmpty()) {
             errors.rejectValue("password", "field.not.specified");
-        } else if (password.length() > 128 || password.length() < 6) {
-            errors.rejectValue("password", "invalid.field.size.range");
         }
     }
 
     private void validateLogin(String login, Errors errors) {
         if (login == null || login.isEmpty()) {
             errors.rejectValue("login", "field.not.specified");
-        } else if (login.length() > 128 || login.length() < 6) {
-            errors.rejectValue("login", "invalid.field.size.range");
         }
     }
 }
