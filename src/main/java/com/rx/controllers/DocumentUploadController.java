@@ -86,11 +86,15 @@ public class DocumentUploadController {
                                  BindingResult bindingResult,
                                  Model model) {
         model.addAttribute("user", userService.getUserById(userId));
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
+
         if (bindingResult.hasErrors()) {
+            model.addAttribute("type", "syllabus");
             return "upload";
         }
 
         if (documentStorageService.isFileExists(documentUploadFormDto.getMultipartFile().getOriginalFilename())) {
+            model.addAttribute("type", "syllabus");
             bindingResult.rejectValue("multipartFile", "upload.file.exists");
             return "upload";
         }
@@ -99,7 +103,7 @@ public class DocumentUploadController {
                 saveSyllabusInStorage(documentUploadFormDto.getMultipartFile(), Date.valueOf(LocalDate.now()));
 
         model.addAttribute("uploadedFileId", result.getDocumentId());
-        model.addAttribute("attribute", "redirectWithRedirectPrefix");
+
 
         return "redirect:/user/syllabuses?userId=" + userId;
     }
@@ -119,13 +123,16 @@ public class DocumentUploadController {
                                  @Valid DocumentUploadFormDto documentUploadFormDto,
                                  BindingResult bindingResult,
                                  Model model) {
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
         model.addAttribute("user", userService.getUserById(userId));
         if (bindingResult.hasErrors()) {
+            model.addAttribute("type", "act");
             return "upload";
         }
 
         if (documentStorageService.isFileExists(documentUploadFormDto.getMultipartFile().getOriginalFilename())) {
             bindingResult.rejectValue("multipartFile", "upload.file.exists");
+            model.addAttribute("type", "syllabus");
             return "upload";
         }
 
@@ -133,7 +140,7 @@ public class DocumentUploadController {
                 saveNormativeActInStorage(documentUploadFormDto.getMultipartFile(), Date.valueOf(LocalDate.now()));
 
         model.addAttribute("uploadedFileId", result.getDocumentId());
-        model.addAttribute("attribute", "redirectWithRedirectPrefix");
+
 
         return "redirect:/user/acts?userId=" + userId;
     }
@@ -159,11 +166,13 @@ public class DocumentUploadController {
         model.addAttribute("user", userById);
         model.addAttribute("userId", userId);
         if (bindingResult.hasErrors()) {
+            model.addAttribute("type", "teaching-load");
             return "upload";
         }
 
         if (documentStorageService.isFileExists(documentUploadFormDto.getMultipartFile().getOriginalFilename())) {
             bindingResult.rejectValue("multipartFile", "upload.file.exists");
+            model.addAttribute("type", "teaching-load");
             return "upload";
         }
 
@@ -196,6 +205,7 @@ public class DocumentUploadController {
         model.addAttribute("user", userById);
         model.addAttribute("userId", userId);
         if (bindingResult.hasErrors()) {
+            model.addAttribute("type", "teaching-load");
             return "upload-curriculum";
         }
 
