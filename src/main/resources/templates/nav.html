@@ -8,7 +8,17 @@
         <th:block th:fragment="nav">
             <nav class="navbar background-custom navbar-inverse navbar-fixed-top">
                 <div class="container-fluid">
-                    <div class="navbar-header navbar-right">
+
+                    <div class="navbar-header navbar-right navbar-nav">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Меню
+                                <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a th:href="@{/logout}">Вийти</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="navbar-header navbar-right navbar-nav">
                         <a class=" navbar-text navbar-text-custom" th:href="@{/user/profile(userId=${user.getId()})}"
                            th:text="#{${user.getUserRole().getString()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|">
                         </a>
