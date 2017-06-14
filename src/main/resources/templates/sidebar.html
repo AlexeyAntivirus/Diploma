@@ -25,7 +25,7 @@
                             <a th:href="@{/user/syllabuses(userId=${user.getId()})}">Навчальні плани</a>
                         </li>
                         <li>
-                            <a th:href="@{/upload/teaching-load(userId=${user.getId()})}">Завантаження пед. нагрузок</a>
+                            <a th:href="@{/upload/teaching-load(userId=${user.getId()})}">Завантаження пед. навантажень</a>
                         </li>
                     </th:block>
                     <th:block th:if="${user.getUserRole() != T(com.rx.dao.UserRole).ADMINISTRATOR and user.getUserRole() != T(com.rx.dao.UserRole).ASSISTANT}">
@@ -35,10 +35,10 @@
                     </th:block>
                     <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
                         <li>
-                            <a th:href="@{/upload/syllabus(userId=${user.getId()})}">Завантаження нав. планів</a>
+                            <a th:href="@{/upload/syllabus(userId=${user.getId()})}">Завантаження навчальних планів</a>
                         </li>
                         <li>
-                            <a th:href="@{/upload/act(userId=${user.getId()})}">Завантаження норм. актів</a>
+                            <a th:href="@{/upload/act(userId=${user.getId()})}">Завантаження нормативних актів</a>
                         </li>
                     </th:block>
                     <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST} or ${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">

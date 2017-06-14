@@ -21,7 +21,7 @@
                         </div>
                         <div class="panel-body">
                             <div th:if="${teacher == null}">
-                                <p th:text="${'User with id ' + id + ' is not exists'}"></p>
+                                <p th:text="${'User with id ' + id + ' does not exist'}"></p>
                             </div>
                             <div th:unless="${teacher == null}">
                                 <form id="fullUserFormDto" action="#" th:action="@{'/admin/get-user/' + ${id}(userId=${userId})}" method="post"
