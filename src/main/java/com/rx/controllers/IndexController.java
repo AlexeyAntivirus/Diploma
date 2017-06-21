@@ -14,18 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class IndexController {
 
 
-    private UserService userService;
-
-    @Autowired
-    public IndexController(UserService userService) {
-        this.userService = userService;
-    }
-
     @GetMapping
-    public String getUserDashboard(@RequestParam("userId") Long id,
-                                   Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        model.addAttribute("id", id);
+    public String getUserDashboard() {
 
         return "index";
     }

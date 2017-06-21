@@ -13,9 +13,9 @@
                             <h3 class="panel-title">Головна</h3>
                         </div>
                         <div class="panel-body">
-                            <th:block th:if="${user.getUserRole() != T(com.rx.dao.UserRole).ADMINISTRATOR}">
+                            <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR}">
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/discipline/disciplines(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/discipline/disciplines}">
                                         <div class="caption text-center">
                                             <h3>Перелік дисциплін</h3>
                                             <p>Переглянути дисципліни, які Ви ведете</p>
@@ -23,7 +23,7 @@
                                     </a>
                                 </div>
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/user/acts(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/user/acts}">
                                         <div class="caption text-center">
                                             <h3>Нормативні акти</h3>
                                             <p>Переглянути усі накази, розпорядження та інші нормативні акти</p>
@@ -31,7 +31,7 @@
                                     </a>
                                 </div>
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/user/syllabuses(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/user/syllabuses}">
                                         <div class="caption text-center">
                                             <h3>Навчальні плани</h3>
                                             <p>Переглянути усі навчальні плани</p>
@@ -39,7 +39,7 @@
                                     </a>
                                 </div>
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/upload/teaching-load(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/upload/teaching-load}">
                                         <div class="caption text-center">
                                             <h3>Завантаження пед. навантажень</h3>
                                             <p>Завантажити педагогічні навантаження</p>
@@ -47,9 +47,9 @@
                                     </a>
                                 </div>
                             </th:block>
-                            <th:block th:if="${user.getUserRole() != T(com.rx.dao.UserRole).ADMINISTRATOR and user.getUserRole() != T(com.rx.dao.UserRole).ASSISTANT}">
+                            <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR and user.getUserRole() != T(com.rx.dao.UserRole).ASSISTANT}">
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/upload/curriculum(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/upload/curriculum}">
                                         <div class="caption text-center">
                                             <h3>Завантаження НМК</h3>
                                             <p>Завантажити документи, які відносяться до навчально-методичного комплексу (НМК)</p>
@@ -57,9 +57,9 @@
                                     </a>
                                 </div>
                             </th:block>
-                            <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
+                            <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST}">
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/upload/syllabus(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/upload/syllabus}">
                                         <div class="caption text-center">
                                             <h3>Завантаження навчальних планів</h3>
                                             <p>Завантажити навчальні плани</p>
@@ -67,7 +67,7 @@
                                     </a>
                                 </div>
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/upload/act(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/upload/act}">
                                         <div class="caption text-center">
                                             <h3>Завантаження нормативних актів</h3>
                                             <p>Завантажити нормативні акти</p>
@@ -75,9 +75,9 @@
                                     </a>
                                 </div>
                             </th:block>
-                            <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST} or ${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">
+                            <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST} or ${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/report(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/report}">
                                         <div class="caption text-center">
                                             <h3>Стан НМК</h3>
                                             <p>Переглянути стан навчально-методичного комплексу (НМК)</p>
@@ -85,9 +85,9 @@
                                     </a>
                                 </div>
                             </th:block>
-                            <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ADMINISTRATOR}">
+                            <th:block th:if="${role == T(com.rx.dao.UserRole).ADMINISTRATOR}">
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/admin/disciplines(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/admin/disciplines}">
                                         <div class="caption text-center">
                                             <h3>Перелік дисциплін</h3>
                                             <p>Переглянути усі дисципліни, які ведуться на кафедрі</p>
@@ -95,7 +95,7 @@
                                     </a>
                                 </div>
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/admin/users(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/admin/users}">
                                         <div class="caption text-center">
                                             <h3>Перелік користувачів</h3>
                                             <p>Переглянути усіх користувачів</p>
@@ -103,7 +103,7 @@
                                     </a>
                                 </div>
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/admin/add-user(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/admin/add-user}">
                                         <div class="caption text-center">
                                             <h3>Додати користувача</h3>
                                             <p>Створити нового користувача в системі</p>
@@ -111,7 +111,7 @@
                                     </a>
                                 </div>
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/admin/add-discipline(userId=${user.getId()})}">
+                                    <a class="thumbnail thumb" th:href="@{/admin/add-discipline}">
                                         <div class="caption text-center">
                                             <h3>Додати дисципліну</h3>
                                             <p>Створити нову дисципліну в системі</p>
@@ -120,7 +120,7 @@
                                 </div>
                             </th:block>
                             <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                <a class="thumbnail thumb" th:href="@{/user/profile(userId=${user.getId()})}">
+                                <a class="thumbnail thumb" th:href="@{/user/profile}">
                                     <div class="caption text-center">
                                         <h3>Профіль</h3>
                                         <p>Переглянути і редагувати персональні дані</p>

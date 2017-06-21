@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <head>
         <title>Сторінка авторизації</title>
         <th:block th:replace="head :: head">Head</th:block>
@@ -14,22 +15,20 @@
                             <h3 class="panel-title">Сторінка авторизації</h3>
                         </div>
                         <div class="panel-body">
-                            <form accept-charset="UTF-8" role="form" id="loginFormDto" action="#" th:action="@{/login}" method="post" th:object="${loginFormDto}">
+                            <form th:action="@{/login}" method="post">
                                 <fieldset>
                                     <div class="row">
-                                        <div th:class="${#fields.hasErrors('login') ? 'col-md-12 form-group has-error has-feedback':'col-md-12 form-group'}">
-                                            <input id="login" class="form-control col-md-12" placeholder="Логін"  type="text" th:field="*{login}"/>
-                                            <label for="login" class="col-md-12" th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
+                                        <div th:class="${'col-md-12 form-group'}">
+                                            <input id="login" name="login" class="form-control col-md-12" placeholder="Логін" type="text"/>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div th:class="${#fields.hasErrors('password') ? 'col-md-12 form-group has-error has-feedback':'col-md-12 form-group'}">
-                                            <input id="password" class="form-control col-md-12" placeholder="Пароль"  type="password" th:field="*{password}"/>
-                                            <label for="password" class="col-md-12" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></label>
+                                        <div th:class="${'col-md-12 form-group'}">
+                                            <input id="password" name="password" class="form-control col-md-12" placeholder="Пароль" type="password"/>
                                         </div>
                                     </div>
-                                    <p th:text="#{${authorizationError}}"></p>
-                                    <input class="btn btn-lg btn-success btn-block" type="submit"  form="loginFormDto" value="Увійти"/>
+                                    <input class="btn btn-lg btn-success btn-block" name="submit" type="submit" value="Увійти"/>
+                                    <p th:if="${error != null}" th:text="#{${error}}"></p>
                                 </fieldset>
                             </form>
                         </div>

@@ -9,6 +9,7 @@ import com.rx.dto.UserUpdatingResultDto;
 import com.rx.dto.forms.FullUserFormDto;
 import com.rx.dto.forms.UserFormDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,9 +17,14 @@ public class UserService {
 
     private UserRepository userRepository;
 
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository,
+                       BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public User getUserById(Long id) {
@@ -26,7 +32,13 @@ public class UserService {
     }
 
     public User getUserByLoginAndPassword(String login, String password) {
-        return userRepository.findByLoginAndPassword(login, password);
+        User user = userRepository.findByLogin(login);
+
+        if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            user = null;
+        }
+
+        return user;
     }
 
     public Iterable<User> getAllUsers() {
@@ -47,6 +59,7 @@ public class UserService {
         } else {
             User user = User.builder()
                     .withLogin(fullUserFormDto.getLogin())
+                    .withPassword(bCryptPasswordEncoder.encode(fullUserFormDto.getPassword()))
                     .withEmail(fullUserFormDto.getEmail())
                     .withLastName(fullUserFormDto.getLastName())
                     .withFirstName(fullUserFormDto.getFirstName())
@@ -74,7 +87,7 @@ public class UserService {
             errorMessage = "email.isBusy";
         } else {
             user.setEmail(userFormDto.getEmail());
-            user.setPassword(userFormDto.getPassword());
+            user.setPassword(bCryptPasswordEncoder.encode(userFormDto.getPassword()));
             user.setLastName(userFormDto.getLastName());
             user.setFirstName(userFormDto.getFirstName());
             user.setMiddleName(userFormDto.getMiddleName());
@@ -103,6 +116,7 @@ public class UserService {
             errorMessage = "login.isBusy";
         } else {
             user.setLogin(fullUserFormDto.getLogin());
+            user.setPassword(bCryptPasswordEncoder.encode(fullUserFormDto.getPassword()));
             user.setEmail(fullUserFormDto.getEmail());
             user.setLastName(fullUserFormDto.getLastName());
             user.setFirstName(fullUserFormDto.getFirstName());
@@ -127,7 +141,7 @@ public class UserService {
 
     public void deleteById(Long id) {
         User one = userRepository.findOne(id);
-        for (Discipline discipline: one.getDisciplines()) {
+        for (Discipline discipline : one.getDisciplines()) {
             discipline.getUsers().remove(one);
         }
         userRepository.delete(id);

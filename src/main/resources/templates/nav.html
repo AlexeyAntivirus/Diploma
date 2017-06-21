@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <div class="navbar-header navbar-right navbar-nav">
-                        <a class=" navbar-text navbar-text-custom" th:href="@{/user/profile(userId=${user.getId()})}"
+                        <a class=" navbar-text navbar-text-custom" th:href="@{/user/profile}"
                            th:text="#{${user.getUserRole().getString()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|">
                         </a>
                     </div>

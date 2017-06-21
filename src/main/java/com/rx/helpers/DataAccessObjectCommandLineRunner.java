@@ -10,6 +10,7 @@ import com.rx.dao.repositories.DisciplineRepository;
 import com.rx.dao.repositories.DocumentRepository;
 import com.rx.dao.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.transaction.Transactional;
 import java.sql.Date;
@@ -24,12 +25,16 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
 
     private final DisciplineRepository disciplineRepository;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public DataAccessObjectCommandLineRunner(UserRepository userRepository,
                                              DisciplineRepository disciplineRepository,
-                                             DocumentRepository documentRepository) {
+                                             DocumentRepository documentRepository,
+                                             BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.documentRepository = documentRepository;
         this.disciplineRepository = disciplineRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -90,9 +95,10 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
 
         disciplineRepository.save(discipline1);
         disciplineRepository.save(discipline2);
+
         User user1 = User.builder()
                 .withLogin("nshvec60")
-                .withPassword("nshvec60")
+                .withPassword(bCryptPasswordEncoder.encode("nshvec60"))
                 .withEmail("shvetsnatalya@rambler.ru")
                 .withLastName("Швець")
                 .withFirstName("Наталя")
@@ -101,7 +107,7 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
                 .build();
         User user2 = User.builder()
                 .withLogin("proziumod")
-                .withPassword("proziumod")
+                .withPassword(bCryptPasswordEncoder.encode("proziumod"))
                 .withEmail("proziumod@gmail.com")
                 .withLastName("Мітрофанова")
                 .withFirstName("Наталя")
@@ -125,7 +131,7 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
                 .withLogin("admin")
                 .withPassword("admin")
                 .withEmail("blabla@gmail.com")
-                .withPassword("14ph38")
+                .withPassword(bCryptPasswordEncoder.encode("14ph38"))
                 .withLastName("")
                 .withFirstName("")
                 .withMiddleName("")
@@ -134,9 +140,9 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(User.builder()
-                .withLogin("plotnikov")
-                .withPassword("plotnikov")
-                .withEmail("plotnikov@ukr.net")
+                .withLogin("vmplotnik")
+                .withPassword(bCryptPasswordEncoder.encode("plotnikov"))
+                .withEmail("vmplotnik@gmail.com")
                 .withLastName("Плотников")
                 .withFirstName("Валерій")
                 .withMiddleName("Михайлович")
@@ -144,12 +150,16 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
                 .build());
         userRepository.save(User.builder()
                 .withLogin("popkovdn")
-                .withPassword("popkovdn")
+                .withPassword(bCryptPasswordEncoder.encode("popkovdn"))
                 .withEmail("popkovdn@ukr.net")
                 .withLastName("Попков")
                 .withFirstName("Денис")
                 .withMiddleName("Миколайович")
                 .withUserRole(UserRole.LECTURER)
                 .build());
+
+        for (User user: userRepository.findAll()) {
+            System.out.println(user.getLogin() + " " + user.getPassword());
+        }
     }
 }

@@ -35,7 +35,7 @@
                                             <p class="p-size">Пароль</p>
                                         </div>
                                         <div th:class="${#fields.hasErrors('password') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                            <input id="password" class="form-control" type="text" th:field="*{password}"/>
+                                            <input id="password" class="form-control" type="password" th:field="*{password}"/>
                                         </div>
                                         <label for="password" class="col-md-4 control-label" th:if="${#fields.hasErrors('password')}"
                                                th:errors="*{password}"></label>
