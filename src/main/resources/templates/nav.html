@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <head>
         <meta charset="UTF-8"/>
         <title>Title</title>
@@ -19,8 +20,10 @@
                         </div>
                     </div>
                     <div class="navbar-header navbar-right navbar-nav">
-                        <a class=" navbar-text navbar-text-custom" th:href="@{/user/profile}"
-                           th:text="#{${user.getUserRole().getString()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|">
+                        <a class=" navbar-text navbar-text-custom" th:href="@{/user/profile}">
+                            <span sec:authentication="principal.userRole"></span>
+                            <span sec:authentication="principal.firstName"></span>
+                            <span sec:authentication="principal.lastName"></span>
                         </a>
                     </div>
                 </div>

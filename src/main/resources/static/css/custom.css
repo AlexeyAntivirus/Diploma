@@ -4,6 +4,10 @@
     border-radius: 0 !important;
 }
 
+html, body {
+    height: 100%;
+}
+
 .background-custom {
     background-color: #34495e !important;
     border: none;
@@ -102,5 +106,16 @@
 }
 
 .main {
-    min-height: 832px;
+    min-height: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.center {
+    margin: auto;
+    max-height: 300px;
+}
+
+.center-block {
+    float: none;
 }

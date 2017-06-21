@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,7 +20,7 @@ public class User {
     @GeneratedValue
     private Long id;
 
-    private String login;
+    private String username;
 
     private String email;
 
@@ -50,7 +49,7 @@ public class User {
     }
 
     private User(UserBuilder builder) {
-        this.login = builder.login;
+        this.username = builder.username;
         this.email = builder.email;
         this.password = builder.password;
         this.lastName = builder.lastName;
@@ -63,12 +62,12 @@ public class User {
         return id;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -141,7 +140,7 @@ public class User {
 
     public static class UserBuilder {
 
-        private String login;
+        private String username;
 
         private String email;
 
@@ -158,8 +157,8 @@ public class User {
         private UserBuilder() {
         }
 
-        public UserBuilder withLogin(String login) {
-            this.login = login;
+        public UserBuilder withUsername(String username) {
+            this.username = username;
             return this;
         }
 

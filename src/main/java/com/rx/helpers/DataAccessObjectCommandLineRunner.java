@@ -97,7 +97,7 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
         disciplineRepository.save(discipline2);
 
         User user1 = User.builder()
-                .withLogin("nshvec60")
+                .withUsername("nshvec60")
                 .withPassword(bCryptPasswordEncoder.encode("nshvec60"))
                 .withEmail("shvetsnatalya@rambler.ru")
                 .withLastName("Швець")
@@ -106,7 +106,7 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
                 .withUserRole(UserRole.METHODOLOGIST)
                 .build();
         User user2 = User.builder()
-                .withLogin("proziumod")
+                .withUsername("proziumod")
                 .withPassword(bCryptPasswordEncoder.encode("proziumod"))
                 .withEmail("proziumod@gmail.com")
                 .withLastName("Мітрофанова")
@@ -128,7 +128,7 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
         user2.setDisciplines(disciplines);
 
         userRepository.save(User.builder()
-                .withLogin("admin")
+                .withUsername("admin")
                 .withPassword("admin")
                 .withEmail("blabla@gmail.com")
                 .withPassword(bCryptPasswordEncoder.encode("14ph38"))
@@ -140,7 +140,7 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(User.builder()
-                .withLogin("vmplotnik")
+                .withUsername("vmplotnik")
                 .withPassword(bCryptPasswordEncoder.encode("plotnikov"))
                 .withEmail("vmplotnik@gmail.com")
                 .withLastName("Плотников")
@@ -149,7 +149,7 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
                 .withUserRole(UserRole.HEAD_OF_DEPARTMENT)
                 .build());
         userRepository.save(User.builder()
-                .withLogin("popkovdn")
+                .withUsername("popkovdn")
                 .withPassword(bCryptPasswordEncoder.encode("popkovdn"))
                 .withEmail("popkovdn@ukr.net")
                 .withLastName("Попков")
@@ -159,7 +159,7 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
                 .build());
 
         for (User user: userRepository.findAll()) {
-            System.out.println(user.getLogin() + " " + user.getPassword());
+            System.out.println(user.getUsername() + " " + user.getPassword());
         }
     }
 }

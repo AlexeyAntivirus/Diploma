@@ -32,7 +32,7 @@ public class UserService {
     }
 
     public User getUserByLoginAndPassword(String login, String password) {
-        User user = userRepository.findByLogin(login);
+        User user = userRepository.findByUsername(login);
 
         if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             user = null;
@@ -50,7 +50,7 @@ public class UserService {
         String errorField = null;
         Long userId = null;
 
-        if (userRepository.existsByLogin(fullUserFormDto.getLogin())) {
+        if (userRepository.existsByUsername(fullUserFormDto.getLogin())) {
             errorField = "login";
             errorMessage = "login.isBusy";
         } else if (userRepository.existsByEmail(fullUserFormDto.getEmail())) {
@@ -58,7 +58,7 @@ public class UserService {
             errorMessage = "email.isBusy";
         } else {
             User user = User.builder()
-                    .withLogin(fullUserFormDto.getLogin())
+                    .withUsername(fullUserFormDto.getLogin())
                     .withPassword(bCryptPasswordEncoder.encode(fullUserFormDto.getPassword()))
                     .withEmail(fullUserFormDto.getEmail())
                     .withLastName(fullUserFormDto.getLastName())
@@ -110,12 +110,12 @@ public class UserService {
                 userRepository.existsByEmail(fullUserFormDto.getEmail())) {
             errorField = "email";
             errorMessage = "email.isBusy";
-        } else if (!fullUserFormDto.getLogin().equals(user.getLogin()) &&
-                userRepository.existsByLogin(fullUserFormDto.getLogin())) {
+        } else if (!fullUserFormDto.getLogin().equals(user.getUsername()) &&
+                userRepository.existsByUsername(fullUserFormDto.getLogin())) {
             errorField = "login";
             errorMessage = "login.isBusy";
         } else {
-            user.setLogin(fullUserFormDto.getLogin());
+            user.setUsername(fullUserFormDto.getLogin());
             user.setPassword(bCryptPasswordEncoder.encode(fullUserFormDto.getPassword()));
             user.setEmail(fullUserFormDto.getEmail());
             user.setLastName(fullUserFormDto.getLastName());
