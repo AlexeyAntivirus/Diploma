@@ -14,16 +14,21 @@
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Меню
                                 <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                                <li><a th:href="@{/logout}">Вийти</a></li>
+                            <ul class="dropdown-menu list-group">
+                                <li class="list-group-item">
+                                    <form th:action="@{/logout}" method="post">
+                                        <input class="btn btn-default" type="submit" value="Вийти"/>
+                                    </form>
+                                </li>
                             </ul>
                         </div>
                     </div>
                     <div class="navbar-header navbar-right navbar-nav">
                         <a class=" navbar-text navbar-text-custom" th:href="@{/user/profile}">
-                            <span sec:authentication="principal.userRole"></span>
-                            <span sec:authentication="principal.firstName"></span>
-                            <span sec:authentication="principal.lastName"></span>
+                            <span th:text="#{${#authentication.principal.userRole.getString()}}"></span>
+                            <span th:text="${#authentication.principal.lastName}"></span>
+                            <span th:text="${#authentication.principal.firstName}"></span>
+                            <span th:text="${#authentication.principal.middleName}"></span>
                         </a>
                     </div>
                 </div>

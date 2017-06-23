@@ -11,7 +11,7 @@
         <div class="container-fluid container-custom">
             <div class="row">
 
-                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
 
                 <div class="col-md-10">
                     <div class="panel panel-default">
@@ -42,7 +42,7 @@
                                 </tr>
                                 <tr th:each="curriculumState: ${curriculumStates}">
                                     <td>
-                                        <a th:text="${curriculumState.getDisciplineName()}" th:href="@{'/discipline/' + ${curriculumState.getDisciplineId()}(userId=${user.getId()})}"></a>
+                                        <a th:text="${curriculumState.getDisciplineName()}" th:href="@{'/discipline/' + ${curriculumState.getDisciplineId()}}"></a>
                                     </td>
                                     <th:block th:with="map = ${curriculumState.getCurriculumState()}">
                                         <td th:each="documentType: ${T(com.rx.dao.DocumentType).values()}" th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()}">

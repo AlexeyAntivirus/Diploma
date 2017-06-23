@@ -19,7 +19,7 @@ public class LoginController {
 
         ModelAndView model = new ModelAndView();
         if (error != null) {
-            model.addObject("error", "user.login.notAuthorize");
+            model.addObject("error", "user.username.notAuthorize");
         }
 
         if (logout != null) {

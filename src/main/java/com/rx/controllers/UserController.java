@@ -2,10 +2,12 @@ package com.rx.controllers;
 
 import com.rx.dto.UserUpdatingResultDto;
 import com.rx.dto.forms.UserFormDto;
+import com.rx.helpers.AuthenticatedUser;
 import com.rx.services.DocumentStorageService;
 import com.rx.services.UserService;
 import com.rx.validators.UserFormDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import sun.plugin.liveconnect.SecurityContextHelper;
 
 import javax.validation.Valid;
 
@@ -42,55 +45,48 @@ public class UserController {
     }
 
     @GetMapping(name = "/profile", value = "/profile")
-    public ModelAndView getUserProfile(@RequestParam("userId") Long id) {
+    public ModelAndView getUserProfile() {
 
         ModelAndView modelAndView = userForm();
-        modelAndView.getModel().put("user", userService.getUserById(id));
-        modelAndView.getModel().put("id", id);
+        Long userId = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        modelAndView.addObject("user", userService.getUserById(userId));
 
         return modelAndView;
     }
 
     @PostMapping(name = "/profile", value = "/profile")
-    public String updateUser(@RequestParam("userId") Long userId,
-                             @Valid UserFormDto userFormDto,
+    public String updateUser(@Valid UserFormDto userFormDto,
                              BindingResult bindingResult,
                              Model model) {
 
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("userFormDto", userFormDto);
-            model.addAttribute("id", userId);
-            model.addAttribute("user", userService.getUserById(userId));
             return "user";
         }
 
+        Long userId = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         UserUpdatingResultDto userUpdatingResultDto = userService.updateUser(userId, userFormDto);
         String errorMessage = userUpdatingResultDto.getErrorMessage();
 
         if (errorMessage != null) {
             bindingResult.rejectValue(userUpdatingResultDto.getErrorField(), errorMessage);
             model.addAttribute("userFormDto", userFormDto);
-            model.addAttribute("id", userId);
-            model.addAttribute("user", userService.getUserById(userId));
             return "user";
         }
 
-        return "redirect:/user/profile?userId=" + userId;
+        return "redirect:/user/profile";
     }
 
     @GetMapping(name = "/syllabuses", value = "/syllabuses")
-    public String getSyllabuses(@RequestParam("userId") Long userId,
-                                Model model) {
-        model.addAttribute("user", userService.getUserById(userId));
+    public String getSyllabuses(Model model) {
         model.addAttribute("syllabuses", documentStorageService.getAllSyllabuses());
         return "syllabuses";
     }
 
     @GetMapping(name = "/acts", value = "/acts")
-    public String getActs(@RequestParam("userId") Long userId,
-                                Model model) {
-        model.addAttribute("user", userService.getUserById(userId));
+    public String getActs(Model model) {
         model.addAttribute("acts", documentStorageService.getAllNormativeActs());
         return "acts";
     }

@@ -50,7 +50,7 @@ public class UserService {
         String errorField = null;
         Long userId = null;
 
-        if (userRepository.existsByUsername(fullUserFormDto.getLogin())) {
+        if (userRepository.existsByUsername(fullUserFormDto.getUsername())) {
             errorField = "login";
             errorMessage = "login.isBusy";
         } else if (userRepository.existsByEmail(fullUserFormDto.getEmail())) {
@@ -58,7 +58,7 @@ public class UserService {
             errorMessage = "email.isBusy";
         } else {
             User user = User.builder()
-                    .withUsername(fullUserFormDto.getLogin())
+                    .withUsername(fullUserFormDto.getUsername())
                     .withPassword(bCryptPasswordEncoder.encode(fullUserFormDto.getPassword()))
                     .withEmail(fullUserFormDto.getEmail())
                     .withLastName(fullUserFormDto.getLastName())
@@ -110,12 +110,12 @@ public class UserService {
                 userRepository.existsByEmail(fullUserFormDto.getEmail())) {
             errorField = "email";
             errorMessage = "email.isBusy";
-        } else if (!fullUserFormDto.getLogin().equals(user.getUsername()) &&
-                userRepository.existsByUsername(fullUserFormDto.getLogin())) {
+        } else if (!fullUserFormDto.getUsername().equals(user.getUsername()) &&
+                userRepository.existsByUsername(fullUserFormDto.getUsername())) {
             errorField = "login";
             errorMessage = "login.isBusy";
         } else {
-            user.setUsername(fullUserFormDto.getLogin());
+            user.setUsername(fullUserFormDto.getUsername());
             user.setPassword(bCryptPasswordEncoder.encode(fullUserFormDto.getPassword()));
             user.setEmail(fullUserFormDto.getEmail());
             user.setLastName(fullUserFormDto.getLastName());

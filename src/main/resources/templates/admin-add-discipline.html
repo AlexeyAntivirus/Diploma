@@ -9,14 +9,14 @@
 
         <div class="container-fluid container-custom">
             <div class="row">
-                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
                 <div class="col-md-10">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">Додати дисципліну</h3>
                         </div>
                         <div class="panel-body">
-                            <form id="addDisciplineFormDto" action="#" th:action="@{/admin/add-discipline(userId=${userId})}" method="post" th:object="${addDisciplineFormDto}">
+                            <form id="addDisciplineFormDto" action="#" th:action="@{/admin/add-discipline}" method="post" th:object="${addDisciplineFormDto}">
                                 <div class="container-fluid">
                                     <div class="row form-group">
                                         <div class="div-offset col-md-1">

@@ -47,7 +47,7 @@
                                     </a>
                                 </div>
                             </th:block>
-                            <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR and user.getUserRole() != T(com.rx.dao.UserRole).ASSISTANT}">
+                            <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR and role != T(com.rx.dao.UserRole).ASSISTANT}">
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
                                     <a class="thumbnail thumb" th:href="@{/upload/curriculum}">
                                         <div class="caption text-center">
@@ -75,7 +75,7 @@
                                     </a>
                                 </div>
                             </th:block>
-                            <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST} or ${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">
+                            <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST} or ${role == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">
                                 <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
                                     <a class="thumbnail thumb" th:href="@{/report}">
                                         <div class="caption text-center">

@@ -2,7 +2,6 @@ package com.rx.helpers;
 
 import com.rx.dao.User;
 import com.rx.dao.UserRole;
-import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,13 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class AuthenticatedUser implements UserDetails, CredentialsContainer {
+public class AuthenticatedUser implements UserDetails {
 
     private Long id;
 
     private String username;
-
-    private String email;
 
     private String password;
 
@@ -42,7 +39,6 @@ public class AuthenticatedUser implements UserDetails, CredentialsContainer {
         this.id = authenticatedUserBuilder.id;
         this.username = authenticatedUserBuilder.username;
         this.password = authenticatedUserBuilder.password;
-        this.email = authenticatedUserBuilder.email;
         this.lastName = authenticatedUserBuilder.lastName;
         this.firstName = authenticatedUserBuilder.firstName;
         this.middleName = authenticatedUserBuilder.middleName;
@@ -67,10 +63,6 @@ public class AuthenticatedUser implements UserDetails, CredentialsContainer {
     @Override
     public String getPassword() {
         return password;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public String getLastName() {
@@ -114,11 +106,6 @@ public class AuthenticatedUser implements UserDetails, CredentialsContainer {
         return this.authorities;
     }
 
-    @Override
-    public void eraseCredentials() {
-        password = null;
-    }
-
     public static AuthenticatedUserBuilder user(User user) {
         return new AuthenticatedUserBuilder(user);
     }
@@ -128,8 +115,6 @@ public class AuthenticatedUser implements UserDetails, CredentialsContainer {
         private Long id;
 
         private String username;
-
-        private String email;
 
         private String password;
 
@@ -156,7 +141,6 @@ public class AuthenticatedUser implements UserDetails, CredentialsContainer {
             this.id = daoUser.getId();
             this.username = daoUser.getUsername();
             this.password = daoUser.getPassword();
-            this.email = daoUser.getEmail();
             this.lastName = daoUser.getLastName();
             this.firstName = daoUser.getFirstName();
             this.middleName = daoUser.getMiddleName();

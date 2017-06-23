@@ -12,7 +12,7 @@
 
         <div class="container-fluid container-custom">
             <div class="row">
-                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
 
                 <div class="col-md-10">
                     <div class="panel panel-default">
@@ -24,18 +24,18 @@
                                 <p th:text="${'User with id ' + id + ' does not exist'}"></p>
                             </div>
                             <div th:unless="${teacher == null}">
-                                <form id="fullUserFormDto" action="#" th:action="@{'/admin/get-user/' + ${id}(userId=${userId})}" method="post"
+                                <form id="fullUserFormDto" action="#" th:action="@{'/admin/get-user/' + ${id}}" method="post"
                                       th:object="${fullUserFormDto}">
                                     <div class="container-fluid">
                                         <div class="row form-group">
                                             <div class="div-offset col-md-1">
                                                 <p class="p-size">Логін</p>
                                             </div>
-                                            <div th:class="${#fields.hasErrors('login') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                                <input id="login" class="form-control" type="text" th:value="${teacher.getLogin()}" th:id="login" th:name="login"/>
+                                            <div th:class="${#fields.hasErrors('username') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                <input id="username" class="form-control" type="text" th:value="${teacher.getUsername()}" th:id="username" th:name="username"/>
                                             </div>
-                                            <label for="login" class="col-md-4 control-label" th:if="${#fields.hasErrors('login')}"
-                                                   th:errors="*{login}"></label>
+                                            <label for="username" class="col-md-4 control-label" th:if="${#fields.hasErrors('username')}"
+                                                   th:errors="*{username}"></label>
                                         </div>
                                         <div class="row form-group">
                                             <div class="div-offset col-md-1">
@@ -110,7 +110,7 @@
                                                 <button class="btn btn-lg btn-success btn-block" type="submit" th:form="'fullUserFormDto'" th:text="'Редагувати'"></button>
                                             </div>
                                             <div class="col-md-2">
-                                                <a class="remove-color discipline-link-mini" th:href="@{${'/admin/delete-user/' + id}(userId=${userId})}">
+                                                <a class="remove-color discipline-link-mini" th:href="@{${'/admin/delete-user/' + id}}">
                                                     <span class="glyphicon glyphicon-remove-circle remove-color discipline-link-mini" aria-hidden="true"></span>Видалити</a>
                                             </div>
                                         </div>

@@ -2,7 +2,6 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <head>
-        <link rel="stylesheet" type="text/css" href="../static/css/custom.css"/>
         <title>Сторінка авторизації</title>
         <th:block th:replace="head :: head">Head</th:block>
     </head>
@@ -27,13 +26,13 @@
                                     </div>
 
                                     <div th:if="${error == null and msg == null}" class="alert alert-info">
-                                        <p th:text="#{user.login.greetings}"></p>
+                                        <p th:text="#{user.username.greetings}"></p>
                                     </div>
 
                                     <fieldset>
                                         <div class="row">
                                             <div th:class="${'col-md-12 form-group'}">
-                                                <input id="login" name="login" class="form-control col-md-12"
+                                                <input id="username" name="username" class="form-control col-md-12"
                                                        placeholder="Логін" type="text"/>
                                             </div>
                                         </div>

@@ -11,17 +11,21 @@
         <div class="container-fluid container-custom">
             <div class="row">
 
-                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
 
-                <div class="col-md-10">
+                <div class="col-md-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">Перелік дисциплін</h3>
                         </div>
                         <div class="panel-body">
-                            <div th:each="discipline: ${disciplines}">
-                                <a class="discipline-link" th:text="${discipline.getName()}"
-                                   th:href="@{'/discipline/' + ${discipline.getId()}(userId=${user.getId()})}"></a>
+                            <div class="container-fluid">
+                                <div class="row" th:each="discipline: ${disciplines}">
+                                    <a class="col-md-12 discipline-link-mini btn btn-default" th:href="@{'/discipline/' + ${discipline.getId()}}">
+                                        <div th:text="${discipline.getName()}">
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

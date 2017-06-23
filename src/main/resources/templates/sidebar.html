@@ -9,31 +9,31 @@
             <div class="col-md-2 sidebar sidebar-custom">
                 <ul class="nav nav-sidebar nav-pills nav-stacked">
                     <li>
-                        <a th:href="@{/(userId=${user.getId()})}">Головна</a>
+                        <a th:href="@{/}">Головна</a>
                     </li>
                     <li>
-                        <a th:href="@{/user/profile(userId=${user.getId()})}">Профіль</a>
+                        <a th:href="@{/user/profile}">Профіль</a>
                     </li>
-                    <th:block th:if="${user.getUserRole() != T(com.rx.dao.UserRole).ADMINISTRATOR}">
+                    <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR}">
                         <li>
-                            <a th:href="@{/discipline/disciplines(userId=${user.getId()})}">Перелік дисциплін</a>
+                            <a th:href="@{/discipline/disciplines}">Перелік дисциплін</a>
                         </li>
                         <li>
-                            <a th:href="@{/user/acts(userId=${user.getId()})}">Нормативні акти</a>
+                            <a th:href="@{/user/acts}">Нормативні акти</a>
                         </li>
                         <li>
-                            <a th:href="@{/user/syllabuses(userId=${user.getId()})}">Навчальні плани</a>
+                            <a th:href="@{/user/syllabuses}">Навчальні плани</a>
                         </li>
                         <li>
                             <a th:href="@{/upload/teaching-load}">Завантаження пед. навантажень</a>
                         </li>
                     </th:block>
-                    <th:block th:if="${user.getUserRole() != T(com.rx.dao.UserRole).ADMINISTRATOR and user.getUserRole() != T(com.rx.dao.UserRole).ASSISTANT}">
+                    <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR and role != T(com.rx.dao.UserRole).ASSISTANT}">
                         <li>
-                            <a th:href="@{/upload/curriculum(userId=${user.getId()})}">Завантаження НМК</a>
+                            <a th:href="@{/upload/curriculum}">Завантаження НМК</a>
                         </li>
                     </th:block>
-                    <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
+                    <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST}">
                         <li>
                             <a th:href="@{/upload/syllabus}">Завантаження навчальних планів</a>
                         </li>
@@ -41,23 +41,23 @@
                             <a th:href="@{/upload/act}">Завантаження нормативних актів</a>
                         </li>
                     </th:block>
-                    <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST} or ${user.getUserRole() == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">
+                    <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST} or ${role == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">
                         <li>
-                            <a th:href="@{/report(userId=${user.getId()})}">Стан НМК</a>
+                            <a th:href="@{/report}">Стан НМК</a>
                         </li>
                     </th:block>
-                    <th:block th:if="${user.getUserRole() == T(com.rx.dao.UserRole).ADMINISTRATOR}">
+                    <th:block th:if="${role == T(com.rx.dao.UserRole).ADMINISTRATOR}">
                         <li>
-                            <a th:href="@{/admin/disciplines(userId=${user.getId()})}">Перелік дисциплін</a>
+                            <a th:href="@{/admin/disciplines}">Перелік дисциплін</a>
                         </li>
                         <li>
-                            <a th:href="@{/admin/users(userId=${user.getId()})}">Перелік користувачів</a>
+                            <a th:href="@{/admin/users}">Перелік користувачів</a>
                         </li>
                         <li>
-                            <a th:href="@{/admin/add-user(userId=${user.getId()})}">Додати користувача</a>
+                            <a th:href="@{/admin/add-user}">Додати користувача</a>
                         </li>
                         <li>
-                            <a th:href="@{/admin/add-discipline(userId=${user.getId()})}">Додати дисципліну</a>
+                            <a th:href="@{/admin/add-discipline}">Додати дисципліну</a>
                         </li>
                     </th:block>
                 </ul>

@@ -15,7 +15,7 @@
 
         <div class="container-fluid container-custom">
             <div class="row">
-                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
                 <div class="col-md-10">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -23,7 +23,7 @@
                         </div>
                         <div class="panel-body">
                             <form id="documentUploadFormDto" method="post" enctype="multipart/form-data" action="#"
-                                  th:action="@{'/upload/' + ${type}(userId=${user.getId()})}"
+                                  th:action="@{'/upload/' + ${type}}"
                                   th:object="${documentUploadFormDto}">
 
                                 <div class="container-fluid">

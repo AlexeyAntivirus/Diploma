@@ -8,7 +8,7 @@
         <th:block th:replace="nav :: nav">Navigation</th:block>
         <div class="container-fluid container-custom">
             <div class="row">
-                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
                 <div class="col-md-10">
                     <div class="container-fluid">
                         <div class="panel panel-default">
@@ -16,8 +16,8 @@
                                 <h3 class="panel-title">Нормативні акти</h3>
                             </div>
                             <div class="panel-body">
-                                <div class="list-group" th:each="act: ${acts}">
-                                    <div class="list-group-item">
+                                <div class="list-group">
+                                    <div class="list-group-item" th:each="act: ${acts}">
                                         <div class="btn-group" role="group">
                                             <a class="btn btn-link" role="button" th:href="@{/download(fileId=${act.getId()})}">
                                                 <span class="glyphicon glyphicon-download-alt"></span>

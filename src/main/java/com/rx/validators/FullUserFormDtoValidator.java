@@ -30,7 +30,7 @@ public class FullUserFormDtoValidator implements Validator {
     public void validate(Object target, Errors errors) {
         FullUserFormDto dto = (FullUserFormDto) target;
 
-        validateLogin(dto.getLogin(), errors);
+        validateLogin(dto.getUsername(), errors);
         validatePassword(dto.getPassword(), errors);
         validateEmail(dto.getEmail(), errors);
         validateFirstName(dto.getFirstName(), errors);

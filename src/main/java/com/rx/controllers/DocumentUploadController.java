@@ -7,6 +7,7 @@ import com.rx.dao.User;
 import com.rx.dto.forms.CurriculumUploadFormDto;
 import com.rx.dto.forms.DocumentUploadFormDto;
 import com.rx.dto.DocumentUploadResultDto;
+import com.rx.helpers.AuthenticatedUser;
 import com.rx.services.DisciplineService;
 import com.rx.services.DocumentStorageService;
 import com.rx.services.UserService;
@@ -17,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -71,21 +73,18 @@ public class DocumentUploadController {
     }
 
     @GetMapping(name = "/syllabus", value = "/syllabus")
-    public ModelAndView getSyllabusUploadForm(@RequestParam("userId") Long userId) {
+    public ModelAndView getSyllabusUploadForm() {
         ModelAndView modelAndView = uploadModelAndView();
 
-        modelAndView.getModel().put("user", userService.getUserById(userId));
         modelAndView.getModel().put("type", "syllabus");
 
         return modelAndView;
     }
 
     @PostMapping(name = "/syllabus", value = "/syllabus", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String uploadSyllabus(@RequestParam("userId") Long userId,
-                                 @Valid DocumentUploadFormDto documentUploadFormDto,
+    public String uploadSyllabus(@Valid DocumentUploadFormDto documentUploadFormDto,
                                  BindingResult bindingResult,
                                  Model model) {
-        model.addAttribute("user", userService.getUserById(userId));
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
 
         if (bindingResult.hasErrors()) {
@@ -105,26 +104,24 @@ public class DocumentUploadController {
         model.addAttribute("uploadedFileId", result.getDocumentId());
 
 
-        return "redirect:/user/syllabuses?userId=" + userId;
+        return "redirect:/user/syllabuses";
     }
 
     @GetMapping(name = "/act", value = "/act")
-    public ModelAndView getNormativeActUploadForm(@RequestParam("userId") Long userId) {
+    public ModelAndView getNormativeActUploadForm() {
         ModelAndView modelAndView = uploadModelAndView();
 
-        modelAndView.getModel().put("user", userService.getUserById(userId));
         modelAndView.getModel().put("type", "act");
 
         return modelAndView;
     }
 
     @PostMapping(name = "/act", value = "/act", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String uploadNormativeAct(@RequestParam("userId") Long userId,
+    public String uploadNormativeAct(
                                  @Valid DocumentUploadFormDto documentUploadFormDto,
                                  BindingResult bindingResult,
                                  Model model) {
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
-        model.addAttribute("user", userService.getUserById(userId));
         if (bindingResult.hasErrors()) {
             model.addAttribute("type", "act");
             return "upload";
@@ -142,29 +139,28 @@ public class DocumentUploadController {
         model.addAttribute("uploadedFileId", result.getDocumentId());
 
 
-        return "redirect:/user/acts?userId=" + userId;
+        return "redirect:/user/acts";
     }
 
     @GetMapping(name = "/teaching-load", value = "/teaching-load")
-    public ModelAndView getTeachingLoadUploadForm(@RequestParam("userId") Long userId) {
+    public ModelAndView getTeachingLoadUploadForm() {
         ModelAndView modelAndView = uploadModelAndView();
 
-        modelAndView.getModel().put("user", userService.getUserById(userId));
         modelAndView.getModel().put("type", "teaching-load");
 
         return modelAndView;
     }
 
     @PostMapping(name = "/teaching-load", value = "/teaching-load", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String uploadTeachingLoad(@RequestParam("userId") Long userId,
+    public String uploadTeachingLoad(
                                      @Valid DocumentUploadFormDto documentUploadFormDto,
                                      BindingResult bindingResult,
                                      Model model) {
+
+        Long userId = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         User userById = userService.getUserById(userId);
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
 
-        model.addAttribute("user", userById);
-        model.addAttribute("userId", userId);
         if (bindingResult.hasErrors()) {
             model.addAttribute("type", "teaching-load");
             return "upload";
@@ -182,30 +178,26 @@ public class DocumentUploadController {
         model.addAttribute("uploadedFileId", result.getDocumentId());
 
 
-        return "redirect:/user/profile?userId=" + userId;
+        return "redirect:/user/profile";
     }
 
     @GetMapping(name = "/curriculum", value = "/curriculum")
-    public ModelAndView getCurriculumUploadForm(@RequestParam("userId") Long userId) {
+    public ModelAndView getCurriculumUploadForm() {
         ModelAndView modelAndView = curriculumUploadModelAndView();
-
-        modelAndView.getModel().put("user", userService.getUserById(userId));
+        Long userId = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        modelAndView.addObject("user", userService.getUserById(userId));
 
         return modelAndView;
     }
 
     @PostMapping(name = "/curriculum", value = "/curriculum", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String uploadCurriculum(@RequestParam("userId") Long userId,
+    public String uploadCurriculum(
                                      @Valid CurriculumUploadFormDto curriculumUploadFormDto,
                                      BindingResult bindingResult,
                                      Model model) {
-        User userById = userService.getUserById(userId);
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
 
-        model.addAttribute("user", userById);
-        model.addAttribute("userId", userId);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("type", "teaching-load");
             return "upload-curriculum";
         }
 
@@ -220,52 +212,46 @@ public class DocumentUploadController {
 
         model.addAttribute("uploadedFileId", result.getDocumentId());
 
-        return "redirect:/discipline/" + curriculumUploadFormDto.getDisciplineId() + "?userId=" + userId;
+        return "redirect:/discipline/" + curriculumUploadFormDto.getDisciplineId();
     }
 
     @GetMapping(name = "/delete-syllabus/{id}", value = "/delete-syllabus/{id}")
     public String deleteSyllabus(@PathVariable("id") Long id,
-                                 @RequestParam("userId") Long userId,
                                  Model model) {
         documentStorageService.deleteDocument(id);
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
-        model.addAttribute("user", userService.getUserById(userId));
 
-        return "redirect:/user/syllabuses?userId=" + userId;
+        return "redirect:/user/syllabuses";
     }
 
     @GetMapping(name = "/delete-act/{id}", value = "/delete-act/{id}")
     public String deleteAct(@PathVariable("id") Long id,
-                                 @RequestParam("userId") Long userId,
-                                 Model model) {
+                            Model model) {
         documentStorageService.deleteDocument(id);
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
-        model.addAttribute("user", userService.getUserById(userId));
 
-        return "redirect:/user/acts?userId=" + userId;
+        return "redirect:/user/acts";
     }
 
     @GetMapping(name = "/delete-curriculum/{id}", value = "/delete-curriculum/{id}")
     public String deleteCurriculum(@PathVariable("id") Long id,
                                    @RequestParam("disciplineId") Long disciplineId,
-                                    @RequestParam("userId") Long userId,
-                                    Model model) {
+                                   Model model) {
         documentStorageService.deleteCurriculum(disciplineId, id);
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
-        model.addAttribute("user", userService.getUserById(userId));
 
-        return "redirect:/discipline/" + disciplineId + "?userId=" + userId;
+        return "redirect:/discipline/" + disciplineId;
     }
 
     @GetMapping(name = "/delete-teaching-load/{id}", value = "/delete-teaching-load/{id}")
-    public String deleteTeachingLoad(@PathVariable("id") Long id,
-                                   @RequestParam("userId") Long userId,
-                                   Model model) {
-        documentStorageService.deleteTeachingLoad(userId, id);
-        model.addAttribute("attribute", "redirectWithRedirectPrefix");
-        model.addAttribute("user", userService.getUserById(userId));
+    public String deleteTeachingLoad(@PathVariable("id") Long id, Model model) {
+        Long userId = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
 
-        return "redirect:/user/profile?userId=" + userId;
+        documentStorageService.deleteTeachingLoad(userId, id);
+
+        model.addAttribute("attribute", "redirectWithRedirectPrefix");
+
+        return "redirect:/user/profile";
     }
 
 

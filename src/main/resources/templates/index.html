@@ -8,7 +8,8 @@
         <th:block th:replace="nav :: nav">Navigation</th:block>
         <div class="container-fluid container-custom">
             <div class="row">
-
+                <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
+                <th:block th:replace="dashboard :: dashboard(${#authentication.principal.userRole})">Dashboard</th:block>
             </div>
         </div>
     </body>

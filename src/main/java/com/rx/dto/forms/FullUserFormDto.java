@@ -2,16 +2,10 @@ package com.rx.dto.forms;
 
 
 import com.rx.dao.UserRole;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 public class FullUserFormDto {
 
-    private String login;
+    private String username;
 
     private String password;
 
@@ -26,12 +20,12 @@ public class FullUserFormDto {
     private UserRole userRole;
 
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {

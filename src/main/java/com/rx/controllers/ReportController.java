@@ -25,11 +25,9 @@ public class ReportController {
     }
 
     @GetMapping
-    public String getReport(@RequestParam("userId") Long id,
-                            Model model) {
+    public String getReport(Model model) {
 
         model.addAttribute("curriculumStates", service.getCurriculumsStateOfAllDisciplines());
-        model.addAttribute("user", userService.getUserById(id));
         return "report";
     }
 }

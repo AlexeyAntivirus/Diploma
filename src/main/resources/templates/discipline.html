@@ -2,6 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>НМК дисципліни</title>
+
         <th:block th:replace="head :: head">Head</th:block>
     </head>
     <body>
@@ -11,7 +12,7 @@
         <div class="container-fluid container-custom">
             <div class="row">
 
-                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
 
                 <div class="col-md-10">
                     <div class="panel panel-default">
@@ -20,7 +21,9 @@
                         </div>
                         <div class="panel-body">
                             <div th:if="${discipline == null}">
-                                <p th:text="${'Discipline with id ' + id + ' does not exist'}"></p>
+                                <div class="alert alert-danger">
+                                    <p th:text="${'Дисципліна з id ' + id + ' не існує або вже видалена!'}"></p>
+                                </div>
                             </div>
                             <div class="container-fluid" th:unless="${discipline == null}">
                                 <div class="page-header">
@@ -33,7 +36,8 @@
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
                                                 <h4 class="panel-title">
-                                                    <a th:text="#{${documentRootType.getString()}}" data-toggle="collapse"
+                                                    <a th:text="#{${documentRootType.getString()}}"
+                                                       data-toggle="collapse"
                                                        data-parent="#accordion" th:href="@{'#' + ${collapseId}}"></a>
                                                 </h4>
                                             </div>
@@ -44,19 +48,27 @@
                                                             th:with="anotherCollapseId = ${'collapse' + (documentRootType.ordinal() - 2) + (documentSubType.ordinal())}">
                                                             <td>
                                                                 <p th:text="#{${documentSubType.getString()}}"></p>
-                                                                <div th:each="curriculum: ${discipline.getCurriculums()}"
-                                                                     th:if="${curriculum.getDocumentType() == T(com.rx.misc.DocumentTypeResolver).resolve(documentRootType, documentSubType)}">
 
-
-                                                                    <div class="col-md-12">
-                                                                        <a th:text="${curriculum.getDocumentFilename()}" th:href="@{/download(fileId=${curriculum.getId()})}"></a>
+                                                                <div class="panel-body">
+                                                                    <div class="list-group">
+                                                                        <div class="list-group-item"
+                                                                             th:each="curriculum: ${discipline.getCurriculums()}"
+                                                                             th:if="${curriculum.getDocumentType() == T(com.rx.misc.DocumentTypeResolver).resolve(documentRootType, documentSubType)}">
+                                                                            <div class="btn-group" role="group">
+                                                                                <a class="btn btn-link" role="button"
+                                                                                   th:href="@{/download(fileId=${curriculum.getId()})}">
+                                                                                    <span class="glyphicon glyphicon-download-alt"></span>
+                                                                                    <span th:text="${curriculum.getDocumentFilename()}"></span>
+                                                                                </a>
+                                                                                <a class="btn btn-danger" role="button"
+                                                                                   th:if="${#authentication.principal.userRole != T(com.rx.dao.UserRole).ADMINISTRATOR} or ${#authentication.principal.userRole != T(com.rx.dao.UserRole).ASSISTANT}"
+                                                                                   th:href="@{'/upload/delete-curriculum/' + ${curriculum.getId()}}">
+                                                                                    <span class="glyphicon glyphicon-remove-circle"></span>
+                                                                                    <span>Видалити</span>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="col-md-2" th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
-                                                                        <a class="remove-color discipline-link-mini"
-                                                                           th:href="@{'/upload/delete-curriculum/' + ${curriculum.getId()}(userId=${user.getId()}, disciplineId=${discipline.getId()})}">
-                                                                            <span class="glyphicon glyphicon-remove-circle remove-color" aria-hidden="true"></span>Видалити</a>
-                                                                    </div>
-                                                                    <br/>
                                                                 </div>
                                                             </td>
                                                         </tr>

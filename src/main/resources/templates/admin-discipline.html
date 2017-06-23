@@ -9,7 +9,7 @@
 
         <div class="container-fluid container-custom">
             <div class="row">
-                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
 
                 <div class="col-md-10">
                     <div class="panel panel-default">
@@ -21,7 +21,7 @@
                                 <p th:text="${'Discipline with id ' + id + ' does not exist'}"></p>
                             </div>
                             <div th:unless="${discipline == null}">
-                                <form id="fullDisciplineFormDto" th:action="@{'/admin/get-discipline/' + ${id}(userId=${user.getId()})}" method="post"
+                                <form id="fullDisciplineFormDto" th:action="@{'/admin/get-discipline/' + ${id}}" method="post"
                                       th:object="${fullDisciplineFormDto}">
 
                                     <div class="container-fluid">
@@ -56,10 +56,10 @@
                                                 <div class="row list-element">
                                                     <div class="col-md-12">
                                                         <a class="discipline-link-mini" th:text="#{${value.getUserRole().getString()}} + ' ' + |${value.getLastName()} ${value.getFirstName()} ${value.getMiddleName()}|"
-                                                           th:href="@{'/admin/get-user/' + ${value.getId()}(userId=${user.getId()})}"></a>
+                                                           th:href="@{'/admin/get-user/' + ${value.getId()}}"></a>
                                                     </div>
                                                     <div class="col-md-2">
-                                                        <a class="discipline-link-mini" th:href="@{/admin/detach(disciplineId=${discipline.getId()}, userId=${user.getId()}, teacherId=${value.getId()})}">
+                                                        <a class="discipline-link-mini" th:href="@{/admin/detach(disciplineId=${discipline.getId()}, teacherId=${value.getId()})}">
                                                             <span class="glyphicon glyphicon-minus-sign discipline-link-mini"></span> Відв'язати
                                                         </a>
                                                     </div>
@@ -72,7 +72,7 @@
                                                 <button class="btn btn-lg btn-success btn-block" type="submit" th:form="fullDisciplineFormDto" th:text="'Редагувати'"></button>
                                             </div>
                                             <div class="col-md-4">
-                                                <a class="remove-color discipline-link" th:href="@{${'/admin/delete-discipline/' + discipline.getId()}(userId=${user.getId()})}">
+                                                <a class="remove-color discipline-link" th:href="@{${'/admin/delete-discipline/' + discipline.getId()}}">
                                                     <span class="glyphicon glyphicon-remove-circle remove-color discipline-link" aria-hidden="true"></span>Видалити</a>
                                             </div>
                                         </div>

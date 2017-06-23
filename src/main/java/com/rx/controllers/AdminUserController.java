@@ -43,13 +43,10 @@ public class AdminUserController {
     }
 
     @GetMapping(name = "/get-user/{id}", value = "/get-user/{id}")
-    public ModelAndView getUser(@PathVariable("id") Long id,
-                                @RequestParam("userId") Long userId) {
+    public ModelAndView getUser(@PathVariable("id") Long id) {
 
         ModelAndView modelAndView = fullUserForm();
         modelAndView.getModel().put("teacher", userService.getUserById(id));
-        modelAndView.getModel().put("userId", userId);
-        modelAndView.getModel().put("user", userService.getUserById(userId));
         modelAndView.getModel().put("id", id);
 
         return modelAndView;
@@ -57,7 +54,6 @@ public class AdminUserController {
 
     @PostMapping(name = "/get-user/{id}", value = "/get-user/{id}")
     public String updateUserFully(@PathVariable("id") Long id,
-                                  @RequestParam("userId") Long userId,
                                   @Valid FullUserFormDto fullUserFormDto,
                                   BindingResult bindingResult,
                                   Model model) {
@@ -65,8 +61,6 @@ public class AdminUserController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("fullUserFormDto", fullUserFormDto);
             model.addAttribute("teacher", userService.getUserById(id));
-            model.addAttribute("userId", userId);
-            model.addAttribute("user", userService.getUserById(userId));
             model.addAttribute("id", id);
 
             return "admin-user";
@@ -78,8 +72,6 @@ public class AdminUserController {
             bindingResult.rejectValue(userUpdatingResultDto.getErrorField(), userUpdatingResultDto.getErrorMessage());
             model.addAttribute("fullUserFormDto", fullUserFormDto);
             model.addAttribute("teacher", userService.getUserById(id));
-            model.addAttribute("userId", userId);
-            model.addAttribute("user", userService.getUserById(userId));
             model.addAttribute("id", id);
 
             return "admin-user";
@@ -87,28 +79,24 @@ public class AdminUserController {
 
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
 
-        return "redirect:/admin/get-user/" + id + "?userId=" + userId;
+        return "redirect:/admin/get-user/" + id;
     }
 
     @GetMapping(name = "/add-user", value = "/add-user")
-    public ModelAndView getAddingUserForm(@RequestParam("userId") Long userId) {
+    public ModelAndView getAddingUserForm() {
         ModelAndView modelAndView = addUserForm();
 
-        modelAndView.getModel().put("user", userService.getUserById(userId));
-        modelAndView.getModel().put("userId", userId);
         return modelAndView;
     }
 
     @PostMapping(name = "/add-user", value = "/add-user")
-    public String addUser(@RequestParam("userId") Long userId,
+    public String addUser(
                           @Valid FullUserFormDto fullUserFormDto,
                           BindingResult bindingResult,
                           Model model) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("fullUserFormDto", fullUserFormDto);
-            model.addAttribute("userId", userId);
-            model.addAttribute("user", userService.getUserById(userId));
             return "admin-add-user";
         }
 
@@ -118,34 +106,28 @@ public class AdminUserController {
         if (newUserId == null) {
             bindingResult.rejectValue(userAddingResultDto.getErrorField(), userAddingResultDto.getErrorMessage());
             model.addAttribute("fullUserFormDto", fullUserFormDto);
-            model.addAttribute("userId", userId);
-            model.addAttribute("user", userService.getUserById(userId));
             return "admin-add-user";
         } else {
             model.addAttribute("attribute", "redirectWithRedirectPrefix");
-            return "redirect:/admin/get-user/" + newUserId + "?userId=" + userId;
+            return "redirect:/admin/get-user/" + newUserId;
         }
     }
 
     @GetMapping(name = "/delete-user/{id}", value = "/delete-user/{id}")
     public String deleteUser(@PathVariable("id") Long id,
-                             @RequestParam("userId") Long userId,
                              Model model) {
         userService.deleteById(id);
 
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
-        model.addAttribute("user", userService.getUserById(userId));
-        return "redirect:/admin/users?userId=" + userId;
+        return "redirect:/admin/users";
     }
 
     @GetMapping(name = "/users", value = "/users")
-    public String getUsers(Model model,
-                           @RequestParam("userId") Long userId) {
+    public String getUsers(Model model) {
 
         Iterable<User> users = userService.getAllUsers();
 
         model.addAttribute("users", users);
-        model.addAttribute("user", userService.getUserById(userId));
         return "admin-users";
     }
 

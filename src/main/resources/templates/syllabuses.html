@@ -8,7 +8,7 @@
         <th:block th:replace="nav :: nav">Navigation</th:block>
         <div class="container-fluid container-custom">
             <div class="row">
-                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
                 <div class="col-md-10">
                     <div class="container-fluid">
                         <div class="panel panel-default">
@@ -23,7 +23,7 @@
                                     </div>
                                     <div class="col-md-2" th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}">
                                         <a class="remove-color discipline-link-mini"
-                                           th:href="@{'/upload/delete-syllabus/' + ${syllabus.getId()}(userId=${user.getId()})}">
+                                           th:href="@{'/upload/delete-syllabus/' + ${syllabus.getId()}}">
                                             <span class="glyphicon glyphicon-remove-circle remove-color" aria-hidden="true"></span>Видалити</a>
                                     </div>
                                 </div>

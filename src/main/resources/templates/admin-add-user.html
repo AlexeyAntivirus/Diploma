@@ -9,7 +9,7 @@
 
         <div class="container-fluid container-custom">
             <div class="row">
-                <th:block th:replace="sidebar :: sidebar(${user.getUserRole()})">Sidebar</th:block>
+                <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
 
                 <div class="col-md-10">
                     <div class="panel panel-default">
@@ -17,17 +17,17 @@
                             <h3 class="panel-title">Додати користувача</h3>
                         </div>
                         <div class="panel-body">
-                            <form id="fullUserFormDto" action="#" th:action="@{/admin/add-user(userId=${userId})}" method="post" th:object="${fullUserFormDto}">
+                            <form id="fullUserFormDto" action="#" th:action="@{/admin/add-user}" method="post" th:object="${fullUserFormDto}">
                                 <div class="container-fluid">
                                     <div class="row form-group">
                                         <div class="div-offset col-md-1">
                                             <p class="p-size">Логін</p>
                                         </div>
-                                        <div th:class="${#fields.hasErrors('login') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                            <input id="login" class="form-control" type="text" th:field="*{login}"/>
+                                        <div th:class="${#fields.hasErrors('username') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                            <input id="username" class="form-control" type="text" th:field="*{username}"/>
                                         </div>
-                                        <label for="login" class="col-md-4 control-label" th:if="${#fields.hasErrors('login')}"
-                                               th:errors="*{login}"></label>
+                                        <label for="username" class="col-md-4 control-label" th:if="${#fields.hasErrors('username')}"
+                                               th:errors="*{username}"></label>
                                     </div>
 
                                     <div class="row form-group">
