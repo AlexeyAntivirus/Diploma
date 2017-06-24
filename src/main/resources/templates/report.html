@@ -13,44 +13,50 @@
 
                 <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
 
-                <div class="col-md-10">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Поточний стан НМК</div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered text-center">
-                                <tr th:with="list = ${#lists.toList(T(com.rx.misc.DocumentRootType).values())}">
-                                    <th th:text="|Назва дисципліни|" th:rowspan="2">
-                                    </th>
-                                    <th:block th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
-                                              th:with="documentRootType = ${T(com.rx.misc.DocumentRootType).resolve(documentType)},
+                <div class="col-md-8">
+                    <div class="container-fluid">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Поточний стан НМК</div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered text-center">
+                                    <tr th:with="list = ${#lists.toList(T(com.rx.misc.DocumentRootType).values())}">
+                                        <th th:text="|Назва дисципліни|" th:rowspan="2">
+                                        </th>
+                                        <th:block th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
+                                                  th:with="documentRootType = ${T(com.rx.misc.DocumentRootType).resolve(documentType)},
                             subTypeCount = ${T(com.rx.misc.DocumentSubType).resolveSubTypes(documentRootType).length}">
-                                        <th th:colspan="${subTypeCount}"
-                                            th:rowspan="${subTypeCount > 1 ? 1 : 2}"
-                                            th:if="${list.remove(documentRootType) and documentRootType.isCurriculum()}">
-                                            <p th:text="#{${documentRootType.getString()}}"></p>
-                                        </th>
-                                    </th:block>
-                                </tr>
-                                <tr>
-                                    <th:block th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
-                                              th:with="documentSubType = ${T(com.rx.misc.DocumentSubType).resolve(documentType)}">
-                                        <th th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()
+                                            <th th:colspan="${subTypeCount}"
+                                                th:rowspan="${subTypeCount > 1 ? 1 : 2}"
+                                                th:if="${list.remove(documentRootType) and documentRootType.isCurriculum()}">
+                                                <p th:text="#{${documentRootType.getString()}}"></p>
+                                            </th>
+                                        </th:block>
+                                    </tr>
+                                    <tr>
+                                        <th:block th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
+                                                  th:with="documentSubType = ${T(com.rx.misc.DocumentSubType).resolve(documentType)}">
+                                            <th th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()
                                 and documentSubType != T(com.rx.misc.DocumentSubType).NO_SUB_TYPE}">
-                                            <p th:text="#{${documentSubType.getString()}}"></p>
-                                        </th>
-                                    </th:block>
-                                </tr>
-                                <tr th:each="curriculumState: ${curriculumStates}">
-                                    <td>
-                                        <a th:text="${curriculumState.getDisciplineName()}" th:href="@{'/discipline/' + ${curriculumState.getDisciplineId()}}"></a>
-                                    </td>
-                                    <th:block th:with="map = ${curriculumState.getCurriculumState()}">
-                                        <td th:each="documentType: ${T(com.rx.dao.DocumentType).values()}" th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()}">
-                                            <p th:text="${map.get(documentType) ? '+' : '-'}"></p>
+                                                <p th:text="#{${documentSubType.getString()}}"></p>
+                                            </th>
+                                        </th:block>
+                                    </tr>
+                                    <tr th:each="curriculumState: ${curriculumStates}">
+                                        <td class="bg-info">
+                                            <a th:text="${curriculumState.getDisciplineName()}"
+                                               th:href="@{'/discipline/' + ${curriculumState.getDisciplineId()}}"></a>
                                         </td>
-                                    </th:block>
-                                </tr>
-                            </table>
+                                        <th:block th:with="map = ${curriculumState.getCurriculumState()}">
+                                            <td th:with="state = ${map.get(documentType)}"
+                                                th:each="documentType: ${T(com.rx.dao.DocumentType).values()}"
+                                                th:if="${T(com.rx.misc.DocumentRootType).resolve(documentType).isCurriculum()}"
+                                                th:class="${state ? 'bg-success':'bg-danger'}">
+                                                <span th:class="${state ? 'glyphicon glyphicon-ok-circle discipline-link text-center text-success':'glyphicon glyphicon-remove-circle discipline-link text-center text-danger'}"></span>
+                                            </td>
+                                        </th:block>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

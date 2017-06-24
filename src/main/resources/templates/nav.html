@@ -9,27 +9,18 @@
         <th:block th:fragment="nav">
             <nav class="navbar background-custom navbar-inverse navbar-fixed-top">
                 <div class="container-fluid">
-
-                    <div class="navbar-header navbar-right navbar-nav">
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Меню
-                                <span class="caret"></span></button>
-                            <ul class="dropdown-menu list-group">
-                                <li class="list-group-item">
-                                    <form th:action="@{/logout}" method="post">
-                                        <input class="btn btn-default" type="submit" value="Вийти"/>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="navbar-header navbar-right navbar-nav">
-                        <a class=" navbar-text navbar-text-custom" th:href="@{/user/profile}">
-                            <span th:text="#{${#authentication.principal.userRole.getString()}}"></span>
-                            <span th:text="${#authentication.principal.lastName}"></span>
-                            <span th:text="${#authentication.principal.firstName}"></span>
-                            <span th:text="${#authentication.principal.middleName}"></span>
-                        </a>
+                    <div class="navbar-right">
+                        <form style="height: 50px" class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
+                            <span>
+                                <a class=" navbar-text navbar-text-custom" th:href="@{/user/profile}">
+                                    <span th:text="#{${#authentication.principal.userRole.getString()}}"></span>
+                                    <span th:text="${#authentication.principal.lastName}"></span>
+                                    <span th:text="${#authentication.principal.firstName}"></span>
+                                    <span th:text="${#authentication.principal.middleName}"></span>
+                                </a>
+                            </span>
+                            <input style="height: 100%" class="btn btn-primary btn-lg center" type="submit" th:value="Вийти"/>
+                        </form>
                     </div>
                 </div>
             </nav>

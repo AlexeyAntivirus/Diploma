@@ -11,73 +11,86 @@
             <div class="row">
                 <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
 
-                <div class="col-md-10">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Призначити викладача</h3>
-                        </div>
-                        <div class="panel-body">
-                            <div th:if="${discipline == null}">
-                                <p th:text="${'Discipline with id ' + id + ' does not exist'}"></p>
+                <div class="col-md-8">
+                    <div class="container-fluid">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Призначити викладача</h3>
                             </div>
-                            <div th:unless="${discipline == null}">
-                                <form id="fullDisciplineFormDto" th:action="@{'/admin/get-discipline/' + ${id}}" method="post"
-                                      th:object="${fullDisciplineFormDto}">
+                            <div class="panel-body">
+                                <div th:if="${discipline == null}">
+                                    <p th:text="${'Discipline with id ' + id + ' does not exist'}"></p>
+                                </div>
+                                <div th:unless="${discipline == null}">
+                                    <form id="fullDisciplineFormDto" th:action="@{'/admin/get-discipline/' + ${id}}"
+                                          method="post"
+                                          th:object="${fullDisciplineFormDto}">
 
-                                    <div class="container-fluid">
-                                        <div class="row form-group">
-                                            <div class="div-offset col-md-1">
-                                                <p class="p-size">Назва</p>
+                                        <div class="container-fluid">
+                                            <div class="row form-group">
+                                                <div class="div-offset col-md-1">
+                                                    <p class="p-size">Назва</p>
+                                                </div>
+                                                <div th:class="${#fields.hasErrors('name') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                    <input id="name" class="form-control" type="text" th:id="name"
+                                                           th:name="name" th:value="${discipline.getName()}"/>
+                                                </div>
+                                                <label class="col-md-4 control-label" for="name"
+                                                       th:if="${#fields.hasErrors('name')}"
+                                                       th:errors="*{name}"></label>
                                             </div>
-                                            <div th:class="${#fields.hasErrors('name') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                                <input id="name" class="form-control" type="text" th:id="name" th:name="name" th:value="${discipline.getName()}"/>
-                                            </div>
-                                            <label class="col-md-4 control-label" for="name" th:if="${#fields.hasErrors('name')}"
-                                                   th:errors="*{name}"></label>
-                                        </div>
 
-                                        <div class="row form-group">
-                                            <div class="div-offset col-md-1">
-                                                <p class="p-size">Призначити викладача</p>
+                                            <div class="row form-group">
+                                                <div class="div-offset col-md-1">
+                                                    <p class="p-size">Призначити викладача</p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <select class="form-control" th:field="*{teacherId}">
+                                                        <option th:text="''" th:value="null"
+                                                                selected="selected"></option>
+                                                        <option th:each="user: ${users}" th:value="${user.getId()}"
+                                                                th:text="#{${user.getUserRole().getString()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|">
+                                                        </option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <select class="form-control" th:field="*{teacherId}">
-                                                    <option th:text="''" th:value="null" selected="selected"></option>
-                                                    <option th:each="user: ${users}" th:value="${user.getId()}"
-                                                            th:text="#{${user.getUserRole().getString()}} + ' ' + |${user.getLastName()} ${user.getFirstName()} ${user.getMiddleName()}|">
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
 
-                                        <div class="row form-group">
-                                            <h3 class="col-md-12" th:text="'Викладачі'"></h3>
-                                            <div class="col-md-12" th:each="value: ${discipline.getUsers()}">
-                                                <div class="row list-element">
-                                                    <div class="col-md-12">
-                                                        <a class="discipline-link-mini" th:text="#{${value.getUserRole().getString()}} + ' ' + |${value.getLastName()} ${value.getFirstName()} ${value.getMiddleName()}|"
-                                                           th:href="@{'/admin/get-user/' + ${value.getId()}}"></a>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <a class="discipline-link-mini" th:href="@{/admin/detach(disciplineId=${discipline.getId()}, teacherId=${value.getId()})}">
-                                                            <span class="glyphicon glyphicon-minus-sign discipline-link-mini"></span> Відв'язати
-                                                        </a>
+                                            <div class="row form-group">
+                                                <h3 class="col-md-12" th:text="'Викладачі'"></h3>
+                                                <div class="col-md-12" th:each="value: ${discipline.getUsers()}">
+                                                    <div class="row list-element">
+                                                        <div class="col-md-12">
+                                                            <a class="discipline-link-mini"
+                                                               th:text="#{${value.getUserRole().getString()}} + ' ' + |${value.getLastName()} ${value.getFirstName()} ${value.getMiddleName()}|"
+                                                               th:href="@{'/admin/get-user/' + ${value.getId()}}"></a>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <a class="discipline-link-mini"
+                                                               th:href="@{/admin/detach(disciplineId=${discipline.getId()}, teacherId=${value.getId()})}">
+                                                                <span class="glyphicon glyphicon-minus-sign discipline-link-mini"></span>
+                                                                Відв'язати
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div class="row form-group">
-                                            <div class="col-md-4">
-                                                <button class="btn btn-lg btn-success btn-block" type="submit" th:form="fullDisciplineFormDto" th:text="'Редагувати'"></button>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <a class="remove-color discipline-link" th:href="@{${'/admin/delete-discipline/' + discipline.getId()}}">
-                                                    <span class="glyphicon glyphicon-remove-circle remove-color discipline-link" aria-hidden="true"></span>Видалити</a>
+                                            <div class="row form-group">
+                                                <div class="col-md-4">
+                                                    <button class="btn btn-lg btn-success btn-block" type="submit"
+                                                            th:form="fullDisciplineFormDto"
+                                                            th:text="'Редагувати'"></button>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <a class="remove-color discipline-link"
+                                                       th:href="@{${'/admin/delete-discipline/' + discipline.getId()}}">
+                                                        <span class="glyphicon glyphicon-remove-circle remove-color discipline-link"
+                                                              aria-hidden="true"></span>Видалити</a>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>

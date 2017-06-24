@@ -13,104 +13,130 @@
 
                 <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
 
-                <div class="col-md-10">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Профіль</h3>
-                        </div>
-                        <div class="panel-body">
-                            <form id="userFormDto" action="#" th:action="@{/user/profile}" method="post"
-                                  th:object="${userFormDto}">
+                <div class="col-md-8">
+                    <div class="container-fluid">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Профіль</h3>
+                            </div>
+                            <div class="panel-body">
+                                <form id="userFormDto" action="#" th:action="@{/user/profile}" method="post"
+                                      th:object="${userFormDto}">
 
-                                <div class="container-fluid">
-                                    <div class="row form-group">
-                                        <div class="div-offset col-md-1">
-                                            <p class="p-size">Email</p>
+                                    <div class="container-fluid">
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Email</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('email') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
+                                                <input id="email" class="form-control" type="email" th:id="email"
+                                                       th:name="email"
+                                                       th:value="${user.getEmail()}"/>
+                                            </div>
+                                            <label for="email" class="col-md-4 control-label"
+                                                   th:if="${#fields.hasErrors('email')}"
+                                                   th:errors="*{email}"></label>
                                         </div>
-                                        <div th:class="${#fields.hasErrors('email') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                            <input id="email" class="form-control" type="email" th:id="email" th:name="email"
-                                                   th:value="${user.getEmail()}"/>
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Пароль</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('password') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
+                                                <input id="password" class="form-control" type="password"
+                                                       th:id="password" th:name="password"/>
+                                            </div>
+                                            <label class="col-md-4 control-label" for="password"
+                                                   th:if="${#fields.hasErrors('password')}"
+                                                   th:errors="*{password}"></label>
                                         </div>
-                                        <label for="email" class="col-md-4 control-label" th:if="${#fields.hasErrors('email')}"
-                                               th:errors="*{email}"></label>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="div-offset col-md-1">
-                                            <p class="p-size">Пароль</p>
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Прізвище</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('lastName') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
+                                                <input id="lastName" class="form-control" type="text" th:id="lastName"
+                                                       th:name="lastName"
+                                                       th:value="${user.getLastName()}"/>
+                                            </div>
+                                            <label class="col-md-4 control-label" for="lastName"
+                                                   th:if="${#fields.hasErrors('password')}"
+                                                   th:errors="*{lastName}"></label>
                                         </div>
-                                        <div th:class="${#fields.hasErrors('password') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                            <input id="password" class="form-control" type="password" th:id="password" th:name="password"/>
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Ім'я</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('firstName') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
+                                                <input id="firstName" class="form-control" type="text" th:id="firstName"
+                                                       th:name="firstName"
+                                                       th:value="${user.getFirstName()}"/>
+                                            </div>
+                                            <label class="col-md-4 control-label" for="firstName"
+                                                   th:if="${#fields.hasErrors('firstName')}"
+                                                   th:errors="*{firstName}"></label>
                                         </div>
-                                        <label class="col-md-4 control-label" for="password" th:if="${#fields.hasErrors('password')}"
-                                               th:errors="*{password}"></label>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="div-offset col-md-1">
-                                            <p class="p-size">Прізвище</p>
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">По батькові</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('middleName') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
+                                                <input id="middleName" class="form-control" type="text"
+                                                       th:id="middleName" th:name="middleName"
+                                                       th:value="${user.getMiddleName()}"/>
+                                            </div>
+                                            <label class="col-md-4 control-label" for="middleName"
+                                                   th:if="${#fields.hasErrors('middleName')}"
+                                                   th:errors="*{middleName}"></label>
                                         </div>
-                                        <div th:class="${#fields.hasErrors('lastName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                            <input id="lastName" class="form-control" type="text" th:id="lastName" th:name="lastName"
-                                                   th:value="${user.getLastName()}"/>
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Роль</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="p-size"
+                                                   th:text="|#{${#authentication.principal.userRole.getString()}}|"></p>
+                                            </div>
                                         </div>
-                                        <label class="col-md-4 control-label" for="lastName" th:if="${#fields.hasErrors('password')}"
-                                               th:errors="*{lastName}"></label>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="div-offset col-md-1">
-                                            <p class="p-size">Ім'я</p>
-                                        </div>
-                                        <div th:class="${#fields.hasErrors('firstName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                            <input id="firstName" class="form-control" type="text" th:id="firstName" th:name="firstName"
-                                                   th:value="${user.getFirstName()}"/>
-                                        </div>
-                                        <label class="col-md-4 control-label" for="firstName" th:if="${#fields.hasErrors('firstName')}"
-                                               th:errors="*{firstName}"></label>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="div-offset col-md-1">
-                                            <p class="p-size">По батькові</p>
-                                        </div>
-                                        <div th:class="${#fields.hasErrors('middleName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                            <input id="middleName" class="form-control" type="text" th:id="middleName" th:name="middleName"
-                                                   th:value="${user.getMiddleName()}"/>
-                                        </div>
-                                        <label class="col-md-4 control-label" for="middleName" th:if="${#fields.hasErrors('middleName')}"
-                                               th:errors="*{middleName}"></label>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="div-offset col-md-1">
-                                            <p class="p-size">Роль</p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <p class="p-size" th:text="|#{${#authentication.principal.userRole.getString()}}|"></p>
-                                        </div>
-                                    </div>
 
-                                    <div class="row" th:if="${#authentication.principal.userRole != T(com.rx.dao.UserRole).ADMINISTRATOR}">
-                                        <h3 class="col-md-12">Педагогічне навантаження</h3>
-                                    </div>
+                                        <div class="row form-group">
+                                            <div class="col-md-4">
+                                                <button class="btn btn-lg btn-success btn-block" type="submit"
+                                                        th:form="'userFormDto'"
+                                                        th:text="'Редагувати'"></button>
+                                            </div>
+                                        </div>
 
-                                    <div class="row" th:if="${#authentication.principal.userRole != T(com.rx.dao.UserRole).ADMINISTRATOR}"
-                                         th:each="teachingLoad: ${user.getTeachingLoads()}">
-                                        <div class="col-md-12">
-                                            <a th:href="@{/download(fileId=${teachingLoad.getId()})}"
-                                               th:text="${teachingLoad.getDocumentFilename()}"></a>
+                                        <div class="row"
+                                             th:if="${#authentication.principal.userRole != T(com.rx.dao.UserRole).ADMINISTRATOR}">
+                                            <h3 class="col-md-12">Педагогічні навантаження</h3>
                                         </div>
-                                        <div class="col-md-2">
-                                            <a class="remove-color discipline-link-mini"
-                                               th:href="@{'/upload/delete-teaching-load/' + ${teachingLoad.getId()}}">
-                                                <span class="glyphicon glyphicon-remove-circle remove-color" aria-hidden="true"></span>Видалити</a>
-                                        </div>
-                                    </div>
 
-                                    <div class="row form-group">
-                                        <div class="col-md-4">
-                                            <button class="btn btn-lg btn-success btn-block" type="submit" th:form="'userFormDto'"
-                                                    th:text="'Редагувати'"></button>
+                                        <div class="list-group">
+                                            <div class="list-group-item"
+                                                 th:if="${#authentication.principal.userRole != T(com.rx.dao.UserRole).ADMINISTRATOR}"
+                                                 th:each="teachingLoad: ${user.getTeachingLoads()}">
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="align-text-top col-md-12">
+                                                            <a class="discipline-link-nano btn btn-link" th:href="@{/download(fileId=${teachingLoad.getId()})}">
+                                                                <span style="vertical-align: text-top;" class="glyphicon glyphicon-download"></span>
+                                                                <span th:text="${teachingLoad.getDocumentFilename()}"></span>
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <a class="btn btn-danger discipline-link-nano"
+                                                               th:href="@{'/upload/delete-teaching-load/' + ${teachingLoad.getId()}}">
+                                                                <span style="vertical-align: text-top;" class="glyphicon glyphicon-remove-circle"
+                                                                     aria-hidden="true"></span> Видалити</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

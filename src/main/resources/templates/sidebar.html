@@ -6,61 +6,40 @@
     </head>
     <body>
         <th:block th:fragment="sidebar(role)">
-            <div class="col-md-2 sidebar sidebar-custom">
-                <ul class="nav nav-sidebar nav-pills nav-stacked">
-                    <li>
-                        <a th:href="@{/}">Головна</a>
-                    </li>
-                    <li>
-                        <a th:href="@{/user/profile}">Профіль</a>
-                    </li>
-                    <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR}">
-                        <li>
-                            <a th:href="@{/discipline/disciplines}">Перелік дисциплін</a>
-                        </li>
-                        <li>
-                            <a th:href="@{/user/acts}">Нормативні акти</a>
-                        </li>
-                        <li>
-                            <a th:href="@{/user/syllabuses}">Навчальні плани</a>
-                        </li>
-                        <li>
-                            <a th:href="@{/upload/teaching-load}">Завантаження пед. навантажень</a>
-                        </li>
-                    </th:block>
-                    <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR and role != T(com.rx.dao.UserRole).ASSISTANT}">
-                        <li>
-                            <a th:href="@{/upload/curriculum}">Завантаження НМК</a>
-                        </li>
-                    </th:block>
-                    <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST}">
-                        <li>
-                            <a th:href="@{/upload/syllabus}">Завантаження навчальних планів</a>
-                        </li>
-                        <li>
-                            <a th:href="@{/upload/act}">Завантаження нормативних актів</a>
-                        </li>
-                    </th:block>
-                    <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST} or ${role == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">
-                        <li>
-                            <a th:href="@{/report}">Стан НМК</a>
-                        </li>
-                    </th:block>
-                    <th:block th:if="${role == T(com.rx.dao.UserRole).ADMINISTRATOR}">
-                        <li>
-                            <a th:href="@{/admin/disciplines}">Перелік дисциплін</a>
-                        </li>
-                        <li>
-                            <a th:href="@{/admin/users}">Перелік користувачів</a>
-                        </li>
-                        <li>
-                            <a th:href="@{/admin/add-user}">Додати користувача</a>
-                        </li>
-                        <li>
-                            <a th:href="@{/admin/add-discipline}">Додати дисципліну</a>
-                        </li>
-                    </th:block>
-                </ul>
+            <div class="col-md-3 sidebar">
+                <div class="container-fluid">
+                    <div class="list-group">
+                        <a class="list-group-item list-group-item-action" th:href="@{/}">Головна</a>
+                        <a class="list-group-item list-group-item-action" th:href="@{/user/profile}">Профіль</a>
+
+                        <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR}">
+                            <a class="list-group-item list-group-item-action" th:href="@{/discipline/disciplines}">Перелік дисциплін</a>
+                            <a class="list-group-item list-group-item-action" th:href="@{/user/acts}">Нормативні акти</a>
+                            <a class="list-group-item list-group-item-action" th:href="@{/user/syllabuses}">Навчальні плани</a>
+                            <a class="list-group-item list-group-item-action" th:href="@{/upload/teaching-load}">Завантаження пед. навантажень</a>
+                        </th:block>
+
+                        <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR and role != T(com.rx.dao.UserRole).ASSISTANT}">
+                            <a class="list-group-item list-group-item-action" th:href="@{/upload/curriculum}">Завантаження НМК</a>
+                        </th:block>
+
+                        <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST}">
+                            <a class="list-group-item list-group-item-action" th:href="@{/upload/syllabus}">Завантаження навчальних планів</a>
+                            <a class="list-group-item list-group-item-action" th:href="@{/upload/act}">Завантаження нормативних актів</a>
+                        </th:block>
+
+                        <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST} or ${role == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">
+                            <a class="list-group-item list-group-item-action" th:href="@{/report}">Стан НМК</a>
+                        </th:block>
+
+                        <th:block th:if="${role == T(com.rx.dao.UserRole).ADMINISTRATOR}">
+                            <a class="list-group-item list-group-item-action" th:href="@{/admin/disciplines}">Перелік дисциплін</a>
+                            <a class="list-group-item list-group-item-action" th:href="@{/admin/users}">Перелік користувачів</a>
+                            <a class="list-group-item list-group-item-action" th:href="@{/admin/add-user}">Додати користувача</a>
+                            <a class="list-group-item list-group-item-action" th:href="@{/admin/add-discipline}">Додати дисципліну</a>
+                        </th:block>
+                    </div>
+                </div>
             </div>
         </th:block>
     </body>

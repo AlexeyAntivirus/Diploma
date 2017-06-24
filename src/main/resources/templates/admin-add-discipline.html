@@ -10,31 +10,38 @@
         <div class="container-fluid container-custom">
             <div class="row">
                 <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
-                <div class="col-md-10">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Додати дисципліну</h3>
-                        </div>
-                        <div class="panel-body">
-                            <form id="addDisciplineFormDto" action="#" th:action="@{/admin/add-discipline}" method="post" th:object="${addDisciplineFormDto}">
-                                <div class="container-fluid">
-                                    <div class="row form-group">
-                                        <div class="div-offset col-md-1">
-                                            <p class="p-size">Назва дисципліни</p>
+                <div class="col-md-8">
+                    <div class="container-fluid">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Додати дисципліну</h3>
+                            </div>
+                            <div class="panel-body">
+                                <form id="addDisciplineFormDto" action="#" th:action="@{/admin/add-discipline}"
+                                      method="post" th:object="${addDisciplineFormDto}">
+                                    <div class="container-fluid">
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Назва дисципліни</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('disciplineName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                <input id="disciplineName" class="form-control" type="text"
+                                                       th:field="*{disciplineName}"/>
+                                            </div>
                                         </div>
-                                        <div th:class="${#fields.hasErrors('disciplineName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
-                                            <input id="disciplineName" class="form-control" type="text" th:field="*{disciplineName}"/>
-                                        </div>
+                                        <label class="col-md-4 control-label" for="disciplineName"
+                                               th:if="${#fields.hasErrors('disciplineName')}"
+                                               th:errors="*{disciplineName}"></label>
                                     </div>
-                                    <label class="col-md-4 control-label" for="disciplineName" th:if="${#fields.hasErrors('disciplineName')}" th:errors="*{disciplineName}"></label>
-                                </div>
 
-                                <div class="row form-group">
-                                    <div class="col-md-4">
-                                        <button class="btn btn-lg btn-success btn-block" type="submit" form="addDisciplineFormDto" th:text="'Додати'"></button>
+                                    <div class="row form-group">
+                                        <div class="col-md-4">
+                                            <button class="btn btn-lg btn-success btn-block" type="submit"
+                                                    form="addDisciplineFormDto" th:text="'Додати'"></button>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

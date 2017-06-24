@@ -9,7 +9,7 @@
         <div class="container-fluid container-custom">
             <div class="row">
                 <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
-                <div class="col-md-10">
+                <div class="col-md-8">
                     <div class="container-fluid">
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -18,15 +18,24 @@
                             <div class="panel-body">
                                 <div class="list-group">
                                     <div class="list-group-item" th:each="act: ${acts}">
-                                        <div class="btn-group" role="group">
-                                            <a class="btn btn-link" role="button" th:href="@{/download(fileId=${act.getId()})}">
-                                                <span class="glyphicon glyphicon-download-alt"></span>
-                                                <span th:text="${act.getDocumentFilename()}"></span>
-                                            </a>
-                                            <a class="btn btn-danger" role="button" th:if="${user.getUserRole() == T(com.rx.dao.UserRole).METHODOLOGIST}" th:href="@{'/upload/delete-act/' + ${act.getId()}(userId=${user.getId()})}">
-                                                <span class="glyphicon glyphicon-remove-circle"></span>
-                                                <span>Видалити</span>
-                                            </a>
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="discipline-link-nano btn btn-link" role="button"
+                                                       th:href="@{/download(fileId=${act.getId()})}">
+                                                        <span class="glyphicon glyphicon-download"></span>
+                                                        <span th:text="${act.getDocumentFilename()}"></span>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <a class="discipline-link-nano btn btn-danger" role="button"
+                                                       th:if="${#authentication.principal.userRole == T(com.rx.dao.UserRole).METHODOLOGIST}"
+                                                       th:href="@{'/upload/delete-act/' + ${act.getId()}}">
+                                                        <span class="glyphicon glyphicon-remove-circle"></span>
+                                                        <span>Видалити</span>
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

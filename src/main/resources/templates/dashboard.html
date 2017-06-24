@@ -6,126 +6,131 @@
     </head>
     <body>
         <th:block th:fragment="dashboard(role)">
-            <div class="container container-fluid">
-                <div class="col-md-10">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Головна</h3>
-                        </div>
-                        <div class="panel-body">
-                            <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR}">
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/discipline/disciplines}">
-                                        <div class="caption text-center">
-                                            <h3>Перелік дисциплін</h3>
-                                            <p>Переглянути дисципліни, які Ви ведете</p>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/user/acts}">
-                                        <div class="caption text-center">
-                                            <h3>Нормативні акти</h3>
-                                            <p>Переглянути усі накази, розпорядження та інші нормативні акти</p>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/user/syllabuses}">
-                                        <div class="caption text-center">
-                                            <h3>Навчальні плани</h3>
-                                            <p>Переглянути усі навчальні плани</p>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/upload/teaching-load}">
-                                        <div class="caption text-center">
-                                            <h3>Завантаження пед. навантажень</h3>
-                                            <p>Завантажити педагогічні навантаження</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </th:block>
-                            <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR and role != T(com.rx.dao.UserRole).ASSISTANT}">
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/upload/curriculum}">
-                                        <div class="caption text-center">
-                                            <h3>Завантаження НМК</h3>
-                                            <p>Завантажити документи, які відносяться до навчально-методичного комплексу (НМК)</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </th:block>
-                            <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST}">
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/upload/syllabus}">
-                                        <div class="caption text-center">
-                                            <h3>Завантаження навчальних планів</h3>
-                                            <p>Завантажити навчальні плани</p>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/upload/act}">
-                                        <div class="caption text-center">
-                                            <h3>Завантаження нормативних актів</h3>
-                                            <p>Завантажити нормативні акти</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </th:block>
-                            <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST} or ${role == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/report}">
-                                        <div class="caption text-center">
-                                            <h3>Стан НМК</h3>
-                                            <p>Переглянути стан навчально-методичного комплексу (НМК)</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </th:block>
-                            <th:block th:if="${role == T(com.rx.dao.UserRole).ADMINISTRATOR}">
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/admin/disciplines}">
-                                        <div class="caption text-center">
-                                            <h3>Перелік дисциплін</h3>
-                                            <p>Переглянути усі дисципліни, які ведуться на кафедрі</p>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/admin/users}">
-                                        <div class="caption text-center">
-                                            <h3>Перелік користувачів</h3>
-                                            <p>Переглянути усіх користувачів</p>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/admin/add-user}">
-                                        <div class="caption text-center">
-                                            <h3>Додати користувача</h3>
-                                            <p>Створити нового користувача в системі</p>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                    <a class="thumbnail thumb" th:href="@{/admin/add-discipline}">
-                                        <div class="caption text-center">
-                                            <h3>Додати дисципліну</h3>
-                                            <p>Створити нову дисципліну в системі</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </th:block>
-                            <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
-                                <a class="thumbnail thumb" th:href="@{/user/profile}">
-                                    <div class="caption text-center">
-                                        <h3>Профіль</h3>
-                                        <p>Переглянути і редагувати персональні дані</p>
+            <div class="container-fluid">
+                <div class="col-md-8">
+                    <div class="container-fluid">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Головна</h3>
+                            </div>
+                            <div class="panel-body">
+                                <th:block th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR}">
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/discipline/disciplines}">
+                                            <div class="caption text-center">
+                                                <h3>Перелік дисциплін</h3>
+                                                <p>Переглянути дисципліни, які Ви ведете</p>
+                                            </div>
+                                        </a>
                                     </div>
-                                </a>
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/user/acts}">
+                                            <div class="caption text-center">
+                                                <h3>Нормативні акти</h3>
+                                                <p>Переглянути усі накази, розпорядження та інші нормативні акти</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/user/syllabuses}">
+                                            <div class="caption text-center">
+                                                <h3>Навчальні плани</h3>
+                                                <p>Переглянути усі навчальні плани</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/upload/teaching-load}">
+                                            <div class="caption text-center">
+                                                <h3>Завантаження пед. навантажень</h3>
+                                                <p>Завантажити педагогічні навантаження</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </th:block>
+                                <th:block
+                                        th:if="${role != T(com.rx.dao.UserRole).ADMINISTRATOR and role != T(com.rx.dao.UserRole).ASSISTANT}">
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/upload/curriculum}">
+                                            <div class="caption text-center">
+                                                <h3>Завантаження НМК</h3>
+                                                <p>Завантажити документи, які відносяться до навчально-методичного
+                                                    комплексу (НМК)</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </th:block>
+                                <th:block th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST}">
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/upload/syllabus}">
+                                            <div class="caption text-center">
+                                                <h3>Завантаження навчальних планів</h3>
+                                                <p>Завантажити навчальні плани</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/upload/act}">
+                                            <div class="caption text-center">
+                                                <h3>Завантаження нормативних актів</h3>
+                                                <p>Завантажити нормативні акти</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </th:block>
+                                <th:block
+                                        th:if="${role == T(com.rx.dao.UserRole).METHODOLOGIST} or ${role == T(com.rx.dao.UserRole).HEAD_OF_DEPARTMENT}">
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/report}">
+                                            <div class="caption text-center">
+                                                <h3>Стан НМК</h3>
+                                                <p>Переглянути стан навчально-методичного комплексу (НМК)</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </th:block>
+                                <th:block th:if="${role == T(com.rx.dao.UserRole).ADMINISTRATOR}">
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/admin/disciplines}">
+                                            <div class="caption text-center">
+                                                <h3>Перелік дисциплін</h3>
+                                                <p>Переглянути усі дисципліни, які ведуться на кафедрі</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/admin/users}">
+                                            <div class="caption text-center">
+                                                <h3>Перелік користувачів</h3>
+                                                <p>Переглянути усіх користувачів</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/admin/add-user}">
+                                            <div class="caption text-center">
+                                                <h3>Додати користувача</h3>
+                                                <p>Створити нового користувача в системі</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                        <a class="thumbnail thumb" th:href="@{/admin/add-discipline}">
+                                            <div class="caption text-center">
+                                                <h3>Додати дисципліну</h3>
+                                                <p>Створити нову дисципліну в системі</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </th:block>
+                                <div class="dashboard-function col-lg-3 col-md-4 col-xs-6 thumb clearfix">
+                                    <a class="thumbnail thumb" th:href="@{/user/profile}">
+                                        <div class="caption text-center">
+                                            <h3>Профіль</h3>
+                                            <p>Переглянути і редагувати персональні дані</p>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

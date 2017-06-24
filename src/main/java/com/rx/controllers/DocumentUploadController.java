@@ -129,7 +129,7 @@ public class DocumentUploadController {
 
         if (documentStorageService.isFileExists(documentUploadFormDto.getMultipartFile().getOriginalFilename())) {
             bindingResult.rejectValue("multipartFile", "upload.file.exists");
-            model.addAttribute("type", "syllabus");
+            model.addAttribute("type", "act");
             return "upload";
         }
 

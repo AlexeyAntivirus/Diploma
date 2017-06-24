@@ -13,15 +13,17 @@
 
                 <th:block th:replace="sidebar :: sidebar(${#authentication.principal.userRole})">Sidebar</th:block>
 
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">Перелік дисциплін</h3>
                         </div>
                         <div class="panel-body">
                             <div class="container-fluid">
-                                <div class="row" th:each="discipline: ${disciplines}">
-                                    <a class="col-md-12 discipline-link-mini btn btn-default" th:href="@{'/discipline/' + ${discipline.getId()}}">
+                                <div class="list-group">
+                                    <a class="list-group-item list-group-item-action discipline-link-mini"
+                                       th:each="discipline: ${disciplines}"
+                                       th:href="@{'/discipline/' + ${discipline.getId()}}">
                                         <div th:text="${discipline.getName()}">
                                         </div>
                                     </a>
