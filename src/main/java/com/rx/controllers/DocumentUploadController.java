@@ -191,18 +191,20 @@ public class DocumentUploadController {
     }
 
     @PostMapping(name = "/curriculum", value = "/curriculum", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String uploadCurriculum(
-                                     @Valid CurriculumUploadFormDto curriculumUploadFormDto,
+    public String uploadCurriculum(@Valid CurriculumUploadFormDto curriculumUploadFormDto,
                                      BindingResult bindingResult,
                                      Model model) {
+        Long userId = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("user", userService.getUserById(userId));
             return "upload-curriculum";
         }
 
         if (documentStorageService.isFileExists(curriculumUploadFormDto.getMultipartFile().getOriginalFilename())) {
             bindingResult.rejectValue("multipartFile", "upload.file.exists");
+            model.addAttribute("user", userService.getUserById(userId));
             return "upload-curriculum";
         }
         Discipline discipline = disciplineService.getDisciplineById(curriculumUploadFormDto.getDisciplineId());

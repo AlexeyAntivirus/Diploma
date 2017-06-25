@@ -27,14 +27,17 @@
                                                         <span th:text="${act.getDocumentFilename()}"></span>
                                                     </a>
                                                 </div>
-                                                <div class="col-md-12">
-                                                    <a class="discipline-link-nano btn btn-danger" role="button"
-                                                       th:if="${#authentication.principal.userRole == T(com.rx.dao.UserRole).METHODOLOGIST}"
-                                                       th:href="@{'/upload/delete-act/' + ${act.getId()}}">
-                                                        <span class="glyphicon glyphicon-remove-circle"></span>
-                                                        <span>Видалити</span>
-                                                    </a>
-                                                </div>
+                                                <th:block th:if="${#authentication.principal.userRole == T(com.rx.dao.UserRole).METHODOLOGIST}">
+                                                    <div class="col-md-12">
+                                                        <a class="discipline-link-nano btn btn-danger" role="button"
+                                                           th:href="@{'/upload/delete-act/' + ${act.getId()}}"
+                                                           onclick="return confirm('Ви впевнені, що хочете видалити?')">
+                                                            <span class="glyphicon glyphicon-remove-circle"></span>
+                                                            <span>Видалити</span>
+                                                        </a>
+                                                    </div>
+                                                </th:block>
+
                                             </div>
                                         </div>
                                     </div>

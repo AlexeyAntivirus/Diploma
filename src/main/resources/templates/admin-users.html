@@ -20,19 +20,42 @@
                                 <h3 class="panel-title">Перелік користувачів</h3>
                             </div>
                             <div class="panel-body">
-                                <div class="row list-element" th:each="value: ${users}">
-                                    <div class="col-md-12">
-                                        <a class="discipline-link"
-                                           th:text="#{${value.getUserRole().getString()}} + ' ' + |${value.getLastName()} ${value.getFirstName()} ${value.getMiddleName()}|"
-                                           th:href="@{'/admin/get-user/' + ${value.getId()}}"></a>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <a class="remove-color discipline-link-mini"
-                                           th:href="@{${'/admin/delete-user/' + value.getId()}}">
-                            <span class="glyphicon glyphicon-remove-circle remove-color discipline-link-mini"
-                                  aria-hidden="true"></span>Видалити</a>
+                                <div class="list-group">
+                                    <div class="list-group-item"
+                                         th:each="value: ${users}">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="discipline-link-nano btn btn-link"
+                                                       th:href="@{${value.getUsername() != #authentication.principal.username ? '/admin/get-user/' + value.getId(): '/user/profile'}}">
+                                                        <span class="glyphicon glyphicon-user"></span>
+
+                                                        <th:block th:if="${value.getUsername() != #authentication.principal.username}">
+                                                            <span th:text="#{${value.getUserRole().getString()}}"></span>
+                                                            <span th:text="${value.getLastName()}"></span>
+                                                            <span th:text="${value.getFirstName()}"></span>
+                                                            <span th:text="${value.getMiddleName()}"></span>
+                                                        </th:block>
+                                                        <th:block th:unless="${value.getUsername() != #authentication.principal.username}">
+                                                            <span th:text="#{${#authentication.principal.userRole.getString()}}"></span>
+                                                            <span th:text="${#authentication.principal.lastName}"></span>
+                                                            <span th:text="${#authentication.principal.firstName}"></span>
+                                                            <span th:text="${#authentication.principal.middleName}"></span>
+                                                        </th:block>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <a class="discipline-link-nano btn btn-danger"
+                                                       th:href="@{${'/admin/delete-user/' + value.getId()}}"
+                                                       onclick="return confirm('Ви впевнені, що хочете видалити?')">
+                                                        <span class="glyphicon glyphicon-remove-circle"
+                                                              aria-hidden="true"></span> Видалити</a>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>

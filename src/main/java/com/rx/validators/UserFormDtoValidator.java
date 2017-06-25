@@ -1,13 +1,16 @@
 package com.rx.validators;
 
 
-import com.rx.dao.UserRole;
 import com.rx.dto.forms.UserFormDto;
+import com.rx.helpers.AuthenticatedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import sun.plugin.liveconnect.SecurityContextHelper;
 
 import java.util.regex.Pattern;
 
@@ -15,10 +18,12 @@ import java.util.regex.Pattern;
 public class UserFormDtoValidator implements Validator {
 
     private final Pattern emailPattern;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserFormDtoValidator(@Value("${app.email.pattern}") String emailPattern) {
+    public UserFormDtoValidator(@Value("${app.email.pattern}") String emailPattern, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.emailPattern = Pattern.compile(emailPattern);
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -31,7 +36,7 @@ public class UserFormDtoValidator implements Validator {
         UserFormDto dto = (UserFormDto) target;
 
         validateEmail(dto.getEmail(), errors);
-        validatePassword(dto.getPassword(), errors);
+        validatePassword(dto.getCurrentPassword(), dto.getNewPassword(), errors);
         validateFirstName(dto.getFirstName(), errors);
         validateLastName(dto.getLastName(), errors);
         validateMiddleName(dto.getMiddleName(), errors);
@@ -45,12 +50,38 @@ public class UserFormDtoValidator implements Validator {
         }
     }
 
-    private void validatePassword(String password, Errors errors) {
-        if (password == null || password.isEmpty()) {
-            errors.rejectValue("password", "field.not.specified");
-        } else if (password.length() > 128 || password.length() < 6) {
-            errors.rejectValue("password", "invalid.field.size.range");
+    private void validatePassword(String currentPassword, String newPassword, Errors errors) {
+
+        if ((currentPassword == null || currentPassword.isEmpty()) && (newPassword != null && !newPassword.isEmpty())) {
+            errors.rejectValue("currentPassword", "field.not.specified");
+            return;
+        } else if ((newPassword == null || newPassword.isEmpty()) && (currentPassword != null && !currentPassword.isEmpty())) {
+            errors.rejectValue("newPassword", "field.not.specified");
+            return;
+        } else if ((currentPassword == null || currentPassword.isEmpty()) && (newPassword == null || newPassword.isEmpty())) {
+            return;
         }
+
+        if (currentPassword.length() > 128 || currentPassword.length() < 6) {
+            errors.rejectValue("currentPassword", "invalid.field.size.range");
+            return;
+        }
+
+        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!bCryptPasswordEncoder.matches(currentPassword, principal.getPassword())) {
+            errors.rejectValue("currentPassword", "user.password.notConfirmed");
+            return;
+        }
+
+        if (newPassword.length() > 128 || newPassword.length() < 6) {
+            errors.rejectValue("newPassword", "invalid.field.size.range");
+            return;
+        }
+
+        if (currentPassword.equals(newPassword)) {
+            errors.rejectValue("newPassword", "user.password.notConfirmed");
+        }
+
     }
 
     private void validateLastName(String lastName, Errors errors) {

@@ -60,23 +60,31 @@ public class UserController {
                              Model model) {
 
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
+        Long userId = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("userFormDto", userFormDto);
+
+            model.addAttribute("user", userService.getUserById(userId));
+            model.addAttribute("success", false);
             return "user";
         }
 
-        Long userId = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         UserUpdatingResultDto userUpdatingResultDto = userService.updateUser(userId, userFormDto);
         String errorMessage = userUpdatingResultDto.getErrorMessage();
 
         if (errorMessage != null) {
             bindingResult.rejectValue(userUpdatingResultDto.getErrorField(), errorMessage);
             model.addAttribute("userFormDto", userFormDto);
+            model.addAttribute("user", userService.getUserById(userId));
+            model.addAttribute("success", false);
             return "user";
         }
 
-        return "redirect:/user/profile";
+        model.addAttribute("success", true);
+        model.addAttribute("user", userService.getUserById(userId));
+
+        return "user";
     }
 
     @GetMapping(name = "/syllabuses", value = "/syllabuses")

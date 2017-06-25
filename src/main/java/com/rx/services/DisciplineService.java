@@ -10,6 +10,7 @@ import com.rx.dto.DisciplineAddingResultDto;
 import com.rx.dto.DisciplineUpdatingResultDto;
 import com.rx.dto.forms.AddDisciplineFormDto;
 import com.rx.dto.forms.FullDisciplineFormDto;
+import com.rx.helpers.FileStorageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +30,14 @@ import java.util.stream.Stream;
 public class DisciplineService {
 
     private DisciplineRepository disciplineRepository;
+    private FileStorageHelper fileStorageHelper;
     private UserService userService;
 
     @Autowired
-    public DisciplineService(DisciplineRepository disciplineRepository, UserService userService) {
+    public DisciplineService(DisciplineRepository disciplineRepository,
+                             FileStorageHelper fileStorageHelper,
+                             UserService userService) {
+        this.fileStorageHelper = fileStorageHelper;
         this.disciplineRepository = disciplineRepository;
         this.userService = userService;
     }
@@ -46,11 +51,12 @@ public class DisciplineService {
         for (User user: one.getUsers()) {
             user.getDisciplines().remove(one);
         }
-        disciplineRepository.delete(id);
-    }
 
-    public void saveDiscipline(Discipline discipline) {
-        disciplineRepository.save(discipline);
+        for (Document document: one.getCurriculums()) {
+            fileStorageHelper.deleteFile(document);
+        }
+
+        disciplineRepository.delete(id);
     }
 
     public Iterable<Discipline> getTeacherDisciplines(Long userId) {

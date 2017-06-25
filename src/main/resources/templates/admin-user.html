@@ -2,12 +2,9 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Редагувати користувача</title>
-
         <th:block th:replace="head :: head">Head</th:block>
-
     </head>
     <body>
-
         <th:block th:replace="nav :: nav">Navigation</th:block>
 
         <div class="container-fluid container-custom">
@@ -25,10 +22,18 @@
                                     <p th:text="${'User with id ' + id + ' does not exist'}"></p>
                                 </div>
                                 <div th:unless="${teacher == null}">
+
                                     <form id="fullUserFormDto" action="#" th:action="@{'/admin/get-user/' + ${id}}"
                                           method="post"
                                           th:object="${fullUserFormDto}">
+
                                         <div class="container-fluid">
+                                            <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
+                                                <p th:text="'Виникла помилка при введенні!'"></p>
+                                            </div>
+                                            <div th:if="${success}" class="alert alert-success">
+                                                <p th:text="'Користувач успішно редагован!'"></p>
+                                            </div>
                                             <div class="row form-group">
                                                 <div class="div-offset col-md-1">
                                                     <p class="p-size">Логін</p>
@@ -126,15 +131,19 @@
                                             </div>
 
                                             <div class="row form-group">
-                                                <div class="col-md-4">
+                                                <div class="align-text-top col-md-4">
                                                     <button class="btn btn-lg btn-success btn-block" type="submit"
-                                                            th:form="'fullUserFormDto'" th:text="'Редагувати'"></button>
+                                                            th:form="'fullUserFormDto'">
+                                                        <span class="glyphicon glyphicon-pencil"></span>
+                                                        <span th:text="'Редагувати'"></span>
+                                                    </button>
+
                                                 </div>
-                                                <div class="col-md-2">
-                                                    <a class="remove-color discipline-link-mini"
+                                                <div class="col-md-4">
+                                                    <a class="discipline-link-nano btn btn-lg btn-danger" onclick="return confirm('Ви впевнені, що хочете видалити?')"
                                                        th:href="@{${'/admin/delete-user/' + id}}">
-                                                        <span class="glyphicon glyphicon-remove-circle remove-color discipline-link-mini"
-                                                              aria-hidden="true"></span>Видалити</a>
+                                                        <span style="vertical-align: text-top;" class="glyphicon glyphicon-remove-circle"
+                                                              aria-hidden="true"></span> Видалити</a>
                                                 </div>
                                             </div>
                                         </div>

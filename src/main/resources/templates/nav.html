@@ -19,7 +19,10 @@
                                     <span th:text="${#authentication.principal.middleName}"></span>
                                 </a>
                             </span>
-                            <input style="height: 100%" class="btn btn-primary btn-lg center" type="submit" th:value="Вийти"/>
+                            <button style="height: 100%" class="btn btn-primary btn-lg center" type="submit">
+                                <span class="glyphicon glyphicon-log-out"></span>
+                                <span th:text="'Вийти'"></span>
+                            </button>
                         </form>
                     </div>
                 </div>

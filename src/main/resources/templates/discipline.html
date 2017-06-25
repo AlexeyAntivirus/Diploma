@@ -71,8 +71,9 @@
                                                                                     <div class="col-md-12">
                                                                                         <a class="discipline-link-nano btn btn-danger"
                                                                                            role="button"
-                                                                                           th:if="${#authentication.principal.userRole != T(com.rx.dao.UserRole).ADMINISTRATOR} or ${#authentication.principal.userRole != T(com.rx.dao.UserRole).ASSISTANT}"
-                                                                                           th:href="@{'/upload/delete-curriculum/' + ${curriculum.getId()}(disciplineId=${discipline.getId()})}">
+                                                                                           th:if="${(#authentication.principal.userRole != T(com.rx.dao.UserRole).ADMINISTRATOR or #authentication.principal.userRole != T(com.rx.dao.UserRole).ASSISTANT) and discipline.isUserTeachDiscipline(#authentication.principal.username)}"
+                                                                                           th:href="@{'/upload/delete-curriculum/' + ${curriculum.getId()}(disciplineId=${discipline.getId()})}"
+                                                                                           onclick="return confirm('Ви впевнені, що хочете видалити?')">
                                                                                         <span style="vertical-align: text-top;"
                                                                                               class="glyphicon glyphicon-remove-circle"></span>
                                                                                             <span>Видалити</span>

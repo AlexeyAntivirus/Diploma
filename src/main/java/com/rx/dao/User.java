@@ -1,6 +1,8 @@
 package com.rx.dao;
 
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

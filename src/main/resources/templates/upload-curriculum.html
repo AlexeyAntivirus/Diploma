@@ -35,7 +35,7 @@
                                             <div class="div-offset col-md-1">
                                                 <p class="p-size">Дисципліна</p>
                                             </div>
-                                            <div th:class="${#fields.hasErrors('disciplineId') ? 'col-md-11 has-error has-feedback':'col-md-10'}">
+                                            <div th:class="${#fields.hasErrors('disciplineId') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
                                                 <select id="disciplineId" class="form-control"
                                                         th:field="*{disciplineId}">
                                                     <option th:text="''" th:value="null" selected="selected"></option>
@@ -52,7 +52,7 @@
                                             <div class="div-offset col-md-1">
                                                 <p class="p-size">Тип документа</p>
                                             </div>
-                                            <div th:class="${#fields.hasErrors('documentType') ? 'col-md-11 has-error has-feedback':'col-md-10'}">
+                                            <div th:class="${#fields.hasErrors('documentType') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
                                                 <select id="documentType" class="form-control"
                                                         th:field="*{documentType}">
                                                     <option th:text="''" th:value="null" selected="selected"></option>
@@ -67,7 +67,7 @@
                                                    th:errors="*{documentType}"></label>
                                         </div>
                                         <div class="row form-group">
-                                            <div th:class="${#fields.hasErrors('multipartFile') ? 'col-md-12 has-error has-feedback':'col-md-12'}">
+                                            <div th:class="${#fields.hasErrors('multipartFile') ? 'col-md-10 has-error has-feedback':'col-md-10'}">
                                                 <label class="control-label"
                                                        for="input-1a multipartFile">Документ</label>
                                                 <input id="input-1a multipartFile" type="file" class="file"

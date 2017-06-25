@@ -1,5 +1,7 @@
 package com.rx.dao;
 
+
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

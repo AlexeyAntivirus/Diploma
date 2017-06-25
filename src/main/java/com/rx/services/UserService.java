@@ -6,9 +6,16 @@ import com.rx.dao.User;
 import com.rx.dao.repositories.UserRepository;
 import com.rx.dto.UserAddingResultDto;
 import com.rx.dto.UserUpdatingResultDto;
+import com.rx.dto.forms.AddUserFormDto;
 import com.rx.dto.forms.FullUserFormDto;
 import com.rx.dto.forms.UserFormDto;
+import com.rx.helpers.AuthenticatedUser;
+import com.rx.helpers.FileStorageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,54 +24,52 @@ public class UserService {
 
     private UserRepository userRepository;
 
+    private SimpleUserDetailsService simpleUserDetailsService;
+
+    private FileStorageHelper fileStorageHelper;
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     @Autowired
     public UserService(UserRepository userRepository,
-                       BCryptPasswordEncoder bCryptPasswordEncoder) {
+                       BCryptPasswordEncoder bCryptPasswordEncoder,
+                       FileStorageHelper fileStorageHelper,
+                       SimpleUserDetailsService simpleUserDetailsService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.simpleUserDetailsService = simpleUserDetailsService;
+        this.fileStorageHelper = fileStorageHelper;
     }
 
     public User getUserById(Long id) {
         return userRepository.findOne(id);
     }
 
-    public User getUserByLoginAndPassword(String login, String password) {
-        User user = userRepository.findByUsername(login);
-
-        if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            user = null;
-        }
-
-        return user;
-    }
-
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public UserAddingResultDto addUser(FullUserFormDto fullUserFormDto) {
+    public UserAddingResultDto addUser(AddUserFormDto addUserFormDto) {
         String errorMessage = null;
         String errorField = null;
         Long userId = null;
 
-        if (userRepository.existsByUsername(fullUserFormDto.getUsername())) {
-            errorField = "login";
-            errorMessage = "login.isBusy";
-        } else if (userRepository.existsByEmail(fullUserFormDto.getEmail())) {
+        if (userRepository.existsByUsername(addUserFormDto.getUsername())) {
+            errorField = "username";
+            errorMessage = "username.isBusy";
+        } else if (userRepository.existsByEmail(addUserFormDto.getEmail())) {
             errorField = "email";
             errorMessage = "email.isBusy";
         } else {
             User user = User.builder()
-                    .withUsername(fullUserFormDto.getUsername())
-                    .withPassword(bCryptPasswordEncoder.encode(fullUserFormDto.getPassword()))
-                    .withEmail(fullUserFormDto.getEmail())
-                    .withLastName(fullUserFormDto.getLastName())
-                    .withFirstName(fullUserFormDto.getFirstName())
-                    .withMiddleName(fullUserFormDto.getMiddleName())
-                    .withUserRole(fullUserFormDto.getUserRole())
+                    .withUsername(addUserFormDto.getUsername())
+                    .withPassword(bCryptPasswordEncoder.encode(addUserFormDto.getPassword()))
+                    .withEmail(addUserFormDto.getEmail())
+                    .withLastName(addUserFormDto.getLastName())
+                    .withFirstName(addUserFormDto.getFirstName())
+                    .withMiddleName(addUserFormDto.getMiddleName())
+                    .withUserRole(addUserFormDto.getUserRole())
                     .build();
             userId = userRepository.save(user).getId();
         }
@@ -87,11 +92,16 @@ public class UserService {
             errorMessage = "email.isBusy";
         } else {
             user.setEmail(userFormDto.getEmail());
-            user.setPassword(bCryptPasswordEncoder.encode(userFormDto.getPassword()));
+            user.setPassword(!userFormDto.getCurrentPassword().isEmpty() ? bCryptPasswordEncoder.encode(userFormDto.getNewPassword()) : user.getPassword());
             user.setLastName(userFormDto.getLastName());
             user.setFirstName(userFormDto.getFirstName());
             user.setMiddleName(userFormDto.getMiddleName());
-            userRepository.save(user);
+            User save = userRepository.save(user);
+            UserDetails userDetails = simpleUserDetailsService.loadUserByUsername(save.getUsername());
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails, userDetails.getPassword(), userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         return UserUpdatingResultDto.builder()
@@ -112,17 +122,26 @@ public class UserService {
             errorMessage = "email.isBusy";
         } else if (!fullUserFormDto.getUsername().equals(user.getUsername()) &&
                 userRepository.existsByUsername(fullUserFormDto.getUsername())) {
-            errorField = "login";
-            errorMessage = "login.isBusy";
+            errorField = "username";
+            errorMessage = "username.isBusy";
         } else {
             user.setUsername(fullUserFormDto.getUsername());
-            user.setPassword(bCryptPasswordEncoder.encode(fullUserFormDto.getPassword()));
+            user.setPassword(!fullUserFormDto.getPassword().isEmpty() ? bCryptPasswordEncoder.encode(fullUserFormDto.getPassword()) : user.getPassword());
             user.setEmail(fullUserFormDto.getEmail());
             user.setLastName(fullUserFormDto.getLastName());
             user.setFirstName(fullUserFormDto.getFirstName());
             user.setMiddleName(fullUserFormDto.getMiddleName());
             user.setUserRole(fullUserFormDto.getUserRole());
-            userRepository.save(user);
+
+            User save = userRepository.save(user);
+            Long userId = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+            if (save.getId().equals(userId)) {
+                UserDetails userDetails = simpleUserDetailsService.loadUserByUsername(save.getUsername());
+
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, userDetails.getPassword(), userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
 
         return UserUpdatingResultDto.builder()
@@ -144,6 +163,11 @@ public class UserService {
         for (Discipline discipline : one.getDisciplines()) {
             discipline.getUsers().remove(one);
         }
+
+        for (Document document: one.getTeachingLoads()) {
+            fileStorageHelper.deleteFile(document);
+        }
+
         userRepository.delete(id);
     }
 

@@ -18,9 +18,13 @@
                                 <h3 class="panel-title">Додати користувача</h3>
                             </div>
                             <div class="panel-body">
-                                <form id="fullUserFormDto" action="#" th:action="@{/admin/add-user}" method="post"
-                                      th:object="${fullUserFormDto}">
+
+                                <form id="addUserFormDto" action="#" th:action="@{/admin/add-user}" method="post"
+                                      th:object="${addUserFormDto}">
                                     <div class="container-fluid">
+                                        <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
+                                            <p th:text="'Виникла помилка при введенні!'"></p>
+                                        </div>
                                         <div class="row form-group">
                                             <div class="div-offset col-md-1">
                                                 <p class="p-size">Логін</p>
@@ -105,8 +109,7 @@
                                                     <option th:text="''" th:value="null" selected="selected"></option>
                                                     <option th:each="userRoleValue: ${T(com.rx.dao.UserRole).values()}"
                                                             th:text="#{${userRoleValue.getString()}}"
-                                                            th:value="${userRoleValue}"
-                                                            th:if="${userRoleValue != T(com.rx.dao.UserRole).ADMINISTRATOR}"></option>
+                                                            th:value="${userRoleValue}"></option>
                                                 </select>
                                             </div>
                                             <label class="col-md-4 control-label" for="userRole"
@@ -117,7 +120,10 @@
                                         <div class="row form-group">
                                             <div class="col-md-4">
                                                 <button class="btn btn-lg btn-success btn-block" type="submit"
-                                                        form="fullUserFormDto" th:text="'Додати'"></button>
+                                                        form="addUserFormDto">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <span th:text="'Додати'"></span>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

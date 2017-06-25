@@ -72,6 +72,16 @@ public class Discipline {
         this.users = users;
     }
 
+    public boolean isUserTeachDiscipline(String username) {
+        for (User user: getUsers()) {
+            if (username.equals(user.getUsername())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static class DisciplineBuilder {
         private String name;
 

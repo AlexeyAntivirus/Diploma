@@ -24,8 +24,8 @@
                                     <a class="list-group-item list-group-item-action discipline-link-mini"
                                        th:each="discipline: ${disciplines}"
                                        th:href="@{'/discipline/' + ${discipline.getId()}}">
-                                        <div th:text="${discipline.getName()}">
-                                        </div>
+                                        <span class="glyphicon glyphicon-book"></span>
+                                        <span th:text="${discipline.getName()}"></span>
                                     </a>
                                 </div>
                             </div>

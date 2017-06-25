@@ -22,13 +22,19 @@
                             <div class="panel-body">
                                 <form id="userFormDto" action="#" th:action="@{/user/profile}" method="post"
                                       th:object="${userFormDto}">
+                                    <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
+                                        <p th:text="'Виникла помилка при введенні!'"></p>
+                                    </div>
+                                    <div th:if="${success}" class="alert alert-success">
+                                        <p th:text="'Користувач успішно редагован!'"></p>
+                                    </div>
 
                                     <div class="container-fluid">
                                         <div class="row form-group">
                                             <div class="div-offset col-md-1">
                                                 <p class="p-size">Email</p>
                                             </div>
-                                            <div th:class="${#fields.hasErrors('email') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
+                                            <div th:class="${#fields.hasErrors('email') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
                                                 <input id="email" class="form-control" type="email" th:id="email"
                                                        th:name="email"
                                                        th:value="${user.getEmail()}"/>
@@ -39,34 +45,46 @@
                                         </div>
                                         <div class="row form-group">
                                             <div class="div-offset col-md-1">
-                                                <p class="p-size">Пароль</p>
+                                                <p class="p-size">Старий пароль</p>
                                             </div>
-                                            <div th:class="${#fields.hasErrors('password') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
-                                                <input id="password" class="form-control" type="password"
-                                                       th:id="password" th:name="password"/>
+                                            <div th:class="${#fields.hasErrors('currentPassword') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                <input id="currentPassword" class="form-control" type="password"
+                                                       th:id="currentPassword" th:name="currentPassword"/>
                                             </div>
-                                            <label class="col-md-4 control-label" for="password"
-                                                   th:if="${#fields.hasErrors('password')}"
-                                                   th:errors="*{password}"></label>
+                                            <label class="col-md-4 control-label" for="currentPassword"
+                                                   th:if="${#fields.hasErrors('currentPassword')}"
+                                                   th:errors="*{currentPassword}"></label>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="div-offset col-md-1">
+                                                <p class="p-size">Новий пароль</p>
+                                            </div>
+                                            <div th:class="${#fields.hasErrors('newPassword') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
+                                                <input id="newPassword" class="form-control" type="password"
+                                                       th:id="newPassword" th:name="newPassword"/>
+                                            </div>
+                                            <label class="col-md-4 control-label" for="newPassword"
+                                                   th:if="${#fields.hasErrors('newPassword')}"
+                                                   th:errors="*{newPassword}"></label>
                                         </div>
                                         <div class="row form-group">
                                             <div class="div-offset col-md-1">
                                                 <p class="p-size">Прізвище</p>
                                             </div>
-                                            <div th:class="${#fields.hasErrors('lastName') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
+                                            <div th:class="${#fields.hasErrors('lastName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
                                                 <input id="lastName" class="form-control" type="text" th:id="lastName"
                                                        th:name="lastName"
                                                        th:value="${user.getLastName()}"/>
                                             </div>
                                             <label class="col-md-4 control-label" for="lastName"
-                                                   th:if="${#fields.hasErrors('password')}"
+                                                   th:if="${#fields.hasErrors('lastName')}"
                                                    th:errors="*{lastName}"></label>
                                         </div>
                                         <div class="row form-group">
                                             <div class="div-offset col-md-1">
                                                 <p class="p-size">Ім'я</p>
                                             </div>
-                                            <div th:class="${#fields.hasErrors('firstName') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
+                                            <div th:class="${#fields.hasErrors('firstName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
                                                 <input id="firstName" class="form-control" type="text" th:id="firstName"
                                                        th:name="firstName"
                                                        th:value="${user.getFirstName()}"/>
@@ -79,7 +97,7 @@
                                             <div class="div-offset col-md-1">
                                                 <p class="p-size">По батькові</p>
                                             </div>
-                                            <div th:class="${#fields.hasErrors('middleName') ? 'col-md-6 has-error has-feedback':'col-md-6'}">
+                                            <div th:class="${#fields.hasErrors('middleName') ? 'col-md-4 has-error has-feedback':'col-md-4'}">
                                                 <input id="middleName" class="form-control" type="text"
                                                        th:id="middleName" th:name="middleName"
                                                        th:value="${user.getMiddleName()}"/>
@@ -101,8 +119,10 @@
                                         <div class="row form-group">
                                             <div class="col-md-4">
                                                 <button class="btn btn-lg btn-success btn-block" type="submit"
-                                                        th:form="'userFormDto'"
-                                                        th:text="'Редагувати'"></button>
+                                                        th:form="'userFormDto'">
+                                                    <span class="glyphicon glyphicon-pencil"></span>
+                                                    <span th:text="'Редагувати'"></span>
+                                                </button>
                                             </div>
                                         </div>
 
@@ -125,7 +145,8 @@
                                                         </div>
                                                         <div class="col-md-12">
                                                             <a class="btn btn-danger discipline-link-nano"
-                                                               th:href="@{'/upload/delete-teaching-load/' + ${teachingLoad.getId()}}">
+                                                               th:href="@{'/upload/delete-teaching-load/' + ${teachingLoad.getId()}}"
+                                                               onclick="return confirm('Ви впевнені, що хочете видалити?')">
                                                                 <span style="vertical-align: text-top;" class="glyphicon glyphicon-remove-circle"
                                                                      aria-hidden="true"></span> Видалити</a>
                                                         </div>

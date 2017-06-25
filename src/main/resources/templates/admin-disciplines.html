@@ -22,14 +22,25 @@
                                 <h3 class="panel-title">Перелік дисциплін</h3>
                             </div>
                             <div class="panel-body">
-                                <div class="row list-element" th:each="discipline: ${disciplines}">
-                                    <div class="col-md-12">
-                                        <a class="discipline-link" th:text="${discipline.getName()}"
-                                           th:href="@{${'/admin/get-discipline/' + discipline.getId()}}"></a>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <a class="remove-color discipline-link-mini " th:href="@{${'/admin/delete-discipline/' + discipline.getId()}}">
-                                            <span class="glyphicon glyphicon-remove-circle remove-color" aria-hidden="true"></span>Видалити</a>
+                                <div class="list-group">
+                                    <div class="list-group-item" th:each="discipline: ${disciplines}">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="discipline-link-nano btn btn-link"
+                                                       th:href="@{${'/admin/get-discipline/' + discipline.getId()}}">
+                                                        <span class="glyphicon glyphicon-book"></span>
+                                                        <span th:text="${discipline.getName()}"></span>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <a class="discipline-link-nano btn btn-danger"
+                                                       th:href="@{${'/admin/delete-discipline/' + discipline.getId()}}"
+                                                       onclick="return confirm('Ви впевнені, що хочете видалити?')">
+                                                        <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> Видалити</a>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

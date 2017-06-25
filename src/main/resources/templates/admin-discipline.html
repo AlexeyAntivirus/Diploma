@@ -22,11 +22,18 @@
                                     <p th:text="${'Discipline with id ' + id + ' does not exist'}"></p>
                                 </div>
                                 <div th:unless="${discipline == null}">
+
                                     <form id="fullDisciplineFormDto" th:action="@{'/admin/get-discipline/' + ${id}}"
                                           method="post"
                                           th:object="${fullDisciplineFormDto}">
 
                                         <div class="container-fluid">
+                                            <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
+                                                <p th:text="'Виникла помилка при введенні!'"></p>
+                                            </div>
+                                            <div th:if="${success}" class="alert alert-success">
+                                                <p th:text="'Дисципліна успішно редагована!'"></p>
+                                            </div>
                                             <div class="row form-group">
                                                 <div class="div-offset col-md-1">
                                                     <p class="p-size">Назва</p>
@@ -55,21 +62,29 @@
                                                 </div>
                                             </div>
 
-                                            <div class="row form-group">
-                                                <h3 class="col-md-12" th:text="'Викладачі'"></h3>
-                                                <div class="col-md-12" th:each="value: ${discipline.getUsers()}">
-                                                    <div class="row list-element">
-                                                        <div class="col-md-12">
-                                                            <a class="discipline-link-mini"
-                                                               th:text="#{${value.getUserRole().getString()}} + ' ' + |${value.getLastName()} ${value.getFirstName()} ${value.getMiddleName()}|"
-                                                               th:href="@{'/admin/get-user/' + ${value.getId()}}"></a>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <a class="discipline-link-mini"
-                                                               th:href="@{/admin/detach(disciplineId=${discipline.getId()}, teacherId=${value.getId()})}">
-                                                                <span class="glyphicon glyphicon-minus-sign discipline-link-mini"></span>
-                                                                Відв'язати
-                                                            </a>
+                                            <h3 class="form-group" th:text="'Викладачі'"></h3>
+                                            <div class="form-group">
+
+                                                <div class="list-group">
+                                                    <div class="list-group-item" th:each="value: ${discipline.getUsers()}">
+                                                        <div class="container-fluid">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <a class="discipline-link-mini"
+                                                                       th:href="@{'/admin/get-user/' + ${value.getId()}}">
+                                                                        <span class="glyphicon glyphicon-user"></span>
+                                                                        <span th:text="#{${value.getUserRole().getString()}} + ' ' + |${value.getLastName()} ${value.getFirstName()} ${value.getMiddleName()}|"></span>
+                                                                    </a>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <a class="btn btn-info discipline-link-mini"
+                                                                       th:href="@{/admin/detach(disciplineId=${discipline.getId()}, teacherId=${value.getId()})}"
+                                                                       onclick="return confirm('Ви впевнені, що хочете відв\'язати')">
+                                                                        <span class="glyphicon glyphicon-minus-sign discipline-link-mini"></span>
+                                                                        Відв'язати
+                                                                    </a>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -78,14 +93,17 @@
                                             <div class="row form-group">
                                                 <div class="col-md-4">
                                                     <button class="btn btn-lg btn-success btn-block" type="submit"
-                                                            th:form="fullDisciplineFormDto"
-                                                            th:text="'Редагувати'"></button>
+                                                            th:form="fullDisciplineFormDto">
+                                                        <span class="glyphicon glyphicon-pencil"></span>
+                                                        <span th:text="'Редагувати'"></span>
+                                                    </button>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <a class="remove-color discipline-link"
+                                                    <a class="discipline-link-nano btn btn-lg btn-danger"
+                                                       onclick="return confirm('Ви впевнені, що хочете видалити?')"
                                                        th:href="@{${'/admin/delete-discipline/' + discipline.getId()}}">
-                                                        <span class="glyphicon glyphicon-remove-circle remove-color discipline-link"
-                                                              aria-hidden="true"></span>Видалити</a>
+                                                        <span style="vertical-align: text-top;" class="glyphicon glyphicon-remove-circle"
+                                                              aria-hidden="true"></span> Видалити</a>
                                                 </div>
                                             </div>
                                         </div>

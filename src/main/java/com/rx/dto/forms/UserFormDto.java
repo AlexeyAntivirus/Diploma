@@ -4,7 +4,9 @@ public class UserFormDto {
 
     private String email;
 
-    private String password;
+    private String currentPassword;
+
+    private String newPassword;
 
     private String lastName;
 
@@ -21,12 +23,12 @@ public class UserFormDto {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getCurrentPassword() {
+        return currentPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
     }
 
     public String getLastName() {
@@ -51,5 +53,13 @@ public class UserFormDto {
 
     public void setMiddleName(String middleName) {
         this.middleName = middleName;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 }

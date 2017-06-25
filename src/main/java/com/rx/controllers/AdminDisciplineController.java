@@ -121,6 +121,7 @@ public class AdminDisciplineController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("fullDisciplineFormDto", fullDisciplineFormDto);
+            model.addAttribute("success", false);
             return "redirect:/admin/get-discipline/" + id;
         }
 
@@ -130,8 +131,11 @@ public class AdminDisciplineController {
             bindingResult.rejectValue(disciplineUpdatingResultDto.getErrorField(),
                     disciplineUpdatingResultDto.getErrorMessage());
             model.addAttribute("fullDisciplineFormDto", fullDisciplineFormDto);
+            model.addAttribute("success", false);
             return "redirect:/admin/get-discipline/" + id;
         }
+
+        model.addAttribute("success", true);
 
         return "redirect:/admin/get-discipline/" + id;
     }

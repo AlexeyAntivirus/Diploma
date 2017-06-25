@@ -18,20 +18,23 @@
                             <div class="panel-body">
                                 <div class="list-group">
                                     <div class="list-group-item" th:each="syllabus: ${syllabuses}">
-                                        <div class="container">
+                                        <div class="container-fluid">
                                             <div class="row">
-                                                <div class="col-md-12">
+                                                <div class="align-text-top col-md-12">
                                                     <a class="discipline-link-nano btn btn-link"
                                                        th:href="@{/download(fileId=${syllabus.getId()})}">
-                                                        <span class="glyphicon glyphicon-download"></span>
+                                                        <span style="vertical-align: text-top;" class="glyphicon glyphicon-download"></span>
                                                         <span th:text="${syllabus.getDocumentFilename()}"></span>
                                                     </a>
                                                 </div>
-                                                <div class="col-md-12">
-                                                    <a class="discipline-link-nano btn btn-danger"
-                                                       th:href="@{'/upload/delete-syllabus/' + ${syllabus.getId()}}">
-                                                        <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>Видалити</a>
-                                                </div>
+                                                <th:block th:if="${#authentication.principal.userRole == T(com.rx.dao.UserRole).METHODOLOGIST}">
+                                                    <div class="col-md-12">
+                                                        <a class="discipline-link-nano btn btn-danger"
+                                                           th:href="@{'/upload/delete-syllabus/' + ${syllabus.getId()}}"
+                                                           onclick="return confirm('Ви впевнені, що хочете видалити?')">
+                                                            <span style="vertical-align: text-top;" class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>Видалити</a>
+                                                    </div>
+                                                </th:block>
                                             </div>
                                         </div>
                                     </div>

@@ -2,7 +2,7 @@ package com.rx.validators;
 
 
 import com.rx.dao.UserRole;
-import com.rx.dto.forms.FullUserFormDto;
+import com.rx.dto.forms.AddUserFormDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -12,26 +12,26 @@ import org.springframework.validation.Validator;
 import java.util.regex.Pattern;
 
 @Component
-public class FullUserFormDtoValidator implements Validator {
+public class AddUserFormDtoValidator implements Validator {
 
     private final Pattern emailPattern;
 
     @Autowired
-    public FullUserFormDtoValidator(@Value("${app.email.pattern}") String emailPattern) {
+    public AddUserFormDtoValidator(@Value("${app.email.pattern}") String emailPattern) {
         this.emailPattern = Pattern.compile(emailPattern);
     }
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return FullUserFormDto.class.isAssignableFrom(clazz);
+        return AddUserFormDto.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        FullUserFormDto dto = (FullUserFormDto) target;
+        AddUserFormDto dto = (AddUserFormDto) target;
 
         validateUsername(dto.getUsername(), errors);
-        validateChangedPassword(dto.getPassword(), errors);
+        validatePassword(dto.getPassword(), errors);
         validateEmail(dto.getEmail(), errors);
         validateFirstName(dto.getFirstName(), errors);
         validateLastName(dto.getLastName(), errors);
@@ -47,11 +47,11 @@ public class FullUserFormDtoValidator implements Validator {
         }
     }
 
-    private void validateChangedPassword(String password, Errors errors) {
-        if (password != null && !password.isEmpty()) {
-             if (password.length() > 128 || password.length() < 6) {
-                 errors.rejectValue("password", "invalid.field.size.range");
-             }
+    private void validatePassword(String password, Errors errors) {
+        if (password == null || password.isEmpty()) {
+            errors.rejectValue("password", "field.not.specified");
+        } else if (password.length() > 128 || password.length() < 6) {
+            errors.rejectValue("password", "invalid.field.size.range");
         }
     }
 
