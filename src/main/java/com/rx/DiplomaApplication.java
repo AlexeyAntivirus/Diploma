@@ -3,7 +3,8 @@ package com.rx;
 import com.rx.dao.repositories.DisciplineRepository;
 import com.rx.dao.repositories.DocumentRepository;
 import com.rx.dao.repositories.UserRepository;
-import com.rx.helpers.DataAccessObjectCommandLineRunner;
+import com.rx.helpers.DevDataAccessObjectCommandLineRunner;
+import com.rx.helpers.ProdDataAccessObjectCommandLineRunner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,6 +26,13 @@ public class DiplomaApplication {
 									DocumentRepository documentRepository,
 									DisciplineRepository disciplineRepository,
 									BCryptPasswordEncoder bCryptPasswordEncoder) {
-		return new DataAccessObjectCommandLineRunner(userRepository, disciplineRepository, documentRepository, bCryptPasswordEncoder);
+		return new DevDataAccessObjectCommandLineRunner(userRepository, disciplineRepository, documentRepository, bCryptPasswordEncoder);
 	}
+
+    @Bean
+    @Profile("prod")
+    public CommandLineRunner prodRunner(UserRepository userRepository,
+                                        BCryptPasswordEncoder bCryptPasswordEncoder) {
+        return new ProdDataAccessObjectCommandLineRunner(userRepository, bCryptPasswordEncoder);
+    }
 }

@@ -17,7 +17,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashSet;
 
-public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
+public class DevDataAccessObjectCommandLineRunner implements CommandLineRunner {
 
     private final UserRepository userRepository;
 
@@ -27,10 +27,10 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public DataAccessObjectCommandLineRunner(UserRepository userRepository,
-                                             DisciplineRepository disciplineRepository,
-                                             DocumentRepository documentRepository,
-                                             BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public DevDataAccessObjectCommandLineRunner(UserRepository userRepository,
+                                                DisciplineRepository disciplineRepository,
+                                                DocumentRepository documentRepository,
+                                                BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.documentRepository = documentRepository;
         this.disciplineRepository = disciplineRepository;
@@ -129,7 +129,6 @@ public class DataAccessObjectCommandLineRunner implements CommandLineRunner {
 
         userRepository.save(User.builder()
                 .withUsername("admin")
-                .withPassword("admin")
                 .withEmail("blabla@gmail.com")
                 .withPassword(bCryptPasswordEncoder.encode("14ph38"))
                 .withLastName("")
