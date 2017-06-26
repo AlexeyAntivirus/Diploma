@@ -91,8 +91,10 @@ public class AdminUserController {
 
         model.addAttribute("attribute", "redirectWithRedirectPrefix");
         model.addAttribute("success", true);
+        model.addAttribute("teacher", userService.getUserById(id));
+        model.addAttribute("id", id);
 
-        return "redirect:/admin/get-user/" + id;
+        return "admin-user";
     }
 
     @GetMapping(name = "/add-user", value = "/add-user")
