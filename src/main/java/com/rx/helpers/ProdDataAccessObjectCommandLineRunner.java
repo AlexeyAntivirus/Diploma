@@ -24,7 +24,7 @@ public class ProdDataAccessObjectCommandLineRunner implements CommandLineRunner 
         User user = User.builder()
                 .withUsername("administrator")
                 .withEmail("blabla@gmail.com")
-                .withPassword(bCryptPasswordEncoder.encode("14ph38th2796"))
+                .withPassword(bCryptPasswordEncoder.encode("14ph38th2796a"))
                 .withLastName("Admin")
                 .withFirstName("Admin")
                 .withMiddleName("Admin")
